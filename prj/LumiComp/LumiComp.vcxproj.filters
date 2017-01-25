@@ -7,10 +7,10 @@
     <Filter Include="source\gles20">
       <UniqueIdentifier>{66ff6897-5b80-437a-8fe4-23ecaeeb085d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\LumiComp">
+    <Filter Include="source\ImageJuggler">
       <UniqueIdentifier>{605b36df-d947-427c-9add-683840ccd8af}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\LumiComp\Image">
+    <Filter Include="source\ImageJuggler\Image">
       <UniqueIdentifier>{634067de-951e-4d89-af67-072d3f85176e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -18,28 +18,25 @@
     <ClCompile Include="..\..\source\Source.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\LumiComp\Image\LCImage.cpp">
-      <Filter>source\LumiComp\Image</Filter>
+    <ClCompile Include="..\..\source\ImageJuggler\IJMainWorker.cpp">
+      <Filter>source\ImageJuggler</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\LumiComp\Image\RGBImage.cpp">
-      <Filter>source\LumiComp\Image</Filter>
+    <ClCompile Include="..\..\source\ImageJuggler\Image\IJYCbCrImage.cpp">
+      <Filter>source\ImageJuggler\Image</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\LumiComp\LCMainWorker.cpp">
-      <Filter>source\LumiComp</Filter>
+    <ClCompile Include="..\..\source\ImageJuggler\Image\IJImage.cpp">
+      <Filter>source\ImageJuggler\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ImageJuggler\Image\IJRGBImage.cpp">
+      <Filter>source\ImageJuggler\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ImageJuggler\IJImageTranslator.cpp">
+      <Filter>source\ImageJuggler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\Source.h">
       <Filter>source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\LumiComp\Image\LCImage.h">
-      <Filter>source\LumiComp\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\LumiComp\Image\RGBImage.h">
-      <Filter>source\LumiComp\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\LumiComp\Types.h">
-      <Filter>source\LumiComp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\gles20\gl2.h">
       <Filter>source\gles20</Filter>
@@ -50,8 +47,23 @@
     <ClInclude Include="..\..\source\gles20\gl2platform.h">
       <Filter>source\gles20</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\LumiComp\LCMainWorker.h">
-      <Filter>source\LumiComp</Filter>
+    <ClInclude Include="..\..\source\ImageJuggler\IJMainWorker.h">
+      <Filter>source\ImageJuggler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ImageJuggler\Image\IJYCbCrImage.h">
+      <Filter>source\ImageJuggler\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ImageJuggler\IJTypes.h">
+      <Filter>source\ImageJuggler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ImageJuggler\Image\IJImage.h">
+      <Filter>source\ImageJuggler\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ImageJuggler\Image\IJRGBImage.h">
+      <Filter>source\ImageJuggler\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ImageJuggler\IJImageTranslator.h">
+      <Filter>source\ImageJuggler</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
