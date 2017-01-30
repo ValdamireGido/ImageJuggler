@@ -8,6 +8,13 @@ enum class IJResult : uint8_t
 	UnknownError,
 	UnknownFileFormat,
 	UnableToOpenFile, 
-	UnableToLoadFile
-	
+	UnableToLoadFile,
+	UnableToSaveFile
+};
+
+enum class IJImageType : uint8_t
+{
+	RGB = 0, 
+	YCbCr, 
+	YCoCg
 };
