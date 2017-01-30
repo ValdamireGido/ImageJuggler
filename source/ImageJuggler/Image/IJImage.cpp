@@ -1,5 +1,7 @@
 #include "IJImage.h"
 
+///////////////////////////////////////////////////////////////////////
+
 std::string GetFileExtension(const std::string& fileName) 
 {
 	std::string ext;
@@ -11,4 +13,7 @@ std::string GetFileExtension(const std::string& fileName)
 
 	return ext;
 }
+
+///////////////////////////////////////////////////////////////////////
+
 

@@ -12,7 +12,7 @@
 int main(int argc, char** argv)
 {
 	//bar_skybox.tga
-	std::string atalsCarsImage("input/Atlas_Cars.tga");
+	/*std::string atalsCarsImage("input/Atlas_Cars.tga");
 	IJRGBImage imageAtlasCars;
 	if (imageAtlasCars.Load(atalsCarsImage) != IJResult::Success)
 	{
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 	if (imageAtlasCars.Save("output/imageOutput.tga") != IJResult::Success)
 	{
 		return EXIT_FAILURE;
-	}
+	}*/
 
 	return EXIT_SUCCESS;
 }

@@ -6,5 +6,5 @@
 
 class IJImageTranslator
 {
-	static IJResult RGBToYCbCr(IJRGBImage* input, YCbCrImage* output);
+	//static IJResult RGBToYCbCr(IJRGBImage* input, YCbCrImage* output);
 };
