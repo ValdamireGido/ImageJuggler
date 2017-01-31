@@ -71,9 +71,6 @@ protected:
 	void					ClearPixels();
 
 private:
-	void _copy(const IJImage& other);
-
-private:
 	std::string		m_fileName;
 	PixelData_t		m_pixels;
 	size_t			m_imageSize;
@@ -81,6 +78,40 @@ private:
 };
 
 // Inline realization
+
+template <typename _PixelCompTy>
+IJImage<_PixelCompTy>::IJImage(const std::string& fileName, IJImageType type)
+	: m_fileName(fileName)
+	, m_pixels()
+	, m_imageSize(0u)
+	, m_imageType(type)
+{}
+
+template <typename _PixelCompTy>
+IJImage<_PixelCompTy>::~IJImage()
+{}
+
+template <typename _PixelCompTy>
+IJResult IJImage<_PixelCompTy>::Load()
+{
+	if (m_fileName.emtpy())
+	{
+		return IJResult::FileNameEmty;
+	}
+
+	return Load(m_fileName);
+}
+
+template <typename _PixelCompTy>
+IJResult IJImage<_PixelCompTy>::Save()
+{
+	if (m_fileName.empty())
+	{
+		return IJResult::FileNameEmpty;
+	}
+
+	return Save(m_fileName);
+}
 
 template <typename _PixelCompTy>
 inline const std::string& IJImage<_PixelCompTy>::GetFileName() const 
@@ -104,4 +135,40 @@ template <typename _PixelCompTy>
 inline size_t IJImage<_PixelCompTy>::GetImageSize() const
 {
 	return m_imageSize;
+}
+
+template <typename _PixelCompTy>
+inline void IJImage<_PixelCompTy>::SetFileName(const std::string& fileName)
+{
+	m_fileName = fileName;
+}
+
+template <typename _PixelCompTy>
+inline void IJImage<_PixelCompTy>::SetImageType(IJImageType imageType)
+{
+	m_imageType = imageType;
+}
+
+template <typename _PixelCompTy>
+inline void IJImage<_PixelCompTy>::SetImageSize(size_t size)
+{
+	m_imageSize = size;
+}
+
+template <typename _PixelCompTy>
+inline typename IJImage<_PixelCompTy>::PixelData_t& IJImage<_PixelCompTy>::GetPixelData() 
+{
+	return m_pixels;
+}
+
+template <typename _PixelCompTy>
+inline void IJImage<_PixelCompTy>::AddPixel(typename IJImage<_PixelCompTy>::Pixel_t* pPixel)
+{
+	m_pixels.push_back(pPixel);
+}
+
+template <typename _PixelCompTy>
+inline void IJImage<_PixelCompTy>::ClearPixels()
+{
+	m_pixels.clear();
 }
