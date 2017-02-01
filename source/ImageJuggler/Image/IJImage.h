@@ -24,8 +24,9 @@ struct Pixel
 	Pixel&	operator=(	    Pixel&&	other)	= delete;
 	virtual ~Pixel() {}
 
-	virtual Comp_t		operator[](uint32_t compIdx) const	= 0;
-	virtual uint32_t	compCount()					 const	= 0;
+	virtual				operator std::vector<Comp_t>()	const	= 0;
+	virtual Comp_t		operator[](uint32_t compIdx)	const	= 0;
+	virtual uint32_t	compCount()						const	= 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -96,7 +97,7 @@ IJResult IJImage<_PixelCompTy>::Load()
 {
 	if (m_fileName.emtpy())
 	{
-		return IJResult::FileNameEmty;
+		return IJResult::FileNameEmpty;
 	}
 
 	return Load(m_fileName);

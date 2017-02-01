@@ -11,7 +11,7 @@ IJRGBPixel::IJRGBPixel(const std::vector<uint8_t>& _data)
 	std::copy(_data.begin(), _data.end(), data.begin());
 }
 
-IJRGBPixel::IJRGBPixel(const CompData& _data)
+IJRGBPixel::IJRGBPixel(const CompData_t& _data)
 {
 	std::copy(_data.begin(), _data.end(), data.begin());
 }
@@ -25,6 +25,14 @@ IJRGBPixel& IJRGBPixel::operator=(const IJRGBPixel&& other)
 {
 	std::copy(other.data.begin(), other.data.end(), data.begin());
 	return *this;
+}
+
+IJRGBPixel::operator std::vector<IJRGBPixel::Comp_t>() const 
+{
+	std::vector<Comp_t> vData;
+	vData.resize(k_compCount);
+	std::copy(data.begin(), data.end(), vData.begin());
+	return vData;
 }
 
 // IJRGBImage
@@ -51,19 +59,15 @@ IJResult IJRGBImage::LoadRGB(const std::string& fileName)
 		return IJResult::UnableToOpenFile;
 	}
 
-	uint32_t imageSize = 0;
+	size_t imageSize = 0u;
 	while (!imageFile.eof())
 	{
-		uint8_t data[IJRGBPixel::k_compCount];
-		imageFile.read((char*)data, IJRGBPixel::k_compCount);
-		std::array<uint8_t, IJRGBPixel::k_compCount> rawPixel;
-		rawPixel[0] = data[0];
-		rawPixel[1] = data[1];
-		rawPixel[2] = data[2];
+		std::array<IJRGBPixel::Comp_t, IJRGBPixel::k_compCount> rawPixel;
+		imageFile.read((char*)&rawPixel[0], IJRGBPixel::k_compCount);
 		IJRGBPixel* pixel = new IJRGBPixel(rawPixel);
 		assert(pixel);
 		AddPixel(pixel);
-		imageSize += IJRGBPixel::k_compCount;
+		imageSize += static_cast<size_t>(IJRGBPixel::k_compCount);
 	}
 
 	imageFile.close();
@@ -74,6 +78,11 @@ IJResult IJRGBImage::LoadRGB(const std::string& fileName)
 
 IJResult IJRGBImage::SaveRGB(const std::string& fileName)
 {
+	if (fileName.empty())
+	{
+		return IJResult::FileNameEmpty;
+	}
+
 	std::ofstream outputFile;
 	outputFile.open(fileName, std::ios::out | std::ios::binary);
 	if (!outputFile.is_open())
@@ -81,24 +90,12 @@ IJResult IJRGBImage::SaveRGB(const std::string& fileName)
 		return IJResult::UnableToOpenFile;
 	}
 
-	std::string data;
-	//data.resize(GetPixelData().size() * IJRGBPixel::k_compCount);
 	for (uint32_t i = 0; i < GetPixelData().size(); i++)
 	{
-		const Pixel<PixelComp_t>& pixel = *GetPixelData()[i];
-		data += pixel[0];
-		data += pixel[1];
-		data += pixel[2];
+		std::vector<IJRGBPixel::Comp_t> rawPixel(*GetPixelData()[i]);
+		outputFile.write((char*)&rawPixel[0], IJRGBPixel::k_compCount);
 	}
 
-	if (data.empty())
-	{
-		outputFile.close();
-		return IJResult::UnableToSaveFile;
-	}
-
-	outputFile << data;
 	outputFile.close();
-
 	return IJResult::Success;
 }

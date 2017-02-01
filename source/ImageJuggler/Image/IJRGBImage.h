@@ -14,7 +14,7 @@ struct IJRGBPixel
 	using CompData_t = std::array<Comp_t, static_cast<size_t>(k_compCount)>;
 
 	IJRGBPixel() = default;
-	IJRGBPixel(		 IJRGBPixel&  other)	= delete;
+	IJRGBPixel(		 IJRGBPixel&  other) = delete;
 	IJRGBPixel(const IJRGBPixel&& other );
 	IJRGBPixel& operator=(		IJRGBPixel&	 other)	= delete;
 	IJRGBPixel& operator=(const IJRGBPixel&& other);
@@ -22,8 +22,9 @@ struct IJRGBPixel
 	IJRGBPixel(const std::vector<Comp_t>& _data);
 	IJRGBPixel(const CompData_t& _data);
 
-	Comp_t		operator[](uint32_t compIdx)	const override;
-	uint32_t	compCount()						const override;
+				operator std::vector<Comp_t>() const override;
+	Comp_t		operator[](uint32_t compIdx) const override;
+	uint32_t	compCount() const override;
 
 	/** 3 component for pixel: 
 		R - 0, 
@@ -43,9 +44,10 @@ public:
 
 public:
 	IJRGBImage() = default;
+	IJRGBImage(const std::vector<PixelComp_t>& rawImage);
 
-	IJResult Load(const std::string& fileName)		override;
-	IJResult Save(const std::string& fileName)		override;
+	IJResult Load(const std::string& fileName) override;
+	IJResult Save(const std::string& fileName) override;
 	IJResult LoadRGB(const std::string& fileName);
 	IJResult SaveRGB(const std::string& fileName);
 };
