@@ -1,7 +1,6 @@
 #pragma once 
 
 #include "IJImage.h"
-
 #include <array>
 
 // Pixel definition
@@ -11,10 +10,9 @@ struct IJYCbCrPixel
 	: public Pixel<IJYCbCrPixelComp_t>
 {
 	static constexpr uint32_t k_compCount	= 3u;
-	static constexpr std::array<uint8_t, static_cast<size_t>(k_compCount)> k_compsOffset = { 0u, 4u, 6u };
 
-	using Comp_t		= IJYCbCrPixelComp_t;
-	using CompData_t	= std::array<Comp_t, static_cast<size_t>(k_compCount)>;
+	using Comp_t	 = IJYCbCrPixelComp_t;
+	using CompData_t = std::array<Comp_t, static_cast<size_t>(k_compCount)>;
 
 	IJYCbCrPixel() = default;
 	IJYCbCrPixel(const IJYCbCrPixel&  other) = default;
@@ -43,18 +41,20 @@ class IJYCbCrImage
 	: public IJImage<IJYCbCrPixel::Comp_t>
 {
 public:
-	using PixelComp_t		= IJYCbCrPixel::Comp_t;
-	using Pixel_t			= Pixel<PixelComp_t>;
-	using YCbCrPixel_t		= IJYCbCrPixel;
+	using PixelComp_t	= IJYCbCrPixel::Comp_t;
+	using Pixel_t		= Pixel<PixelComp_t>;
+	using YCbCrPixel_t	= IJYCbCrPixel;
 
 public:
-	IJYCbCrImage() = default;
+	IJYCbCrImage();
 	IJYCbCrImage(const std::vector<PixelComp_t>& rawImage);
+	~IJYCbCrImage();
 
-	IJResult Load(const std::string& fileName) override;
-	IJResult Save(const std::string& fileName) override;
-	IJResult LoadYCbCr(const std::string& fileName);
-	IJResult SaveYCbCr(const std::string& fileName);
+	IJResult Load(std::istream& iStream) override;
+	IJResult Save(std::ostream& oStream) override;
+
+	IJResult Load(const std::vector<PixelComp_t>& rawImage);
+	IJResult Save(		std::vector<PixelComp_t>& rawImage);
 };
 
 // Inline realization

@@ -7,7 +7,7 @@ enum class IJResult : uint8_t
 	Success = 0, 
 	UnknownError,
 	UnknownFileFormat,
-	FileNameEmpty,
+	InvalidFileName,
 	UnableToOpenFile, 
 	UnableToLoadFile,
 	UnableToSaveFile

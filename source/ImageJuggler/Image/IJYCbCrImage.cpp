@@ -4,7 +4,7 @@
 
 // Pixel Realization
 
-IJYCbCrPixel::IJYCbCrPixel(const std::vector<IJYCbCrPixel::Comp_t>& compVector)
+IJYCbCrPixel::IJYCbCrPixel(const std::vector<IJYCbCrPixelComp_t>& compVector)
 {
 	assert(compVector.size() == IJYCbCrPixel::k_compCount);
 	std::copy(compVector.begin(), compVector.end(), data.begin());
@@ -16,13 +16,13 @@ IJYCbCrPixel::IJYCbCrPixel(const IJYCbCrPixel::CompData_t& compVector)
 	std::copy(compVector.begin(), compVector.end(), data.begin());
 }
 
-IJYCbCrPixel::Comp_t IJYCbCrPixel::operator[](uint32_t compIdx) const 
+IJYCbCrPixelComp_t IJYCbCrPixel::operator[](uint32_t compIdx) const 
 {
 	assert(compIdx < k_compCount);
 	return data[compIdx];
 }
 
-IJYCbCrPixel::operator std::vector<IJYCbCrPixel::Comp_t>() const
+IJYCbCrPixel::operator std::vector<IJYCbCrPixelComp_t>() const
 {
 	std::vector<Comp_t> vData;
 	vData.resize(k_compCount);
@@ -32,80 +32,87 @@ IJYCbCrPixel::operator std::vector<IJYCbCrPixel::Comp_t>() const
 
 // Image Realization
 
-IJResult IJYCbCrImage::Load(const std::string& fileName) 
+IJYCbCrImage::IJYCbCrImage()
 {
-	if (fileName.empty())
-	{
-		return IJResult::FileNameEmpty;
-	}
-
-	SetFileName(fileName);
-	return LoadYCbCr(fileName);
-}
-
-IJResult IJYCbCrImage::Save(const std::string& fileName)
-{
-	if (fileName.empty())
-	{
-		return IJResult::FileNameEmpty;
-	}
-
-	SetFileName(fileName);
-	return SaveYCbCr(fileName);
-}
-
-IJResult IJYCbCrImage::LoadYCbCr(const std::string& fileName)
-{
-	if (fileName.empty())
-	{
-		return IJResult::FileNameEmpty;
-	}
-
 	SetImageType(IJImageType::YCbCr);
+	SetImageSize(0ul);
+}
 
-	std::ifstream imageFile;
-	imageFile.open(fileName, std::ios::in | std::ios::binary);
-	if (!imageFile.is_open())
+IJYCbCrImage::IJYCbCrImage(const std::vector<IJYCbCrPixelComp_t>& rawImage)
+{
+	SetImageType(IJImageType::YCbCr);
+	SetImageSize(rawImage.size());
+	IJResult result = Load(rawImage);
+	assert(result == IJResult::Success);
+}
+
+IJYCbCrImage::~IJYCbCrImage()
+{
+	auto it = GetPixelData().begin();
+	for ( ; it != GetPixelData().end(); it++)
 	{
-		return IJResult::UnableToOpenFile;
+		Pixel_t* pixel = *it;
+		if (pixel)
+		{
+			delete pixel;
+		}
 	}
 
+	GetPixelData().clear();
+}
+
+IJResult IJYCbCrImage::Load(std::istream& iStream)
+{
 	size_t imageSize = 0u;
-	while (!imageFile.eof())
+	while (!iStream.eof())
 	{
 		std::array<IJYCbCrPixel::Comp_t, IJYCbCrPixel::k_compCount> rawPixel;
-		imageFile.read((char*)&rawPixel[0], IJYCbCrPixel::k_compCount);
+		iStream.read((char*)&rawPixel[0], IJYCbCrPixel::k_compCount);
 		IJYCbCrPixel* pixel = new IJYCbCrPixel(rawPixel);
 		assert(pixel);
 		AddPixel(pixel);
 		imageSize += static_cast<size_t>(IJYCbCrPixel::k_compCount);
 	}
 
-	imageFile.close();
 	SetImageSize(imageSize);
 	return IJResult::Success;
 }
 
-IJResult IJYCbCrImage::SaveYCbCr(const std::string& fileName)
+IJResult IJYCbCrImage::Save(std::ostream& oStream)
 {
-	if (fileName.empty())
-	{
-		return IJResult::FileNameEmpty;
-	}
-
-	std::ofstream outputFile;
-	outputFile.open(fileName, std::ios::out | std::ios::binary);
-	if (!outputFile.is_open())
-	{
-		return IJResult::UnableToOpenFile;
-	}
-
 	for (size_t i = 0; i < GetPixelData().size(); i++)
 	{
 		std::vector<IJYCbCrPixel::Comp_t> rawPixel(*GetPixelData()[i]);
-		outputFile.write((char*)&rawPixel[0], IJYCbCrPixel::k_compCount);
+		oStream.write((char*)&rawPixel[0], IJYCbCrPixel::k_compCount);
 	}
 
-	outputFile.close();
+	return IJResult::Success;
+}
+
+IJResult IJYCbCrImage::Load(const std::vector<IJYCbCrPixelComp_t>& rawData)
+{
+	assert(!rawData.empty());
+	assert(!GetPixelData().empty());
+	std::vector<IJYCbCrPixelComp_t>::const_iterator it = rawData.begin();
+	while (it != rawData.end())
+	{
+		std::array<IJYCbCrPixelComp_t, IJYCbCrPixel::k_compCount> rawPixel;
+		std::copy(it, it + IJYCbCrPixel::k_compCount, rawPixel.begin());
+		IJYCbCrPixel* pixel = new IJYCbCrPixel(rawPixel);
+		assert(pixel);
+		AddPixel(pixel);
+	}
+
+	return IJResult::Success;
+}
+
+IJResult IJYCbCrImage::Save(std::vector<IJYCbCrPixelComp_t>& rawData)
+{
+	for (size_t i = 0; i < GetPixelData().size(); i++)
+	{
+		std::vector<IJYCbCrPixelComp_t>& rawPixel = static_cast<std::vector<IJYCbCrPixelComp_t> >(*GetPixelData()[i]);
+		rawData.insert(rawData.end(), rawPixel.begin(), rawPixel.end());
+	}
+
 	return IJResult::Success;
 }

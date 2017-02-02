@@ -43,13 +43,15 @@ public:
 	using RGBPixel_t		= IJRGBPixel;
 
 public:
-	IJRGBImage() = default;
+	IJRGBImage();
 	IJRGBImage(const std::vector<PixelComp_t>& rawImage);
+	~IJRGBImage();
 
-	IJResult Load(const std::string& fileName) override;
-	IJResult Save(const std::string& fileName) override;
-	IJResult LoadRGB(const std::string& fileName);
-	IJResult SaveRGB(const std::string& fileName);
+	IJResult Load(std::istream& iStream) override;
+	IJResult Save(std::ostream& oStream) override;
+
+	IJResult Load(const std::vector<PixelComp_t>& rawImage);
+	IJResult Save(		std::vector<PixelComp_t>& rawImage);
 };
 
 // Inline IJRGBPixel

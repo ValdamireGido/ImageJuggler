@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <stdint.h>
+#include <fstream>
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -53,9 +54,11 @@ public:
 
 	// IJImage interface
 			IJResult		Load();
-	virtual IJResult		Load(const std::string& fileName) = 0;
+			IJResult		Load(const std::string& fileName);
+	virtual IJResult		Load(	   std::istream& iStream) = 0;
 			IJResult		Save();
-	virtual IJResult		Save(const std::string& fileName) = 0;
+			IJResult		Save(const std::string& fileName);
+	virtual IJResult		Save(	   std::ostream& oStream) = 0;
 
 	const std::string&		GetFileName()	const;
 		  IJImageType		GetImageType()	const;
@@ -97,10 +100,31 @@ IJResult IJImage<_PixelCompTy>::Load()
 {
 	if (m_fileName.emtpy())
 	{
-		return IJResult::FileNameEmpty;
+		return IJResult::InvalidFileName;
 	}
 
 	return Load(m_fileName);
+}
+
+template <typename _PixelCompTy>
+IJResult IJImage<_PixelCompTy>::Load(const std::string& fileName)
+{
+	if (fileName.empty())
+	{
+		return IJResult::InvalidFileName;
+	}
+
+	SetFileName(fileName);
+	std::ifstream inputFileStream;
+	inputFileStream.open(fileName, std::ios::in | std::ios::binary);
+	if (!inputFileStream.is_open())
+	{
+		return IJResult::UnableToOpenFile;
+	}
+
+	IJResult result = Load(inputFileStream);
+	inputFileStream.close();
+	return result;
 }
 
 template <typename _PixelCompTy>
@@ -108,10 +132,31 @@ IJResult IJImage<_PixelCompTy>::Save()
 {
 	if (m_fileName.empty())
 	{
-		return IJResult::FileNameEmpty;
+		return IJResult::InvalidFileName;
 	}
 
 	return Save(m_fileName);
+}
+
+template <typename _PixelCompTy>
+IJResult IJImage<_PixelCompTy>::Save(const std::string& fileName)
+{
+	if (fileName.empty())
+	{
+		return IJResult::InvalidFileName;
+	}
+
+	SetFileName(fileName);
+	std::ifstream outputFile;
+	outputFile.open(fileName, std::ios::in | std::ios::binary);
+	if (!outputFile.empty())
+	{
+		return IJResult::UnableToOpenFile;
+	}
+
+	IJResult result = Load(outputFile);
+	outputFile.close();
+	return result;
 }
 
 template <typename _PixelCompTy>
