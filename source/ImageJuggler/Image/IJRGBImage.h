@@ -5,6 +5,8 @@
 #include <array>
 #include <assert.h>
 
+// IJRGBPixel
+
 struct IJRGBPixel
 	: public Pixel<uint8_t>
 {
@@ -34,6 +36,8 @@ struct IJRGBPixel
 	CompData_t data;
 };
 
+// IJRGBImage
+
 class IJRGBImage
 	: public IJImage<uint8_t>
 {
@@ -44,6 +48,7 @@ public:
 
 public:
 	IJRGBImage();
+	IJRGBImage(const std::string& fileName);
 	IJRGBImage(const std::vector<PixelComp_t>& rawImage);
 	~IJRGBImage();
 
@@ -52,6 +57,9 @@ public:
 
 	IJResult Load(const std::vector<PixelComp_t>& rawImage);
 	IJResult Save(		std::vector<PixelComp_t>& rawImage);
+
+	using IJImage<uint8_t>::Load;
+	using IJImage<uint8_t>::Save;
 };
 
 // Inline IJRGBPixel

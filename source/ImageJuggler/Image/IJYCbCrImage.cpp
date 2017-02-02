@@ -1,6 +1,7 @@
 #include "IJYCbCrImage.h"
 #include <assert.h>
 #include <fstream>
+#include <sstream>
 
 // Pixel Realization
 
@@ -33,14 +34,16 @@ IJYCbCrPixel::operator std::vector<IJYCbCrPixelComp_t>() const
 // Image Realization
 
 IJYCbCrImage::IJYCbCrImage()
-{
-	SetImageType(IJImageType::YCbCr);
-	SetImageSize(0ul);
-}
+	: IJImage<IJYCbCrPixelComp_t>(IJImageType::YCbCr)
+{}
+
+IJYCbCrImage::IJYCbCrImage(const std::string& fileName)
+	: IJImage<IJYCbCrPixelComp_t>(fileName, IJImageType::YCbCr)
+{}
 
 IJYCbCrImage::IJYCbCrImage(const std::vector<IJYCbCrPixelComp_t>& rawImage)
+	: IJImage<IJYCbCrPixelComp_t>(IJImageType::YCbCr)
 {
-	SetImageType(IJImageType::YCbCr);
 	SetImageSize(rawImage.size());
 	IJResult result = Load(rawImage);
 	assert(result == IJResult::Success);
@@ -93,6 +96,10 @@ IJResult IJYCbCrImage::Load(const std::vector<IJYCbCrPixelComp_t>& rawData)
 {
 	assert(!rawData.empty());
 	assert(!GetPixelData().empty());
+
+	std::stringstream iStream(std::string(rawData.begin(), rawData.end()));
+	return Load(iStream);
+/*
 	std::vector<IJYCbCrPixelComp_t>::const_iterator it = rawData.begin();
 	while (it != rawData.end())
 	{
@@ -103,7 +110,7 @@ IJResult IJYCbCrImage::Load(const std::vector<IJYCbCrPixelComp_t>& rawData)
 		AddPixel(pixel);
 	}
 
-	return IJResult::Success;
+	return IJResult::Success;*/
 }
 
 IJResult IJYCbCrImage::Save(std::vector<IJYCbCrPixelComp_t>& rawData)

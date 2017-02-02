@@ -47,6 +47,7 @@ public:
 
 public:
 	IJYCbCrImage();
+	IJYCbCrImage(const std::string& fileName);
 	IJYCbCrImage(const std::vector<PixelComp_t>& rawImage);
 	~IJYCbCrImage();
 
@@ -55,6 +56,9 @@ public:
 
 	IJResult Load(const std::vector<PixelComp_t>& rawImage);
 	IJResult Save(		std::vector<PixelComp_t>& rawImage);
+
+	using IJImage<IJYCbCrPixelComp_t>::Load;
+	using IJImage<IJYCbCrPixelComp_t>::Save;
 };
 
 // Inline realization

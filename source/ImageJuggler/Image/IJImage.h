@@ -47,32 +47,33 @@ public:
 	IJImage& operator=(const IJImage&  other) = default;
 	IJImage& operator=(		 IJImage&& other) = default;
 
+	IJImage(IJImageType type);
 	IJImage(const std::string& fileName, IJImageType type);
 
 	// D'tor
 	virtual ~IJImage();
 
 	// IJImage interface
-			IJResult		Load();
-			IJResult		Load(const std::string& fileName);
-	virtual IJResult		Load(	   std::istream& iStream) = 0;
-			IJResult		Save();
-			IJResult		Save(const std::string& fileName);
-	virtual IJResult		Save(	   std::ostream& oStream) = 0;
+			IJResult	Load();
+			IJResult	Load(const std::string& fileName);
+	virtual IJResult	Load(	   std::istream& iStream) = 0;
+			IJResult	Save();
+			IJResult	Save(const std::string& fileName);
+	virtual IJResult	Save(	   std::ostream& oStream) = 0;
 
-	const std::string&		GetFileName()	const;
-		  IJImageType		GetImageType()	const;
-	const PixelData_t&		GetPixelData()	const;
-		  size_t			GetImageSize()	const;
+	const std::string&	GetFileName()	const;
+		  IJImageType	GetImageType()	const;
+	const PixelData_t&	GetPixelData()	const;
+		  size_t		GetImageSize()	const;
 
 protected:
-	void					SetFileName(const std::string& fileName);
-	void					SetImageType(IJImageType type);
-	void					SetImageSize(size_t size);
+	void				SetFileName(const std::string& fileName);
+	void				SetImageType(IJImageType type);
+	void				SetImageSize(size_t size);
 
-	PixelData_t&			GetPixelData();
-	void					AddPixel(Pixel_t* pixel);
-	void					ClearPixels();
+	PixelData_t&		GetPixelData();
+	void				AddPixel(Pixel_t* pixel);
+	void				ClearPixels();
 
 private:
 	std::string		m_fileName;
@@ -82,6 +83,14 @@ private:
 };
 
 // Inline realization
+
+template <typename _PixelCompTy>
+IJImage<_PixelCompTy>::IJImage(IJImageType type)
+	: m_fileName()
+	, m_pixels()
+	, m_imageSize(0ul)
+	, m_imageType(type)
+{}
 
 template <typename _PixelCompTy>
 IJImage<_PixelCompTy>::IJImage(const std::string& fileName, IJImageType type)
@@ -98,7 +107,7 @@ IJImage<_PixelCompTy>::~IJImage()
 template <typename _PixelCompTy>
 IJResult IJImage<_PixelCompTy>::Load()
 {
-	if (m_fileName.emtpy())
+	if (m_fileName.empty())
 	{
 		return IJResult::InvalidFileName;
 	}
@@ -147,14 +156,8 @@ IJResult IJImage<_PixelCompTy>::Save(const std::string& fileName)
 	}
 
 	SetFileName(fileName);
-	std::ifstream outputFile;
-	outputFile.open(fileName, std::ios::in | std::ios::binary);
-	if (!outputFile.empty())
-	{
-		return IJResult::UnableToOpenFile;
-	}
-
-	IJResult result = Load(outputFile);
+	std::ofstream outputFile(fileName, std::ios::out | std::ios::binary);
+	IJResult result = Save(outputFile);
 	outputFile.close();
 	return result;
 }

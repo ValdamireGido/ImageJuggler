@@ -2,6 +2,8 @@
 
 #include <fstream>
 #include <vector>
+#include <sstream>
+#include <strstream>
 
 // IJRGBPixel 
 
@@ -38,14 +40,16 @@ IJRGBPixel::operator std::vector<IJRGBPixel::Comp_t>() const
 // IJRGBImage
 
 IJRGBImage::IJRGBImage()
-{
-	SetImageType(IJImageType::RGB);
-	SetImageSize(0ul);
-}
+	: IJImage<Pixel_t::Comp_t>(IJImageType::RGB)
+{}
+
+IJRGBImage::IJRGBImage(const std::string& fileName)
+	: IJImage<Pixel_t::Comp_t>(fileName, IJImageType::RGB)
+{}
 
 IJRGBImage::IJRGBImage(const std::vector<PixelComp_t>& rawImage)
+	: IJImage<Pixel_t::Comp_t>(IJImageType::RGB)
 {
-	SetImageType(IJImageType::RGB);
 	SetImageSize(rawImage.size());
 	IJResult result = Load(rawImage);
 	assert(result == IJResult::Success);
@@ -98,6 +102,20 @@ IJResult IJRGBImage::Load(const std::vector<PixelComp_t>& rawImage)
 {
 	assert(!rawImage.empty());
 	assert(GetPixelData().empty());
+	
+	struct omembuf
+	    : std::streambuf
+	{
+		omembuf(char* base, std::size_t size) {
+			this->setp(base, base + size);
+		}
+		char* begin() const { return this->pbase(); }
+		char* end() const { return this->pptr(); }
+	};
+
+	std::strstream stream((char*)&rawImage[0], rawImage.size(), std::ios::in);
+	return Load(stream);
+/*
 	std::vector<PixelComp_t>::const_iterator it = rawImage.begin();
 	while (it != rawImage.end())
 	{
@@ -108,7 +126,7 @@ IJResult IJRGBImage::Load(const std::vector<PixelComp_t>& rawImage)
 		AddPixel(pixel);
 	}
 
-	return IJResult::Success;
+	return IJResult::Success;*/
 }
 
 IJResult IJRGBImage::Save(std::vector<PixelComp_t>& rawImage)
@@ -119,6 +137,7 @@ IJResult IJRGBImage::Save(std::vector<PixelComp_t>& rawImage)
 	{
 		std::vector<PixelComp_t> rawPixel = static_cast<std::vector<PixelComp_t> >(*(*it));
 		rawImage.insert(rawImage.end(), rawPixel.begin(), rawPixel.end());
+		it++;
 	}
 
 	return IJResult::Success;
