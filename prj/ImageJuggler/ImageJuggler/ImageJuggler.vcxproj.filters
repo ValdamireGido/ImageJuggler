@@ -21,9 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\Source.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\ImageJuggler\IJImageTranslator.cpp">
       <Filter>source\ImageJuggler</Filter>
     </ClCompile>
@@ -41,9 +38,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\source\Source.h">
-      <Filter>source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\gles20\gl2.h">
       <Filter>source\gles20</Filter>
     </ClInclude>

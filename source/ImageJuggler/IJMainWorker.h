@@ -3,18 +3,18 @@
 #include "IJTypes.h"
 #include <string>
 
-class LCMainWorker
+class IJMainWorker
 {
 public:
 	// C'tors
-	LCMainWorker() = default;
-	LCMainWorker(const LCMainWorker&&) = delete;
-	LCMainWorker(LCMainWorker&) = delete;
-	LCMainWorker& operator=(const LCMainWorker&&) = delete;
-	LCMainWorker& operator=(LCMainWorker&) = delete;
+	IJMainWorker() = default;
+	IJMainWorker(const IJMainWorker&&) = delete;
+	IJMainWorker(IJMainWorker&) = delete;
+	IJMainWorker& operator=(const IJMainWorker&&) = delete;
+	IJMainWorker& operator=(IJMainWorker&) = delete;
 
 	// D'tor
-	~LCMainWorker() {}
+	~IJMainWorker() = default;
 
 	// Class Interface
 	IJResult		Load(const std::string& fileName);

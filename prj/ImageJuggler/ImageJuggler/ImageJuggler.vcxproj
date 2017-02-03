@@ -71,6 +71,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(ProjectDir)..\..\..\source\gles20;$(ProjectDir)..\..\..\source\ImageJuggler;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)..\..\ImageJugglerLib\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -118,7 +119,6 @@
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJImage.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage.cpp" />
-    <ClCompile Include="..\..\..\source\Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\gles20\gl2.h" />
@@ -131,7 +131,6 @@
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImage.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage.h" />
-    <ClInclude Include="..\..\..\source\Source.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,38 +7,6 @@
 
 #include "ImageJuggler/Image/IJRGBImage.h"
 
-IJResult LoadRGBImage(IJRGBImage* image, const std::string& fileName)
-{
-	image = new IJRGBImage(fileName);
-	if (!image)
-	{
-		return IJResult::MemoryAllocationError;
-	}
-
-	return image->Load();
-}
-
-IJResult SaveRGBImage(IJRGBImage* image)
-{
-	if (!image)
-	{
-		return IJResult::BadMemoryPointer;
-	}
-
-	return image->Save();
-}
-
-IJResult UnloadRGBImage(IJRGBImage* image)
-{
-	if (!image)
-	{
-		return IJResult::BadMemoryPointer;
-	}
-
-	delete image;
-	return IJResult::Success;
-}
-
 int main(int argc, char** argv)
 {
 	//bar_skybox.tga
@@ -80,27 +48,60 @@ namespace ProgramTestingPart
 	using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 	namespace IJRGBImageTest
 	{
+		IJResult LoadRGBImage(IJRGBImage* image, const std::string& fileName)
+		{
+			image = new IJRGBImage(fileName);
+			if (!image)
+			{
+				return IJResult::MemoryAllocationError;
+			}
+
+			return image->Load();
+		}
+
+		IJResult SaveRGBImage(IJRGBImage* image)
+		{
+			if (!image)
+			{
+				return IJResult::BadMemoryPointer;
+			}
+
+			return image->Save();
+		}
+
+		IJResult UnloadRGBImage(IJRGBImage* image)
+		{
+			if (!image)
+			{
+				return IJResult::BadMemoryPointer;
+			}
+
+			delete image;
+			return IJResult::Success;
+		}
+
+
 		TEST_CLASS(IJRGBImageTestClass)
 		{
 		public:
 			TEST_METHOD(LoadIJRGBImageTestMethod)
 			{
-				uint32_t expectedResult = static_cast<uint32_t>(LoadRGBImage(m_image, m_fileName));
-				uint32_t actualResult	= static_cast<uint32_t>(IJResult::Success);
+				uint32_t expectedResult = static_cast<uint32_t>(IJResult::Success);
+				uint32_t actualResult	= static_cast<uint32_t>(LoadRGBImage(m_image, m_fileName));
 				Assert::AreEqual(expectedResult, actualResult);
 			}
 
 			TEST_METHOD(SaveIJRGBImageTestMethod)
 			{
-				uint32_t expectedResult = static_cast<uint32_t>(SaveRGBImage(m_image));
-				uint32_t actualResult	= static_cast<uint32_t>(IJResult::Success);
+				uint32_t expectedResult = static_cast<uint32_t>(IJResult::Success);
+				uint32_t actualResult	= static_cast<uint32_t>(SaveRGBImage(m_image));
 				Assert::AreEqual(expectedResult, actualResult);
 			}
 
 			TEST_METHOD(UnloadIJRGBImageTestMethod)
 			{
-				uint32_t expectedResult = static_cast<uint32_t>(UnloadRGBImage(m_image));
-				uint32_t actualResult	= static_cast<uint32_t>(IJResult::Success);
+				uint32_t expectedResult = static_cast<uint32_t>(IJResult::Success);
+				uint32_t actualResult	= static_cast<uint32_t>(UnloadRGBImage(m_image));
 				Assert::AreEqual(expectedResult, actualResult);
 			}
 

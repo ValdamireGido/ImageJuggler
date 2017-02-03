@@ -99,18 +99,6 @@ IJResult IJYCbCrImage::Load(const std::vector<IJYCbCrPixelComp_t>& rawData)
 
 	std::stringstream iStream(std::string(rawData.begin(), rawData.end()));
 	return Load(iStream);
-/*
-	std::vector<IJYCbCrPixelComp_t>::const_iterator it = rawData.begin();
-	while (it != rawData.end())
-	{
-		std::array<IJYCbCrPixelComp_t, IJYCbCrPixel::k_compCount> rawPixel;
-		std::copy(it, it + IJYCbCrPixel::k_compCount, rawPixel.begin());
-		IJYCbCrPixel* pixel = new IJYCbCrPixel(rawPixel);
-		assert(pixel);
-		AddPixel(pixel);
-	}
-
-	return IJResult::Success;*/
 }
 
 IJResult IJYCbCrImage::Save(std::vector<IJYCbCrPixelComp_t>& rawData)
