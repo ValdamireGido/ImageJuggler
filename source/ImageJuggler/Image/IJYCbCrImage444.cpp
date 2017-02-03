@@ -1,29 +1,29 @@
-#include "IJYCbCrImage.h"
+#include "IJYCbCrImage444.h"
 #include <assert.h>
 #include <fstream>
 #include <sstream>
 
 // Pixel Realization
 
-IJYCbCrPixel::IJYCbCrPixel(const std::vector<IJYCbCrPixelComp_t>& compVector)
+IJYCbCrPixel444::IJYCbCrPixel444(const std::vector<IJYCbCrPixelComp_t>& compVector)
 {
-	assert(compVector.size() == IJYCbCrPixel::k_compCount);
+	assert(compVector.size() == IJYCbCrPixel444::k_compCount);
 	std::copy(compVector.begin(), compVector.end(), data.begin());
 }
 
-IJYCbCrPixel::IJYCbCrPixel(const IJYCbCrPixel::CompData_t& compVector)
+IJYCbCrPixel444::IJYCbCrPixel444(const IJYCbCrPixel444::CompData_t& compVector)
 {
-	assert(compVector.size() == IJYCbCrPixel::k_compCount);
+	assert(compVector.size() == IJYCbCrPixel444::k_compCount);
 	std::copy(compVector.begin(), compVector.end(), data.begin());
 }
 
-IJYCbCrPixelComp_t IJYCbCrPixel::operator[](uint32_t compIdx) const 
+IJYCbCrPixelComp_t& IJYCbCrPixel444::operator[](uint32_t compIdx)
 {
 	assert(compIdx < k_compCount);
 	return data[compIdx];
 }
 
-IJYCbCrPixel::operator std::vector<IJYCbCrPixelComp_t>() const
+IJYCbCrPixel444::operator std::vector<IJYCbCrPixelComp_t>() const
 {
 	std::vector<Comp_t> vData;
 	vData.resize(k_compCount);
@@ -34,15 +34,15 @@ IJYCbCrPixel::operator std::vector<IJYCbCrPixelComp_t>() const
 // Image Realization
 
 IJYCbCrImage444::IJYCbCrImage444()
-	: IJImage<IJYCbCrPixelComp_t>(IJImageType::YCbCr)
+	: IJImage<IJYCbCrPixelComp_t>(IJImageType::YCbCr444)
 {}
 
 IJYCbCrImage444::IJYCbCrImage444(const std::string& fileName)
-	: IJImage<IJYCbCrPixelComp_t>(fileName, IJImageType::YCbCr)
+	: IJImage<IJYCbCrPixelComp_t>(fileName, IJImageType::YCbCr444)
 {}
 
 IJYCbCrImage444::IJYCbCrImage444(const std::vector<IJYCbCrPixelComp_t>& rawImage)
-	: IJImage<IJYCbCrPixelComp_t>(IJImageType::YCbCr)
+	: IJImage<IJYCbCrPixelComp_t>(IJImageType::YCbCr444)
 {
 	SetImageSize(rawImage.size());
 	IJResult result = Load(rawImage);
@@ -69,12 +69,12 @@ IJResult IJYCbCrImage444::Load(std::istream& iStream)
 	size_t imageSize = 0u;
 	while (!iStream.eof())
 	{
-		std::array<IJYCbCrPixel::Comp_t, IJYCbCrPixel::k_compCount> rawPixel;
-		iStream.read((char*)&rawPixel[0], IJYCbCrPixel::k_compCount);
-		IJYCbCrPixel* pixel = new IJYCbCrPixel(rawPixel);
+		std::array<IJYCbCrPixel444::Comp_t, IJYCbCrPixel444::k_compCount> rawPixel;
+		iStream.read((char*)&rawPixel[0], IJYCbCrPixel444::k_compCount);
+		IJYCbCrPixel444* pixel = new IJYCbCrPixel444(rawPixel);
 		assert(pixel);
 		AddPixel(pixel);
-		imageSize += static_cast<size_t>(IJYCbCrPixel::k_compCount);
+		imageSize += static_cast<size_t>(IJYCbCrPixel444::k_compCount);
 	}
 
 	SetImageSize(imageSize);
@@ -85,8 +85,8 @@ IJResult IJYCbCrImage444::Save(std::ostream& oStream)
 {
 	for (size_t i = 0; i < GetPixelData().size(); i++)
 	{
-		std::vector<IJYCbCrPixel::Comp_t> rawPixel(*GetPixelData()[i]);
-		oStream.write((char*)&rawPixel[0], IJYCbCrPixel::k_compCount);
+		std::vector<IJYCbCrPixel444::Comp_t> rawPixel(*GetPixelData()[i]);
+		oStream.write((char*)&rawPixel[0], IJYCbCrPixel444::k_compCount);
 	}
 
 	return IJResult::Success;

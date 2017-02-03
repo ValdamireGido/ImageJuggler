@@ -16,17 +16,19 @@ std::string GetFileExtension(const std::string& fileName);
 template<typename _PixelCompTy>
 struct Pixel
 {
-	using Comp_t	= _PixelCompTy;
+	using Comp_t = _PixelCompTy;
 
-	Pixel()= default;
-	Pixel(const Pixel&  other)	= default;
-	Pixel(		Pixel&&	other)	= delete;
-	Pixel&	operator=(const Pixel&  other)	= default;
-	Pixel&	operator=(	    Pixel&&	other)	= delete;
+	Pixel() = default;
+	Pixel(const Pixel&  other) = default;
+	Pixel& operator=(const Pixel& other) = default;
+
+	Pixel(Pixel&& other) = delete;
+	Pixel&	operator=(Pixel&& other) = delete;
+
 	virtual ~Pixel() {}
 
 	virtual				operator std::vector<Comp_t>()	const	= 0;
-	virtual Comp_t		operator[](uint32_t compIdx)	const	= 0;
+	virtual Comp_t&		operator[](uint32_t compIdx)			= 0;
 	virtual uint32_t	compCount()						const	= 0;
 };
 
@@ -35,6 +37,8 @@ struct Pixel
 template<typename _PixelCompTy>
 class IJImage
 {
+	friend struct IJImageTranslator;
+
 public:
 	using Pixel_t		= Pixel<_PixelCompTy>;
 	using PixelData_t	= std::vector<Pixel<_PixelCompTy>*>;
@@ -43,9 +47,10 @@ public:
 	// C'tor
 	IJImage() = default;
 	IJImage(const IJImage&  other) = default;
-	IJImage(	  IJImage&& other) = default;
 	IJImage& operator=(const IJImage&  other) = default;
-	IJImage& operator=(		 IJImage&& other) = default;
+
+	IJImage(IJImage&& other) = default;
+	IJImage& operator=(IJImage&& other) = default;
 
 	IJImage(IJImageType type);
 	IJImage(const std::string& fileName, IJImageType type);

@@ -102,31 +102,9 @@ IJResult IJRGBImage::Load(const std::vector<PixelComp_t>& rawImage)
 {
 	assert(!rawImage.empty());
 	assert(GetPixelData().empty());
-	
-	struct omembuf
-	    : std::streambuf
-	{
-		omembuf(char* base, std::size_t size) {
-			this->setp(base, base + size);
-		}
-		char* begin() const { return this->pbase(); }
-		char* end() const { return this->pptr(); }
-	};
 
 	std::strstream stream((char*)&rawImage[0], rawImage.size(), std::ios::in);
 	return Load(stream);
-/*
-	std::vector<PixelComp_t>::const_iterator it = rawImage.begin();
-	while (it != rawImage.end())
-	{
-		std::array<IJRGBPixel::Comp_t, IJRGBPixel::k_compCount> rawPixel;
-		std::copy(it, it + IJRGBPixel::k_compCount, rawPixel.begin());
-		IJRGBPixel* pixel = new IJRGBPixel(rawPixel);
-		assert(pixel);
-		AddPixel(pixel);
-	}
-
-	return IJResult::Success;*/
 }
 
 IJResult IJRGBImage::Save(std::vector<PixelComp_t>& rawImage)

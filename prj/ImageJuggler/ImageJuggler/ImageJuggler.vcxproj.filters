@@ -33,7 +33,10 @@
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.cpp">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage.cpp">
+    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage422.cpp">
+      <Filter>source\ImageJuggler\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage444.cpp">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,7 +68,10 @@
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.h">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage.h">
+    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage422.h">
+      <Filter>source\ImageJuggler\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage444.h">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClInclude>
   </ItemGroup>

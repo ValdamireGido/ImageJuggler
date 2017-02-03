@@ -12,13 +12,18 @@ enum class IJResult : uint8_t
 	InvalidFileName,
 	UnableToOpenFile, 
 	UnableToLoadFile,
-	UnableToSaveFile
+	UnableToSaveFile, 
+	UnableToTranslateImage, 
+
+	ImageIsEmtpy,
+	InvalidImageFormat
 	
 };
 
 enum class IJImageType : uint8_t
 {
 	RGB = 0, 
-	YCbCr, 
+	YCbCr444, 
+	YCbCr422,
 	YCoCg
 };

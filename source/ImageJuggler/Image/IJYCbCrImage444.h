@@ -6,25 +6,24 @@
 // Pixel definition
 
 using IJYCbCrPixelComp_t = uint8_t;
-struct IJYCbCrPixel
+struct IJYCbCrPixel444
 	: public Pixel<IJYCbCrPixelComp_t>
 {
 	static constexpr uint32_t k_compCount	= 3u;
 
 	using Comp_t	 = IJYCbCrPixelComp_t;
 	using CompData_t = std::array<Comp_t, static_cast<size_t>(k_compCount)>;
+	
+	IJYCbCrPixel444() = default;
 
-	IJYCbCrPixel() = default;
-	IJYCbCrPixel(const IJYCbCrPixel&  other) = default;
-	IJYCbCrPixel(	   IJYCbCrPixel&& other) = delete;
-	IJYCbCrPixel& operator=(const IJYCbCrPixel&  other) = default;
-	IJYCbCrPixel& operator=(	  IJYCbCrPixel&& other) = delete;
+	IJYCbCrPixel444(IJYCbCrPixel444&& other) = delete;
+	IJYCbCrPixel444& operator=(IJYCbCrPixel444&& other) = delete;
 
-	IJYCbCrPixel(const std::vector<Comp_t>& data);
-	IJYCbCrPixel(const CompData_t& data);
+	IJYCbCrPixel444(const std::vector<Comp_t>& data);
+	IJYCbCrPixel444(const CompData_t& data);
 
 				operator std::vector<Comp_t>()	const override;
-	Comp_t		operator[](uint32_t compIdx)	const override;
+	Comp_t&		operator[](uint32_t compIdx)		  override;
 	uint32_t	compCount()						const override;
 
 	/** 3 components
@@ -37,19 +36,19 @@ struct IJYCbCrPixel
 
 // Image definition
 
-class IJYCbCrImage
-	: public IJImage<IJYCbCrPixel::Comp_t>
+class IJYCbCrImage444
+	: public IJImage<IJYCbCrPixel444::Comp_t>
 {
 public:
-	using PixelComp_t	= IJYCbCrPixel::Comp_t;
+	using PixelComp_t	= IJYCbCrPixel444::Comp_t;
 	using Pixel_t		= Pixel<PixelComp_t>;
-	using YCbCrPixel_t	= IJYCbCrPixel;
+	using YCbCrPixel_t	= IJYCbCrPixel444;
 
 public:
-	IJYCbCrImage();
-	IJYCbCrImage(const std::string& fileName);
-	IJYCbCrImage(const std::vector<PixelComp_t>& rawImage);
-	~IJYCbCrImage();
+	IJYCbCrImage444();
+	IJYCbCrImage444(const std::string& fileName);
+	IJYCbCrImage444(const std::vector<PixelComp_t>& rawImage);
+	~IJYCbCrImage444();
 
 	IJResult Load(std::istream& iStream) override;
 	IJResult Save(std::ostream& oStream) override;
@@ -63,7 +62,7 @@ public:
 
 // Inline realization
 
-inline uint32_t IJYCbCrPixel::compCount() const 
+inline uint32_t IJYCbCrPixel444::compCount() const 
 {
 	return k_compCount;
 }

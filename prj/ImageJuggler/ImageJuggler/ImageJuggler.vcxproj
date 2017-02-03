@@ -118,7 +118,8 @@
     <ClCompile Include="..\..\..\source\ImageJuggler\IJMainWorker.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJImage.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.cpp" />
-    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage.cpp" />
+    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage422.cpp" />
+    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage444.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\gles20\gl2.h" />
@@ -130,7 +131,8 @@
     <ClInclude Include="..\..\..\source\ImageJuggler\IJTypes.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImage.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.h" />
-    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage.h" />
+    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage422.h" />
+    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage444.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
