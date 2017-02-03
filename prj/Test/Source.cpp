@@ -125,10 +125,69 @@ void RGBToYCbCrTranslate()
 	}
 }
 
+void YCbCrSplitAndDumpSeparateChanlesTest()
+{
+	IJYCbCrImage444* image;
+	IJResult result = IJResult::Success;
+
+	{
+		dbg__profileBlock("Constructing YCbCrImage");
+		image = new IJYCbCrImage444("output/ybr_alp_tile_Cable_Bridge_df.tga");
+		if (image == nullptr)
+		{
+			DBG_REPORT_ERROR("YCbCr image contruction error");
+		}
+	}
+
+	{
+		dbg__profileBlock("Loading image");
+		result = image->Load();
+		if (result != IJResult::Success)
+		{
+			DBG_REPORT_ERROR("Loading YCbCr image failed: %d", static_cast<int>(result));
+		}
+	}
+
+	{
+		dbg__profileBlock("Spliting ycbcr image");
+
+		std::vector<uint8_t> yComp;
+		std::vector<uint8_t> bComp;
+		std::vector<uint8_t> rComp;
+
+		std::vector<uint8_t> bCompResult;
+		std::vector<uint8_t> rCompResult;
+
+		result = IJImageTranslator::YCbCrCompSplit(image, yComp, bComp, rComp);
+		if (result != IJResult::Success)
+		{
+			DBG_REPORT_ERROR("Error spliting ycbcr image by comps");
+		}
+
+		{
+			dbg__profileBlock("Setting rgb raw images for componenets");
+			yComp.insert(yComp.end(), yComp.begin(), yComp.end());
+			yComp.insert(yComp.end(), yComp.begin(), yComp.end());
+
+			for (size_t i = 0; i < bComp.size(); i++)
+			{
+				std::array<uint8_t, 3> pixel = IJImageTranslator::TranslateYBRPixelToRGB({yComp[i], bComp[i], rComp[i]});
+
+			}
+		}
+
+		// spliting ycbcr image by 3 different images
+		IJRGBImage* yImage = new IJRGBImage(yComp);
+		IJRGBImage* bImage = new IJRGBImage(bComp);
+		IJRGBImage* rImage = new IJRGBImage(rComp);
+	}
+}
+
 int main(int argc, char** argv)
 {
-	RGBLoadUnload();
-	RGBToYCbCrTranslate();
+	//RGBLoadUnload();
+	//RGBToYCbCrTranslate();
+	YCbCrSplitAndDumpSeparateChanlesTest();
 
 	return EXIT_SUCCESS;
 }

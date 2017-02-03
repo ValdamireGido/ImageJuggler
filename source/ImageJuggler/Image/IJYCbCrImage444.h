@@ -15,9 +15,10 @@ struct IJYCbCrPixel444
 	using CompData_t = std::array<Comp_t, static_cast<size_t>(k_compCount)>;
 	
 	IJYCbCrPixel444() = default;
-
-	IJYCbCrPixel444(IJYCbCrPixel444&& other) = delete;
-	IJYCbCrPixel444& operator=(IJYCbCrPixel444&& other) = delete;
+	IJYCbCrPixel444(const IJYCbCrPixel444&) = default;
+	IJYCbCrPixel444(IJYCbCrPixel444&& other) = default;
+	IJYCbCrPixel444& operator=(const IJYCbCrPixel444&) = default;
+	IJYCbCrPixel444& operator=(IJYCbCrPixel444&& other) = default;
 
 	IJYCbCrPixel444(const std::vector<Comp_t>& data);
 	IJYCbCrPixel444(const CompData_t& data);

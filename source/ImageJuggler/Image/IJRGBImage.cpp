@@ -18,17 +18,6 @@ IJRGBPixel::IJRGBPixel(const CompData_t& _data)
 	std::copy(_data.begin(), _data.end(), data.begin());
 }
 
-IJRGBPixel::IJRGBPixel(const IJRGBPixel&& other)
-{
-	std::copy(other.data.begin(), other.data.end(), data.begin());
-}
-
-IJRGBPixel& IJRGBPixel::operator=(const IJRGBPixel&& other)
-{
-	std::copy(other.data.begin(), other.data.end(), data.begin());
-	return *this;
-}
-
 IJRGBPixel::operator std::vector<IJRGBPixel::Comp_t>() const 
 {
 	std::vector<Comp_t> vData;

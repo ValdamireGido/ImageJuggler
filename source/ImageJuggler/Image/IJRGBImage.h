@@ -16,11 +16,10 @@ struct IJRGBPixel
 	using CompData_t = std::array<Comp_t, static_cast<size_t>(k_compCount)>;
 
 	IJRGBPixel() = default;
-	IJRGBPixel(const IJRGBPixel&& other );
-	IJRGBPixel& operator=(const IJRGBPixel&& other);
-
-	IJRGBPixel(IJRGBPixel& other) = delete;
-	IJRGBPixel& operator=(IJRGBPixel& other) = delete;
+	IJRGBPixel(const IJRGBPixel& other) = default;
+	IJRGBPixel(IJRGBPixel&& other) = default;
+	IJRGBPixel& operator=(const IJRGBPixel& other) = default;
+	IJRGBPixel& operator=(IJRGBPixel&& other) = default;
 
 	IJRGBPixel(const std::vector<Comp_t>& _data);
 	IJRGBPixel(const CompData_t& _data);
