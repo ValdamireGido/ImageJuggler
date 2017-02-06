@@ -45,12 +45,15 @@ namespace UnitTestImageJuggler
 
 			delete image;
 			image = nullptr;
+			return IJResult::Success;
 		}
 
 
 		TEST_CLASS(IJYCbCrImage444TestClass)
 		{
 		public:
+			//TEST_CLASS_INITIALIZE()
+
 			TEST_METHOD(TestIJYCbCrImage444Load)
 			{
 				uint32_t expected	= static_cast<uint32_t>(IJResult::Success);

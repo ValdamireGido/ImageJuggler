@@ -6,10 +6,16 @@
 #include <chrono>
 
 #if PROFILING_ENABLED
-#define dbg__profileBlock(blockName) \
+
+#define dbg__profileBlock2(blockName) \
 ProfileUtils::ProfileBlock __profile__block__info__(__FILE__, __FUNCDNAME__, __LINE__, blockName)
+
+#define dbg__profileBlock() \
+ProfileUtils::ProfileBlock __profile__block__info__(__FILE__, __FUNCDNAME__, __LINE__, __FUNCTION__)
+
 #else 
-#define dbg__profileBlock(blockName)
+#define dbg__profileBlock2(blockName)
+#define dbg__profileBlock()
 #endif
 
 

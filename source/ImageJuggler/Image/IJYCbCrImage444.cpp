@@ -44,7 +44,7 @@ IJYCbCrImage444::IJYCbCrImage444(const std::string& fileName)
 IJYCbCrImage444::IJYCbCrImage444(const std::vector<IJYCbCrPixelComp_t>& rawImage)
 	: IJImage<IJYCbCrPixelComp_t>(IJImageType::YCbCr444)
 {
-	SetImageSize(rawImage.size());
+	SetSize(rawImage.size());
 	IJResult result = Load(rawImage);
 	assert(result == IJResult::Success);
 }
@@ -77,7 +77,7 @@ IJResult IJYCbCrImage444::Load(std::istream& iStream)
 		imageSize += static_cast<size_t>(IJYCbCrPixel444::k_compCount);
 	}
 
-	SetImageSize(imageSize);
+	SetSize(imageSize);
 	return IJResult::Success;
 }
 

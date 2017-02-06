@@ -49,7 +49,6 @@ namespace UnitTestImageJuggler
 			{
 				uint32_t expectedResult		= static_cast<uint32_t>(IJResult::Success);
 				uint32_t loadActualResult	= static_cast<uint32_t>(LoadRGBImage(m_image, m_fileName));
-
 				Assert::AreEqual(expectedResult, loadActualResult, L"Load RGB Image test");
 			}
 

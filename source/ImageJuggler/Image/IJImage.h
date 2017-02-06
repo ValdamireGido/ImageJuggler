@@ -43,6 +43,29 @@ public:
 	using Pixel_t		= Pixel<_PixelCompTy>;
 	using PixelData_t	= std::vector<Pixel<_PixelCompTy>*>;
 
+	struct Header
+	{
+		static const uint8_t k_headerSize = 18;
+
+		uint8_t			idlength;
+		uint8_t			colourmaptype;
+		CompressionType datatypecode;
+		uint16_t		colourmaporigin;
+		uint16_t		colourmaplength;
+		uint8_t			colourmapdepth;
+		uint16_t		x_origin;
+		uint16_t		y_origin;
+		uint16_t		width;
+		uint16_t		height;
+		uint8_t			bitsperpixel;
+		uint8_t			imagedescriptor;
+
+		Header();
+		void deserialize(std::istream& iStream);
+		void serialize(std::ostream& oStream);
+		operator std::vector<uint8_t>();
+	};
+
 public:
 	// C'tor
 	IJImage() = default;
@@ -66,15 +89,26 @@ public:
 			IJResult	Save(const std::string& fileName);
 	virtual IJResult	Save(	   std::ostream& oStream) = 0;
 
-	const std::string&	GetFileName()	const;
-		  IJImageType	GetImageType()	const;
-	const PixelData_t&	GetPixelData()	const;
-		  size_t		GetImageSize()	const;
+	const std::string&	GetFileName()		const;
+		  IJImageType	GetImageType()		const;
+	const PixelData_t&	GetPixelData()		const;
+		  size_t		GetSize()			const;
+		  uint16_t		GetWidth()			const;
+		  uint16_t		GetHeight()			const;
+		  CompressionType GetCompressionType() const;
+		  uint8_t		GetBitsPerPixel()	const;
 
 protected:
+	IJResult			_LoadHeader(std::istream& iStream);
+	IJResult			_SaveHeader(std::ostream& oStream);
+
 	void				SetFileName(const std::string& fileName);
 	void				SetImageType(IJImageType type);
-	void				SetImageSize(size_t size);
+	void				SetSize(size_t size);
+	void				SetWidth(uint16_t width);
+	void				SetHeight(uint16_t height);
+	void				SetCompressionType(CompressionType type);
+	void				SetBitsPerPixel(uint8_t bits);
 
 	PixelData_t&		GetPixelData();
 	void				AddPixel(Pixel_t* pixel);
@@ -82,6 +116,7 @@ protected:
 
 private:
 	std::string		m_fileName;
+	Header			m_header;
 	PixelData_t		m_pixels;
 	size_t			m_imageSize;
 	IJImageType		m_imageType;
@@ -90,8 +125,85 @@ private:
 // Inline realization
 
 template <typename _PixelCompTy>
+inline IJImage<_PixelCompTy>::Header::Header()
+	: idlength(uint8_t(0))
+	, colourmaptype(uint8_t(0))
+	, datatypecode(CompressionType::UncompressedRGB)
+	, colourmaporigin(uint16_t(0))
+	, colourmaplength(uint16_t(0))
+	, colourmapdepth( uint8_t(0))
+	, x_origin(uint16_t(0))
+	, y_origin(uint16_t(0))
+	, width(uint16_t(0))
+	, height(uint16_t(0))
+	, bitsperpixel(uint8_t(24))
+	, imagedescriptor(uint8_t(0))
+{}
+
+template <typename _PixelCompTy>
+inline void IJImage<_PixelCompTy>::Header::deserialize(std::istream& iStream)
+{
+	iStream.read((char*)&idlength		, 1);
+	iStream.read((char*)&colourmaptype	, 1);
+	iStream.read((char*)&datatypecode	, 1);
+	iStream.read((char*)&colourmaporigin, 2);
+	iStream.read((char*)&colourmaplength, 2);
+	iStream.read((char*)&colourmapdepth	, 1);
+	iStream.read((char*)&x_origin		, 2);
+	iStream.read((char*)&y_origin		, 2);
+	iStream.read((char*)&width			, 2);
+	iStream.read((char*)&height			, 2);
+	iStream.read((char*)&bitsperpixel	, 1);
+	iStream.read((char*)&imagedescriptor, 1);
+}
+
+template <typename _PixelCompTy>
+inline void IJImage<_PixelCompTy>::Header::serialize(std::ostream& oStream)
+{
+	oStream.write((const char*)&idlength		, 1);
+	oStream.write((const char*)&colourmaptype	, 1);
+	oStream.write((const char*)&datatypecode	, 1);
+	oStream.write((const char*)&colourmaporigin	, 2);
+	oStream.write((const char*)&colourmaplength	, 2);
+	oStream.write((const char*)&colourmapdepth	, 1);
+	oStream.write((const char*)&x_origin		, 2);
+	oStream.write((const char*)&y_origin		, 2);
+	oStream.write((const char*)&width			, 2);
+	oStream.write((const char*)&height			, 2);
+	oStream.write((const char*)&bitsperpixel	, 1);
+	oStream.write((const char*)&imagedescriptor	, 1);
+}
+
+template <typename _PixelCompTy>
+IJImage<_PixelCompTy>::Header::operator std::vector<uint8_t>()
+{
+	std::vector<uint8_t> rawHeader;
+	rawHeader.resize(Header::k_headerSize);
+	rawHeader[0]  = (char)idlength;
+	rawHeader[1]  = (char)colourmaptype;
+	rawHeader[2]  = (char)datatypecode;
+	rawHeader[3]  = (char)(colourmaporigin & 0x00FF);		// 2 bytes
+	rawHeader[4]  = (char)(colourmaporigin & 0xFF00) / 256;	// 2 bytes
+	rawHeader[5]  = (char)(colourmaplength & 0x00FF);		// 2 bytes
+	rawHeader[6]  = (char)(colourmaplength & 0xFF00) / 256;	// 2 bytes
+	rawHeader[7]  = (char)colourmapdepth;
+	rawHeader[8]  = (char)(x_origin & 0x00FF);				// 2 bytes
+	rawHeader[9]  = (char)(x_origin & 0xFF00) / 256;		// 2 bytes
+	rawHeader[10] = (char)(y_origin & 0x00FF);				// 2 bytes
+	rawHeader[11] = (char)(y_origin & 0xFF00) / 256;		// 2 bytes
+	rawHeader[12] = (char)(width & 0x00FF);					// 2 bytes
+	rawHeader[13] = (char)(width & 0xFF00) / 256;			// 2 bytes
+	rawHeader[14] = (char)(height & 0x00FF);				// 2 bytes
+	rawHeader[15] = (char)(height & 0xFF00) / 256;			// 2 bytes
+	rawHeader[16] = (char)bitsperpixel; 
+	rawHeader[17] = (char)imagedescriptor;
+	return rawHeader;
+}
+
+template <typename _PixelCompTy>
 IJImage<_PixelCompTy>::IJImage(IJImageType type)
 	: m_fileName()
+	, m_header()
 	, m_pixels()
 	, m_imageSize(0ul)
 	, m_imageType(type)
@@ -100,6 +212,7 @@ IJImage<_PixelCompTy>::IJImage(IJImageType type)
 template <typename _PixelCompTy>
 IJImage<_PixelCompTy>::IJImage(const std::string& fileName, IJImageType type)
 	: m_fileName(fileName)
+	, m_header()
 	, m_pixels()
 	, m_imageSize(0u)
 	, m_imageType(type)
@@ -136,7 +249,8 @@ IJResult IJImage<_PixelCompTy>::Load(const std::string& fileName)
 		return IJResult::UnableToOpenFile;
 	}
 
-	IJResult result = Load(inputFileStream);
+	IJResult result = _LoadHeader(inputFileStream);
+	result = Load(inputFileStream);
 	inputFileStream.close();
 	return result;
 }
@@ -162,7 +276,8 @@ IJResult IJImage<_PixelCompTy>::Save(const std::string& fileName)
 
 	SetFileName(fileName);
 	std::ofstream outputFile(fileName, std::ios::out | std::ios::binary);
-	IJResult result = Save(outputFile);
+	IJResult result = _SaveHeader(outputFile);
+	result = Save(outputFile);
 	outputFile.close();
 	return result;
 }
@@ -186,9 +301,47 @@ inline const typename IJImage<_PixelCompTy>::PixelData_t& IJImage<_PixelCompTy>:
 }
 
 template <typename _PixelCompTy>
-inline size_t IJImage<_PixelCompTy>::GetImageSize() const
+inline size_t IJImage<_PixelCompTy>::GetSize() const
 {
 	return m_imageSize;
+}
+
+template <typename _PixelCompTy>
+inline uint16_t IJImage<_PixelCompTy>::GetWidth() const 
+{
+	return m_header.width;
+}
+
+template <typename _PixelCompTy>
+inline uint16_t IJImage<_PixelCompTy>::GetHeight() const
+{
+	return m_header.height;
+}
+
+template <typename _PixelCompTy>
+inline CompressionType IJImage<_PixelCompTy>::GetCompressionType() const 
+{
+	return m_header.datatypecode;
+}
+
+template <typename _PixelCompTy>
+inline uint8_t IJImage<_PixelCompTy>::GetBitsPerPixel() const
+{
+	return m_header.bitsperpixel;
+}
+
+template <typename _PixelCompTy>
+inline IJResult IJImage<_PixelCompTy>::_LoadHeader(std::istream& iStream)
+{
+	m_header.deserialize(iStream);
+	return IJResult::Success;
+}
+
+template <typename _PixelCompTy>
+inline IJResult IJImage<_PixelCompTy>::_SaveHeader(std::ostream& oStream)
+{
+	m_header.serialize(oStream);
+	return IJResult::Success;
 }
 
 template <typename _PixelCompTy>
@@ -204,9 +357,33 @@ inline void IJImage<_PixelCompTy>::SetImageType(IJImageType imageType)
 }
 
 template <typename _PixelCompTy>
-inline void IJImage<_PixelCompTy>::SetImageSize(size_t size)
+inline void IJImage<_PixelCompTy>::SetSize(size_t size)
 {
 	m_imageSize = size;
+}
+
+template <typename _PixelCompTy>
+inline void IJImage<_PixelCompTy>::SetWidth(uint16_t width)
+{
+	m_header.width = width;
+}
+
+template <typename _PixelCompTy>
+inline void IJImage<_PixelCompTy>::SetHeight(uint16_t height)
+{
+	m_header.height = height;
+}
+
+template <typename _PixelCompTy>
+inline void IJImage<_PixelCompTy>::SetCompressionType(CompressionType type)
+{
+	m_header.datatypecode = type;
+}
+
+template <typename _PixelCompTy>
+inline void IJImage<_PixelCompTy>::SetBitsPerPixel(uint8_t bits)
+{
+	m_header.bitsperpixel = bits;
 }
 
 template <typename _PixelCompTy>

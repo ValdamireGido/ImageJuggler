@@ -53,7 +53,7 @@ IJYCbCrImage422::IJYCbCrImage422(const std::vector<uint8_t>& y_comps,
 								 const std::vector<uint8_t>& br_comps)
 	: IJImage<uint8_t>(IJImageType::YCbCr422)
 {
-	SetImageSize(y_comps.size() + br_comps.size());
+	SetSize(y_comps.size() + br_comps.size());
 }
 
 IJYCbCrImage422::~IJYCbCrImage422()

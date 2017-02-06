@@ -3,9 +3,6 @@
 #include "Image/IJYCbCrImage444.h"
 #include "Image/IJYCbCrImage422.h"
 
-#define PROFILING_ENABLED 1
-#include "../../prj/Test/Profiling.h"
-
 #define ASSERT_PTR(ptr)\
 do {\
 	assert(ptr);\
@@ -59,13 +56,13 @@ IJResult IJImageTranslator::RGBToYCbCr444(IJRGBImage* input, IJYCbCrImage444* ou
 	ASSERT_PTR(input);
 	ASSERT_PTR(output);
 
-	assert(input->GetImageSize() != 0);
-	if (input->GetImageSize() == 0)
+	assert(input->GetSize() != 0);
+	if (input->GetSize() == 0)
 	{
 		return IJResult::ImageIsEmtpy;
 	}
 
-	for (size_t idx = 0; idx < input->GetImageSize() / IJRGBPixel::k_compCount; idx++)
+	for (size_t idx = 0; idx < input->GetSize() / IJRGBPixel::k_compCount; idx++)
 	{
 		IJRGBPixel* rgbPixel = static_cast<IJRGBPixel*>(input->GetPixelData()[idx]);
 		assert(rgbPixel);
@@ -81,41 +78,11 @@ IJResult IJImageTranslator::RGBToYCbCr444(IJRGBImage* input, IJYCbCrImage444* ou
 		{
 			TranslateRGBPixelToYBR(rgbPixel, ybrPixel);
 			output->AddPixel(ybrPixel);
-			output->SetImageSize(output->GetImageSize() + IJYCbCrPixel444::k_compCount);
 		}
 	}
 
-	assert(output->GetImageSize() != 0);
-	if (output->GetImageSize() == 0)
-	{
-		return IJResult::UnableToTranslateImage;
-	}
-
+	_CopyImageAttributes<uint8_t>(input, output);
 	return IJResult::Success;
-}
-
-IJResult IJImageTranslator::YCbCrCompSplit(IJYCbCrImage444*	input, std::vector<uint8_t>& yComp
-										   						 , std::vector<uint8_t>& bComp
-										   						 , std::vector<uint8_t>& rComp)
-{
-	ASSERT_PTR(input);
-
-	IJResult result = IJResult::Success;
-	dbg__profileBlock("YCbCr components split");
-
-	for (size_t i = 0, size = input->GetImageSize() / IJYCbCrPixel444::k_compCount; i < size; i++)
-	{
-		IJYCbCrPixel444* pixel = static_cast<IJYCbCrPixel444*>(input->GetPixelData()[i]);
-		assert(pixel);
-		if (pixel != nullptr)
-		{
-			yComp.push_back((*pixel)[0]);
-			bComp.push_back((*pixel)[1]);
-			rComp.push_back((*pixel)[2]);
-		}
-	}
-
-	return result;
 }
 
 IJResult IJImageTranslator::RGBToYCbCr442(IJRGBImage* input, IJYCbCrImage422* output)
@@ -132,9 +99,97 @@ IJResult IJImageTranslator::YCbCr444ToRGB(IJYCbCrImage444* input, IJRGBImage* ou
 	return IJResult::Success;
 }
 
-IJResult IJImageTranslator::YCbCr422ToRGB(IJYCbCrImage422* input, IJRGBImage* output)
+//IJResult IJImageTranslator::YCbCr422ToRGB(IJYCbCrImage422* input, IJRGBImage* output)
+//{
+//	ASSERT_PTR(input);
+//	ASSERT_PTR(output);
+//	return IJResult::Success;
+//}
+
+IJResult IJImageTranslator::YCbCrCompSplit(IJYCbCrImage444*	input, std::vector<uint8_t>& yComp
+										   						 , std::vector<uint8_t>& bComp
+										   						 , std::vector<uint8_t>& rComp)
 {
 	ASSERT_PTR(input);
-	ASSERT_PTR(output);
+	IJResult result = IJResult::Success;
+
+	for (size_t i = 0, size = input->GetSize() / IJYCbCrPixel444::k_compCount; i < size; i++)
+	{
+		IJYCbCrPixel444* pixel = static_cast<IJYCbCrPixel444*>(input->GetPixelData()[i]);
+		assert(pixel);
+		if (pixel != nullptr)
+		{
+			yComp.push_back((*pixel)[0]);
+			bComp.push_back((*pixel)[1]);
+			rComp.push_back((*pixel)[2]);
+		}
+	}
+
+	return result;
+}
+
+IJResult IJImageTranslator::YBRToRGBCompSlit(IJYCbCrImage444* input, std::vector<uint8_t>& yComp
+																   , std::vector<uint8_t>& bComp
+																   , std::vector<uint8_t>& rComp)
+{
+	ASSERT_PTR(input);
+	for (size_t i = 0; i < input->GetPixelData().size(); i++)
+	{
+		const IJYCbCrPixel444* pixel = static_cast<IJYCbCrPixel444*>(input->GetPixelData()[i]);
+		std::vector<uint8_t> rawPixel = static_cast<std::vector<uint8_t> >(*pixel);
+				
+		std::array<uint8_t, 3> ypixel = IJImageTranslator::TranslateYBRPixelToRGB( {rawPixel[0], 128		, 128} );
+		yComp.insert(yComp.end(), ypixel.begin(), ypixel.end());
+
+		std::array<uint8_t, 3> bpixel = IJImageTranslator::TranslateYBRPixelToRGB( {235		   , rawPixel[1], 128} );
+		bComp.insert(bComp.end(), bpixel.begin(), bpixel.end());
+
+		std::array<uint8_t, 3> rpixel = IJImageTranslator::TranslateYBRPixelToRGB( {235		   , 128		, rawPixel[2]} );
+		rComp.insert(rComp.end(), rpixel.begin(), rpixel.end());
+	}
+
 	return IJResult::Success;
+}
+
+IJResult IJImageTranslator::YBRToRGBCompSlit(IJYCbCrImage444* input, IJRGBImage* yComp
+																   , IJRGBImage* bComp
+																   , IJRGBImage* rComp)
+{
+	ASSERT_PTR(input);
+	ASSERT_PTR(yComp);
+	ASSERT_PTR(bComp);
+	ASSERT_PTR(rComp);
+
+	IJResult result = IJResult::Success;
+	std::vector<uint8_t> yCompVector, bCompVector, rCompVector;
+	result = YBRToRGBCompSlit(input, yCompVector, bCompVector, rCompVector);
+	if (result != IJResult::Success)
+	{
+		return result;
+	}
+
+	yComp->Load(yCompVector);
+	yComp->Save();
+
+	bComp->Load(bCompVector);
+	bComp->Save();
+
+	rComp->Load(rCompVector);
+	rComp->Save();
+
+	_CopyImageAttributes<uint8_t>(input, yComp);
+	_CopyImageAttributes<uint8_t>(input, bComp);
+	_CopyImageAttributes<uint8_t>(input, rComp);
+	return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <typename _PixelCompTy>
+void IJImageTranslator::_CopyImageAttributes(IJImage<_PixelCompTy>* input, IJImage<_PixelCompTy>* output)
+{
+	output->SetSize(input->GetSize());
+	output->SetWidth(input->GetWidth());
+	output->SetHeight(input->GetHeight());
+	output->SetCompressionType(input->GetCompressionType());
 }

@@ -24,9 +24,9 @@ struct IJRGBPixel
 	IJRGBPixel(const std::vector<Comp_t>& _data);
 	IJRGBPixel(const CompData_t& _data);
 
-				operator std::vector<Comp_t>() const override;
-	Comp_t&		operator[](uint32_t compIdx) override;
-	uint32_t	compCount() const override;
+				operator std::vector<Comp_t>()	const override;
+	Comp_t&		operator[](uint32_t compIdx)		  override;
+	uint32_t	compCount()						const override;
 
 	/** 3 component for pixel: 
 		R - 0, 

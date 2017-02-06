@@ -39,7 +39,7 @@ IJRGBImage::IJRGBImage(const std::string& fileName)
 IJRGBImage::IJRGBImage(const std::vector<PixelComp_t>& rawImage)
 	: IJImage<Pixel_t::Comp_t>(IJImageType::RGB)
 {
-	SetImageSize(rawImage.size());
+	SetSize(rawImage.size());
 	IJResult result = Load(rawImage);
 	assert(result == IJResult::Success);
 }
@@ -72,7 +72,7 @@ IJResult IJRGBImage::Load(std::istream& iStream)
 		imageSize += static_cast<size_t>(IJRGBPixel::k_compCount);
 	}
 
-	SetImageSize(imageSize);
+	SetSize(imageSize);
 	return IJResult::Success;
 }
 

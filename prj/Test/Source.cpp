@@ -20,14 +20,14 @@ void RGBLoadUnload()
 {
 	IJRGBImage* image = nullptr;
 	{
-		dbg__profileBlock("Contructing IJRGBImage");
+		dbg__profileBlock2("Contructing IJRGBImage");
 		image = new IJRGBImage("input/alp_tile_Cable_Bridge_df.tga");
 	}
 
 	IJResult result = IJResult::Success;
 	
 	{
-		dbg__profileBlock("Loading RGB Image");
+		dbg__profileBlock2("Loading RGB Image");
 		result = image->Load();
 		if (result != IJResult::Success)
 		{
@@ -36,7 +36,7 @@ void RGBLoadUnload()
 	}
 	
 	{
-		dbg__profileBlock("Save RGB image to vector<uint8_t>");
+		dbg__profileBlock2("Save RGB image to vector<uint8_t>");
 		std::vector<uint8_t> rawImage;
 		result = image->Save(rawImage);
 		if (result != IJResult::Success)
@@ -46,7 +46,7 @@ void RGBLoadUnload()
 	}
 
 	{
-		dbg__profileBlock("RGB image save to file");
+		dbg__profileBlock2("RGB image save to file");
 		result = image->Save("output/alp_tile_Cable_Bridge_df.tga");
 		if (result != IJResult::Success)
 		{
@@ -55,7 +55,7 @@ void RGBLoadUnload()
 	}
 
 	{
-		dbg__profileBlock("Destructing RGB image");
+		dbg__profileBlock2("Destructing RGB image");
 		delete image;
 		image = nullptr;
 	}
@@ -63,13 +63,15 @@ void RGBLoadUnload()
 
 void RGBToYCbCrTranslate()
 {
+	dbg__profileBlock();
+
 	IJRGBImage* rgbImage = nullptr;
 	IJYCbCrImage444* ybrImage = nullptr;
 	IJResult result = IJResult::Success;
 
 	{
-		dbg__profileBlock("Constructing RGB image");
-		rgbImage = new IJRGBImage("input/alp_tile_Cable_Bridge_df.tga");
+		dbg__profileBlock2("Constructing RGB image");
+		rgbImage = new IJRGBImage("input/alp_shadow_map_square4.tga");
 		if (rgbImage == nullptr)
 		{
 			DBG_REPORT_ERROR("RGB imabe contruct failed");
@@ -77,7 +79,7 @@ void RGBToYCbCrTranslate()
 	}
 
 	{
-		dbg__profileBlock("Loading RGB image");
+		dbg__profileBlock2("Loading RGB image");
 		result = rgbImage->Load();
 		if (result != IJResult::Success)
 		{
@@ -86,7 +88,7 @@ void RGBToYCbCrTranslate()
 	}
 
 	{
-		dbg__profileBlock("Constructing IJYCbCr444 image");
+		dbg__profileBlock2("Constructing IJYCbCr444 image");
 		ybrImage = new IJYCbCrImage444();
 		if (ybrImage == nullptr)
 		{
@@ -95,7 +97,7 @@ void RGBToYCbCrTranslate()
 	}
 
 	{
-		dbg__profileBlock("Translation RGB -> YCbCr444");
+		dbg__profileBlock2("Translation RGB -> YCbCr444");
 		result = IJImageTranslator::RGBToYCbCr444(rgbImage, ybrImage);
 		if (result != IJResult::Success)
 		{
@@ -104,8 +106,8 @@ void RGBToYCbCrTranslate()
 	}
 
 	{
-		dbg__profileBlock("Save YCbCr to file");
-		result = ybrImage->Save("output/ybr_alp_tile_Cable_Bridge_df.tga");
+		dbg__profileBlock2("Save YCbCr to file");
+		result = ybrImage->Save("output/ybr_alp_shadow_map_square4.tga");
 		if (result != IJResult::Success)
 		{
 			DBG_REPORT_ERROR("YCbCr image save failed: %d", static_cast<int>(result));
@@ -113,13 +115,13 @@ void RGBToYCbCrTranslate()
 	}
 
 	{
-		dbg__profileBlock("Destructing YCbCr image");
+		dbg__profileBlock2("Destructing YCbCr image");
 		delete ybrImage;
 		ybrImage = nullptr;
 	}
 
 	{
-		dbg__profileBlock("Destructing RGB image");
+		dbg__profileBlock2("Destructing RGB image");
 		delete rgbImage;
 		rgbImage = nullptr;
 	}
@@ -128,65 +130,77 @@ void RGBToYCbCrTranslate()
 void YCbCrSplitAndDumpSeparateChanlesTest()
 {
 	IJYCbCrImage444* image;
+	IJRGBImage* yCompImage;
+	IJRGBImage* bCompImage;
+	IJRGBImage* rCompImage;
 	IJResult result = IJResult::Success;
 
 	{
-		dbg__profileBlock("Constructing YCbCrImage");
+		dbg__profileBlock2("Constructing YCbCrImage");
 		image = new IJYCbCrImage444("output/ybr_alp_tile_Cable_Bridge_df.tga");
 		if (image == nullptr)
 		{
 			DBG_REPORT_ERROR("YCbCr image contruction error");
+			return;
 		}
 	}
 
 	{
-		dbg__profileBlock("Loading image");
+		dbg__profileBlock2("Loading image");
 		result = image->Load();
 		if (result != IJResult::Success)
 		{
 			DBG_REPORT_ERROR("Loading YCbCr image failed: %d", static_cast<int>(result));
+			return;
 		}
 	}
 
 	{
-		dbg__profileBlock("Spliting ycbcr image");
+		dbg__profileBlock2("Creating output image instances");
+		
+		yCompImage = new IJRGBImage();
+		assert(yCompImage);
+		
+		bCompImage = new IJRGBImage();
+		assert(bCompImage);
 
-		std::vector<uint8_t> yComp;
-		std::vector<uint8_t> bComp;
-		std::vector<uint8_t> rComp;
+		rCompImage = new IJRGBImage();
+		assert(rCompImage);
+	}
 
-		std::vector<uint8_t> bCompResult;
-		std::vector<uint8_t> rCompResult;
+	{
+		dbg__profileBlock2("Spliting the ybr image to three rgb images");
 
-		result = IJImageTranslator::YCbCrCompSplit(image, yComp, bComp, rComp);
+		result = IJImageTranslator::YBRToRGBCompSlit(image, yCompImage, bCompImage, rCompImage);
 		if (result != IJResult::Success)
 		{
-			DBG_REPORT_ERROR("Error spliting ycbcr image by comps");
+			DBG_REPORT_ERROR("YBR split error %d", static_cast<int>(result));
 		}
+	}
 
-		{
-			dbg__profileBlock("Setting rgb raw images for componenets");
-			yComp.insert(yComp.end(), yComp.begin(), yComp.end());
-			yComp.insert(yComp.end(), yComp.begin(), yComp.end());
+	{
+		dbg__profileBlock2("Clearing up data - Unload images");
 
-			for (size_t i = 0; i < bComp.size(); i++)
-			{
-				std::array<uint8_t, 3> pixel = IJImageTranslator::TranslateYBRPixelToRGB({yComp[i], bComp[i], rComp[i]});
+		delete image;
+		image = nullptr;
 
-			}
-		}
+		delete yCompImage;
+		yCompImage = nullptr;
 
-		// spliting ycbcr image by 3 different images
-		IJRGBImage* yImage = new IJRGBImage(yComp);
-		IJRGBImage* bImage = new IJRGBImage(bComp);
-		IJRGBImage* rImage = new IJRGBImage(rComp);
+		delete bCompImage;
+		bCompImage = nullptr;
+
+		delete rCompImage;
+		bCompImage = nullptr;
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char** argv)
 {
 	//RGBLoadUnload();
-	//RGBToYCbCrTranslate();
+	RGBToYCbCrTranslate();
 	YCbCrSplitAndDumpSeparateChanlesTest();
 
 	return EXIT_SUCCESS;
