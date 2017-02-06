@@ -7,6 +7,9 @@ class IJRGBImage;
 class IJYCbCrImage444;
 class IJYCbCrImage422;
 
+struct IJRGBPixel;
+struct IJYCbCrPixel444;
+
 struct IJImageTranslator
 {
 	static std::array<uint8_t, 3> TranslateRGBPixelToYBR(const std::vector<uint8_t>& rgbPixel);

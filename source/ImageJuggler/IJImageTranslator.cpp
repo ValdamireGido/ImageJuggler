@@ -14,19 +14,13 @@ do {\
 	}\
 }while(false)
 
-std::array<uint8_t, 3> IJImageTranslator::TranslateRGBPixelToYBR(const std::vector<uint8_t>& rgbPixel)
-{
-	std::array<uint8_t, 3> ybrPixel;
-	ybrPixel[0] = uint8_t(16  + ( 65.481 * rgbPixel[0]  + 128.553 * rgbPixel[1]  + 24.966 * rgbPixel[2]));
-	ybrPixel[1] = uint8_t(128 + (-37.797 * rgbPixel[0]  +  74.203 * rgbPixel[1]  +  112.0 * rgbPixel[2]));
-	ybrPixel[2] = uint8_t(128 + (  112.0 * rgbPixel[0]  +  18.214 * rgbPixel[1]  + 18.214 * rgbPixel[2]));
-	return ybrPixel;
-}
-
-void IJImageTranslator::TranslateRGBPixelToYBR(IJRGBPixel* rgbPixel, IJYCbCrPixel444* ybrPixel)
-{
-	*ybrPixel = IJYCbCrPixel444(TranslateRGBPixelToYBR(static_cast<std::vector<uint8_t> >(*rgbPixel)));
-}
+#define ASSERT_PTR_VOID(ptr)\
+do {\
+	assert(ptr);\
+	if (!ptr) {\
+		return;\
+	}\
+} while (false)
 
 std::array<uint8_t, 3> IJImageTranslator::TranslateYBRPixelToRGB(const std::vector<uint8_t>& ybrPixel)
 {
@@ -37,9 +31,27 @@ std::array<uint8_t, 3> IJImageTranslator::TranslateYBRPixelToRGB(const std::vect
 	return rgbPixel;
 }
 
+std::array<uint8_t, 3> IJImageTranslator::TranslateRGBPixelToYBR(const std::vector<uint8_t>& rgbPixel)
+{
+	std::array<uint8_t, 3> ybrPixel;
+	ybrPixel[0] = uint8_t(16  + ( 65.481 * rgbPixel[0]  + 128.553 * rgbPixel[1]  + 24.966 * rgbPixel[2]));
+	ybrPixel[1] = uint8_t(128 + (-37.797 * rgbPixel[0]  +  74.203 * rgbPixel[1]  +  112.0 * rgbPixel[2]));
+	ybrPixel[2] = uint8_t(128 + (  112.0 * rgbPixel[0]  +  18.214 * rgbPixel[1]  + 18.214 * rgbPixel[2]));
+	return ybrPixel;
+}
+
 void IJImageTranslator::TranslateYBRPixelToRGB(IJYCbCrPixel444* ybrPixel, IJRGBPixel* rgbPixel)
 {
+	ASSERT_PTR_VOID(ybrPixel);
+	ASSERT_PTR_VOID(rgbPixel);
 	*rgbPixel = IJRGBPixel(TranslateYBRPixelToRGB(static_cast<std::vector<uint8_t> >(*ybrPixel)));
+}
+
+void IJImageTranslator::TranslateRGBPixelToYBR(IJRGBPixel* rgbPixel, IJYCbCrPixel444* ybrPixel)
+{
+	ASSERT_PTR_VOID(rgbPixel);
+	ASSERT_PTR_VOID(ybrPixel);
+	*ybrPixel = IJYCbCrPixel444(TranslateRGBPixelToYBR(static_cast<std::vector<uint8_t> >(*rgbPixel)));
 }
 
 IJResult IJImageTranslator::RGBToYCbCr444(IJRGBImage* input, IJYCbCrImage444* output)
@@ -86,10 +98,12 @@ IJResult IJImageTranslator::YCbCrCompSplit(IJYCbCrImage444*	input, std::vector<u
 										   						 , std::vector<uint8_t>& bComp
 										   						 , std::vector<uint8_t>& rComp)
 {
+	ASSERT_PTR(input);
+
 	IJResult result = IJResult::Success;
 	dbg__profileBlock("YCbCr components split");
 
-	for (size_t i = 0; i < input->GetImageSize() / IJYCbCrPixel444::k_compCount; i++)
+	for (size_t i = 0, size = input->GetImageSize() / IJYCbCrPixel444::k_compCount; i < size; i++)
 	{
 		IJYCbCrPixel444* pixel = static_cast<IJYCbCrPixel444*>(input->GetPixelData()[i]);
 		assert(pixel);
@@ -106,15 +120,21 @@ IJResult IJImageTranslator::YCbCrCompSplit(IJYCbCrImage444*	input, std::vector<u
 
 IJResult IJImageTranslator::RGBToYCbCr442(IJRGBImage* input, IJYCbCrImage422* output)
 {
+	ASSERT_PTR(input);
+	ASSERT_PTR(output);
 	return IJResult::Success;
 }
 
 IJResult IJImageTranslator::YCbCr444ToRGB(IJYCbCrImage444* input, IJRGBImage* output)
 {
+	ASSERT_PTR(input);
+	ASSERT_PTR(output);
 	return IJResult::Success;
 }
 
 IJResult IJImageTranslator::YCbCr422ToRGB(IJYCbCrImage422* input, IJRGBImage* output)
 {
+	ASSERT_PTR(input);
+	ASSERT_PTR(output);
 	return IJResult::Success;
 }
