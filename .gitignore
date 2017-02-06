@@ -7,3 +7,6 @@
 *.idb
 *.pdb
 *.user
+prj/UnitTestImageJuggler/Debug/UnitTestImageJuggler.pch
+prj/ImageJuggler/ipch/UNITTESTIMAGEJUGGLER-233ce5a8/UNITTESTIMAGEJUGGLER-aacdd7df.ipch
+prj/ImageJuggler/Debug/UnitTestImageJuggler.ilk
