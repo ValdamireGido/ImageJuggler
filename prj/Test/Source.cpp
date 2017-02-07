@@ -69,17 +69,17 @@ void RGBToYCbCrTranslate()
 	IJYCbCrImage444* ybrImage = nullptr;
 	IJResult result = IJResult::UnknownResult;
 
+	const std::string inputFileName  = "input/tok_tile_park_stone01_df.tga";
+	const std::string outputFileName = "output/tok_tile_park_stone01_df.ybr.tga";
+
 	{
-		dbg__profileBlock2("Constructing RGB image");
-		rgbImage = new IJRGBImage("input/bar_skybox.tga");
+		dbg__profileBlock2("Loading RGB image");
+		rgbImage = new IJRGBImage(inputFileName);
 		if (rgbImage == nullptr)
 		{
 			DBG_REPORT_ERROR("RGB imabe contruct failed");
 		}
-	}
 
-	{
-		dbg__profileBlock2("Loading RGB image");
 		result = rgbImage->Load();
 		if (result != IJResult::Success)
 		{
@@ -88,16 +88,14 @@ void RGBToYCbCrTranslate()
 	}
 
 	{
-		dbg__profileBlock2("Constructing IJYCbCr444 image");
+		dbg__profileBlock2("Translation RGB -> YCbCr444");
 		ybrImage = new IJYCbCrImage444();
+		assert(ybrImage);
 		if (ybrImage == nullptr)
 		{
 			DBG_REPORT_ERROR("YCbCr image construct failed");
 		}
-	}
 
-	{
-		dbg__profileBlock2("Translation RGB -> YCbCr444");
 		result = IJImageTranslator::RGBToYCbCr444(rgbImage, ybrImage);
 		if (result != IJResult::Success)
 		{
@@ -107,21 +105,15 @@ void RGBToYCbCrTranslate()
 
 	{
 		dbg__profileBlock2("Save YCbCr to file");
-		result = ybrImage->Save("output/ybr_bar_skybox.tga");
+		result = ybrImage->Save("output/bar_skybox.ybr.tga");
 		if (result != IJResult::Success)
 		{
 			DBG_REPORT_ERROR("YCbCr image save failed: %d", static_cast<int>(result));
 		}
-	}
 
-	{
-		dbg__profileBlock2("Destructing YCbCr image");
 		delete ybrImage;
 		ybrImage = nullptr;
-	}
 
-	{
-		dbg__profileBlock2("Destructing RGB image");
 		delete rgbImage;
 		rgbImage = nullptr;
 	}
@@ -135,8 +127,64 @@ void YBRToRGBTranslate()
 	IJRGBImage* rgbImage	  = nullptr;
 	IJResult result			  = IJResult::UnknownResult;
 
-	{
+	const std::string inputFileName  = "output/tok_tile_park_stone01_df.ybr.tga";
+	const std::string outputFileName = "output/tok_tile_park_stone01_df.rgb.tga";
 
+	{
+		dbg__profileBlock2("Loading YBR Image");
+
+		ybrImage = new IJYCbCrImage444();
+		assert(ybrImage);
+		if (!ybrImage)
+		{
+			DBG_REPORT_ERROR("Error allocating IJYCbCrImage444");
+			return;
+		}
+
+		result = ybrImage->Load(inputFileName);
+		if (result != IJResult::Success)
+		{
+			DBG_REPORT_ERROR("Error loading ybr input image %d", static_cast<int>(result));
+		}
+	}
+
+
+	{
+		dbg__profileBlock2("Converting YBR -> RGB");
+
+		rgbImage = new IJRGBImage();
+		assert(rgbImage);
+		if (!rgbImage)
+		{
+			result = IJResult::MemoryAllocationError;
+			DBG_REPORT_ERROR("Error allocating IJRGBImage %d", static_cast<int>(result));
+		}
+
+		result = IJImageTranslator::YCbCr444ToRGB(ybrImage, rgbImage);
+		if (result != IJResult::Success)
+		{
+			DBG_REPORT_ERROR("Error translating ybr to rgb %d", static_cast<int>(result));
+		}
+	}
+
+
+	{
+		dbg__profileBlock2("Saving and deallocating");
+
+		if (rgbImage)
+		{
+			result = rgbImage->Save(outputFileName);
+			if (result != IJResult::Success)
+			{
+				DBG_REPORT_ERROR("Error saving output rgb image %d", static_cast<int>(result));
+			}
+
+			delete rgbImage;
+			rgbImage = nullptr;
+		}
+
+		delete ybrImage;
+		ybrImage = nullptr;
 	}
 }
 
@@ -149,17 +197,14 @@ void YCbCrSplitAndDumpSeparateChanlesTest()
 	IJResult result = IJResult::UnknownResult;
 
 	{
-		dbg__profileBlock2("Constructing YCbCrImage");
+		dbg__profileBlock2("Loading image");
 		image = new IJYCbCrImage444("output/ybr_bar_skybox.tga");
 		if (image == nullptr)
 		{
 			DBG_REPORT_ERROR("YCbCr image contruction error");
 			return;
 		}
-	}
 
-	{
-		dbg__profileBlock2("Loading image");
 		result = image->Load();
 		if (result != IJResult::Success)
 		{
@@ -169,7 +214,7 @@ void YCbCrSplitAndDumpSeparateChanlesTest()
 	}
 
 	{
-		dbg__profileBlock2("Creating output image instances");
+		dbg__profileBlock2("Spliting the ybr image to three rgb images");
 		
 		yCompImage = new IJRGBImage();
 		assert(yCompImage);
@@ -179,10 +224,6 @@ void YCbCrSplitAndDumpSeparateChanlesTest()
 
 		rCompImage = new IJRGBImage();
 		assert(rCompImage);
-	}
-
-	{
-		dbg__profileBlock2("Spliting the ybr image to three rgb images");
 
 		result = IJImageTranslator::YBRToRGBCompSlit(image, yCompImage, bCompImage, rCompImage);
 		if (result != IJResult::Success)
@@ -217,8 +258,12 @@ void YCbCrSplitAndDumpSeparateChanlesTest()
 int main(int argc, char** argv)
 {
 	//RGBLoadUnload();
+	
 	RGBToYCbCrTranslate();
-	YCbCrSplitAndDumpSeparateChanlesTest();
+	
+	//YCbCrSplitAndDumpSeparateChanlesTest();
+
+	YBRToRGBTranslate();
 
 	return EXIT_SUCCESS;
 }

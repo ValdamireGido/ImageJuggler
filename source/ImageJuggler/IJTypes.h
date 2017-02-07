@@ -16,7 +16,7 @@ enum class IJResult : uint8_t
 	UnableToSaveFile		= 8, 
 	UnableToTranslateImage	= 9, 
 
-	ImageIsEmtpy			= 16,
+	ImageIsEmpty			= 16,
 	InvalidImageFormat		= 17
 };
 

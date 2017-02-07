@@ -3,6 +3,13 @@
 #include "IJTypes.h"
 #include <vector>
 
+//#define RGB_TO_YCBCR_CONVERSION__8BIT_SAMPLE
+#define RGB_TO_YCBCR_CONVERSION__GENERAL_KOEF
+
+//#define YCBCR_TO_RGB_CONVERSION__GENERAL
+//#define YCBCR_TO_RGB_CONVERSION__NO_ROUNDING
+#define YCBCR_TO_RGB_CONVERSION__GENERAL_KOEF
+
 template <typename _PixelCompTy> class IJImage;
 class IJRGBImage;
 class IJYCbCrImage444;
@@ -14,13 +21,14 @@ struct IJYCbCrPixel444;
 struct IJImageTranslator
 {
 	static std::array<uint8_t, 3> TranslateRGBPixelToYBR(const std::vector<uint8_t>& rgbPixel);
-	static void TranslateRGBPixelToYBR(IJRGBPixel* rgbPixel, IJYCbCrPixel444* ybrPixel);
-
 	static std::array<uint8_t, 3> TranslateYBRPixelToRGB(const std::vector<uint8_t>& ybrPixel);
-	static void TranslateYBRPixelToRGB(IJYCbCrPixel444* ybrPixel, IJRGBPixel* rgbPixel);
 
-	static IJResult RGBToYCbCr444 (IJRGBImage*		input, IJYCbCrImage444* output);
-	static IJResult YCbCr444ToRGB (IJYCbCrImage444*	input, IJRGBImage*		output);
+	static void TranslateRGBPixelToYBR(IJRGBPixel*		rgbPixel, IJYCbCrPixel444* ybrPixel);
+	static void TranslateYBRPixelToRGB(IJYCbCrPixel444* ybrPixel, IJRGBPixel*	   rgbPixel);
+
+	static IJResult RGBToYCbCr444(IJRGBImage*		input, IJYCbCrImage444* output);
+	static IJResult YCbCr444ToRGB(IJYCbCrImage444*	input, IJRGBImage*		output);
+
 	//static IJResult RGBToYCbCr442 (IJRGBImage*		input, IJYCbCrImage422* output);
 	//static IJResult YCbCr422ToRGB (IJYCbCrImage422*	input, IJRGBImage*		output);
 
