@@ -92,7 +92,7 @@ std::array<uint8_t, 3> IJImageTranslator::TranslateYBRPixelToRGB(const std::vect
 #elif defined(YCBCR_TO_RGB_CONVERSION__GENERAL_KOEF)
 	std::array<uint8_t, 3> rgbPixel;
 	rgbPixel[0] = uint8_t(ybrPixel[0] + ybrPixel[2] * (1 - s_koefR));
-	rgbPixel[1] = uint8_t(ybrPixel[0] - ybrPixel[1] * (1 - s_koefB) * s_koefB / s_koefG - ybrPixel[2] * (1 - s_koefR) * s_koefR / s_koefG);
+	rgbPixel[1] = uint8_t(ybrPixel[0] - ybrPixel[2] * (1 - s_koefB) * s_koefB / s_koefG - ybrPixel[1] * (1 - s_koefR) * s_koefR / s_koefG);
 	rgbPixel[2] = uint8_t(ybrPixel[0] + ybrPixel[1] * (1 - s_koefB));
 	return rgbPixel;
 #endif 
@@ -104,7 +104,7 @@ void IJImageTranslator::TranslateRGBPixelToYBR(IJRGBPixel* rgbPixel, IJYCbCrPixe
 {
 	ASSERT_PTR_VOID(rgbPixel);
 	ASSERT_PTR_VOID(ybrPixel);
-	*ybrPixel = IJYCbCrPixel444(TranslateRGBPixelToYBR(static_cast<std::vector<uint8_t> >(*rgbPixel)));
+	*ybrPixel = IJYCbCrPixel444(TranslateRGBPixelToYBR(*rgbPixel));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ void IJImageTranslator::TranslateYBRPixelToRGB(IJYCbCrPixel444* ybrPixel, IJRGBP
 {
 	ASSERT_PTR_VOID(ybrPixel);
 	ASSERT_PTR_VOID(rgbPixel);
-	*rgbPixel = IJRGBPixel(TranslateYBRPixelToRGB(static_cast<std::vector<uint8_t> >(*ybrPixel)));
+	*rgbPixel = IJRGBPixel(TranslateYBRPixelToRGB(*ybrPixel));
 }
 
 //////////////////////////////////////////////////////////////////////////

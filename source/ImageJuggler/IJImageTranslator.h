@@ -29,8 +29,8 @@ struct IJImageTranslator
 	static IJResult RGBToYCbCr444(IJRGBImage*		input, IJYCbCrImage444* output);
 	static IJResult YCbCr444ToRGB(IJYCbCrImage444*	input, IJRGBImage*		output);
 
-	//static IJResult RGBToYCbCr442 (IJRGBImage*		input, IJYCbCrImage422* output);
-	//static IJResult YCbCr422ToRGB (IJYCbCrImage422*	input, IJRGBImage*		output);
+	//static IJResult RGBToYCbCr442(IJRGBImage*		input, IJYCbCrImage422* output);
+	//static IJResult YCbCr422ToRGB(IJYCbCrImage422*	input, IJRGBImage*		output);
 
 	static IJResult YCbCrCompSplit(IJYCbCrImage444*	input, std::vector<uint8_t>& yComp
 														 , std::vector<uint8_t>& bComp

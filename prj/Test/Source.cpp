@@ -105,7 +105,7 @@ void RGBToYCbCrTranslate()
 
 	{
 		dbg__profileBlock2("Save YCbCr to file");
-		result = ybrImage->Save("output/bar_skybox.ybr.tga");
+		result = ybrImage->Save(outputFileName);
 		if (result != IJResult::Success)
 		{
 			DBG_REPORT_ERROR("YCbCr image save failed: %d", static_cast<int>(result));
