@@ -20,9 +20,15 @@ do {\
 } while (false)
 
 #if defined(RGB_TO_YCBCR_CONVERSION__GENERAL_KOEF) || defined(YCBCR_TO_RGB_CONVERSION__GENERAL_KOEF)
-static constexpr double s_koefR = 0.299;
-static constexpr double s_koefG = 0.587;
-static constexpr double s_koefB = 0.114;
+	#if defined(IMAGE_CONVERSION_STANDARD_REC_601_BT_601)
+		static constexpr double s_koefR = 0.299;
+		static constexpr double s_koefG = 0.587;
+		static constexpr double s_koefB = 0.114;
+	#elif defined(IMAGE_CONVERSION_STANDARD_REC_709_BT_709)
+		static constexpr double s_koefR = 0.2126;
+		static constexpr double s_koefG = 0.7152;
+		static constexpr double s_koefB = 0.0722;
+	#endif
 #endif
 
 //////////////////////////////////////////////////////////////////////////
@@ -43,16 +49,20 @@ std::array<uint8_t, 3> IJImageTranslator::TranslateRGBPixelToYBR(const std::vect
 	static constexpr double rbMu	=  18.285 / 256;
 
 	std::array<uint8_t, 3> ybrPixel;
-	//                            R                     G                     B
-	ybrPixel[0] = uint8_t(16  + ( yrMu * rgbPixel[0]  + ygMu * rgbPixel[1]  + ybMu * rgbPixel[2]));  // Y
-	ybrPixel[1] = uint8_t(128 + ( brMu * rgbPixel[0]  + bgMu * rgbPixel[1]  + bbMu * rgbPixel[2]));  // B 
-	ybrPixel[2] = uint8_t(128 + ( rrMu * rgbPixel[0]  + rgMu * rgbPixel[1]  + rbMu * rgbPixel[2]));  // R
+	//                           R                     G                     B
+	ybrPixel[0] = uint8_t(16  + (yrMu * rgbPixel[0]  + ygMu * rgbPixel[1]  + ybMu * rgbPixel[2]));  // Y
+	ybrPixel[1] = uint8_t(128 + (brMu * rgbPixel[0]  + bgMu * rgbPixel[1]  + bbMu * rgbPixel[2]));  // B 
+	ybrPixel[2] = uint8_t(128 + (rrMu * rgbPixel[0]  + rgMu * rgbPixel[1]  + rbMu * rgbPixel[2]));  // R
 	return ybrPixel;
 #elif defined(RGB_TO_YCBCR_CONVERSION__GENERAL_KOEF)
 	std::array<uint8_t, 3> ybrPixel;
 	ybrPixel[0] = uint8_t(s_koefR * rgbPixel[0] + s_koefG * rgbPixel[1] + s_koefB * rgbPixel[2]);
-	ybrPixel[1] = uint8_t((rgbPixel[2] - ybrPixel[0]) * (1 - s_koefB));
 	ybrPixel[2] = uint8_t((rgbPixel[1] - ybrPixel[0]) * (1 - s_koefR));
+	ybrPixel[1] = uint8_t((rgbPixel[2] - ybrPixel[2]) * (1 - s_koefB));
+
+	//ybrPixel[0] = uint8_t(0.299 * rgbPixel[0] + 0.587 * rgbPixel[1] + 0.114 * rgbPixel[2]);
+	//ybrPixel[2] = uint8_t(0.713 * (rgbPixel[0] - ybrPixel[0]));
+	//ybrPixel[1] = uint8_t(0.564 * (rgbPixel[2] - ybrPixel[2]));
 	return ybrPixel;
 #endif 
 }
@@ -91,9 +101,17 @@ std::array<uint8_t, 3> IJImageTranslator::TranslateYBRPixelToRGB(const std::vect
 	return rgbPixel;
 #elif defined(YCBCR_TO_RGB_CONVERSION__GENERAL_KOEF)
 	std::array<uint8_t, 3> rgbPixel;
-	rgbPixel[0] = uint8_t(ybrPixel[0] + ybrPixel[2] * (1 - s_koefR));
-	rgbPixel[1] = uint8_t(ybrPixel[0] - ybrPixel[2] * (1 - s_koefB) * s_koefB / s_koefG - ybrPixel[1] * (1 - s_koefR) * s_koefR / s_koefG);
-	rgbPixel[2] = uint8_t(ybrPixel[0] + ybrPixel[1] * (1 - s_koefB));
+	rgbPixel[0] = ybrPixel[0] + 1.403 * ybrPixel[2];
+	rgbPixel[1] = ybrPixel[0] - 0.344 * ybrPixel[1] - 0.714 * ybrPixel[2];
+	rgbPixel[2] = ybrPixel[0] + 1.770 * ybrPixel[1];
+
+//	rgbPixel[0] = uint8_t(ybrPixel[0] + ybrPixel[2] * (1 - s_koefR));
+//	rgbPixel[1] = uint8_t(ybrPixel[0] - ybrPixel[2] * (1 - s_koefB) * s_koefB / s_koefG - ybrPixel[1] * (1 - s_koefR) * s_koefR / s_koefG);
+//	rgbPixel[2] = uint8_t(ybrPixel[0] + ybrPixel[1] * (1 - s_koefB));
+
+//	rgbPixel[0] = uint8_t(ybrPixel[0] + 1.402 * (ybrPixel[2] - 128));
+//	rgbPixel[1] = uint8_t(ybrPixel[0] - 0.34414 * (ybrPixel[1] - 128) - 0.71414 * (ybrPixel[2] - 128));
+//	rgbPixel[2] = uint8_t(ybrPixel[0] + 1.772 * (ybrPixel[1] - 128));
 	return rgbPixel;
 #endif 
 }

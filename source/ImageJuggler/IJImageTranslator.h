@@ -1,14 +1,8 @@
 #pragma once
 
 #include "IJTypes.h"
+#include "ImageJuggler_config.h"
 #include <vector>
-
-//#define RGB_TO_YCBCR_CONVERSION__8BIT_SAMPLE
-#define RGB_TO_YCBCR_CONVERSION__GENERAL_KOEF
-
-//#define YCBCR_TO_RGB_CONVERSION__GENERAL
-//#define YCBCR_TO_RGB_CONVERSION__NO_ROUNDING
-#define YCBCR_TO_RGB_CONVERSION__GENERAL_KOEF
 
 template <typename _PixelCompTy> class IJImage;
 class IJRGBImage;

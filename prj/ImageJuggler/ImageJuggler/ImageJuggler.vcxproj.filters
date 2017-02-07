@@ -74,5 +74,8 @@
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage444.h">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\ImageJuggler\ImageJuggler_config.h">
+      <Filter>source\ImageJuggler</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

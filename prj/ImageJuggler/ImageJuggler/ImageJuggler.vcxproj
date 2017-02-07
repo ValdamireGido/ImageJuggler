@@ -129,6 +129,7 @@
     <ClInclude Include="..\..\..\source\ImageJuggler\IJImageTranslator.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\IJMainWorker.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\IJTypes.h" />
+    <ClInclude Include="..\..\..\source\ImageJuggler\ImageJuggler_config.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImage.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage422.h" />
