@@ -4,6 +4,7 @@
 
 enum class IJResult : uint8_t
 {
+	UnknownResult			= 255u,
 	Success					= 0, 
 	UnknownError			= 1,
 	MemoryAllocationError	= 2,

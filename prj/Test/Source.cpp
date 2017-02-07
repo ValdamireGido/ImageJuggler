@@ -24,7 +24,7 @@ void RGBLoadUnload()
 		image = new IJRGBImage("input/alp_tile_Cable_Bridge_df.tga");
 	}
 
-	IJResult result = IJResult::Success;
+	IJResult result = IJResult::UnknownResult;
 	
 	{
 		dbg__profileBlock2("Loading RGB Image");
@@ -67,11 +67,11 @@ void RGBToYCbCrTranslate()
 
 	IJRGBImage* rgbImage = nullptr;
 	IJYCbCrImage444* ybrImage = nullptr;
-	IJResult result = IJResult::Success;
+	IJResult result = IJResult::UnknownResult;
 
 	{
 		dbg__profileBlock2("Constructing RGB image");
-		rgbImage = new IJRGBImage("input/alp_shadow_map_square4.tga");
+		rgbImage = new IJRGBImage("input/bar_skybox.tga");
 		if (rgbImage == nullptr)
 		{
 			DBG_REPORT_ERROR("RGB imabe contruct failed");
@@ -107,7 +107,7 @@ void RGBToYCbCrTranslate()
 
 	{
 		dbg__profileBlock2("Save YCbCr to file");
-		result = ybrImage->Save("output/ybr_alp_shadow_map_square4.tga");
+		result = ybrImage->Save("output/ybr_bar_skybox.tga");
 		if (result != IJResult::Success)
 		{
 			DBG_REPORT_ERROR("YCbCr image save failed: %d", static_cast<int>(result));
@@ -127,17 +127,30 @@ void RGBToYCbCrTranslate()
 	}
 }
 
+void YBRToRGBTranslate()
+{
+	dbg__profileBlock();
+
+	IJYCbCrImage444* ybrImage = nullptr;
+	IJRGBImage* rgbImage	  = nullptr;
+	IJResult result			  = IJResult::UnknownResult;
+
+	{
+
+	}
+}
+
 void YCbCrSplitAndDumpSeparateChanlesTest()
 {
 	IJYCbCrImage444* image;
 	IJRGBImage* yCompImage;
 	IJRGBImage* bCompImage;
 	IJRGBImage* rCompImage;
-	IJResult result = IJResult::Success;
+	IJResult result = IJResult::UnknownResult;
 
 	{
 		dbg__profileBlock2("Constructing YCbCrImage");
-		image = new IJYCbCrImage444("output/ybr_alp_tile_Cable_Bridge_df.tga");
+		image = new IJYCbCrImage444("output/ybr_bar_skybox.tga");
 		if (image == nullptr)
 		{
 			DBG_REPORT_ERROR("YCbCr image contruction error");
@@ -176,6 +189,10 @@ void YCbCrSplitAndDumpSeparateChanlesTest()
 		{
 			DBG_REPORT_ERROR("YBR split error %d", static_cast<int>(result));
 		}
+
+		yCompImage->Save("output/ybr_bar_skybox_Y.tga");
+		bCompImage->Save("output/ybr_bar_skybox_B.tga");
+		rCompImage->Save("output/ybr_bar_skybox_R.tga");
 	}
 
 	{

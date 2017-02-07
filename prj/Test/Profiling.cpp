@@ -17,7 +17,7 @@ namespace ProfileUtils
 		m_startTime = duration_cast<milliseconds>(system_clock().now().time_since_epoch());
 		s_level++;
 
-		m_oStream << std::endl << std::left;
+		m_oStream << std::left;
 		m_oStream << std::setw(4 * s_level - 1)	<< ">" << "================================================================" << std::endl;
 		m_oStream << std::setw(4 * s_level - 1)	<< ">" << "Block: " << m_blockName.c_str() << std::endl;
 		m_oStream << std::setw(4 * s_level - 1)	<< ">" << "{" << std::endl;
