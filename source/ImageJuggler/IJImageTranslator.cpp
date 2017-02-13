@@ -101,9 +101,9 @@ std::array<uint8_t, 3> IJImageTranslator::TranslateYBRPixelToRGB(const std::vect
 	return rgbPixel;
 #elif defined(YCBCR_TO_RGB_CONVERSION__GENERAL_KOEF)
 	std::array<uint8_t, 3> rgbPixel;
-	rgbPixel[0] = ybrPixel[0] + 1.403 * ybrPixel[2];
-	rgbPixel[1] = ybrPixel[0] - 0.344 * ybrPixel[1] - 0.714 * ybrPixel[2];
-	rgbPixel[2] = ybrPixel[0] + 1.770 * ybrPixel[1];
+	rgbPixel[0] = uint8_t(ybrPixel[0] + 1.403 * ybrPixel[2]);
+	rgbPixel[1] = uint8_t(ybrPixel[0] - 0.344 * ybrPixel[1] - 0.714 * ybrPixel[2]);
+	rgbPixel[2] = uint8_t(ybrPixel[0] + 1.770 * ybrPixel[1]);
 
 //	rgbPixel[0] = uint8_t(ybrPixel[0] + ybrPixel[2] * (1 - s_koefR));
 //	rgbPixel[1] = uint8_t(ybrPixel[0] - ybrPixel[2] * (1 - s_koefB) * s_koefB / s_koefG - ybrPixel[1] * (1 - s_koefR) * s_koefR / s_koefG);

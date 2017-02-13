@@ -177,27 +177,27 @@ inline void IJImage<_PixelCompTy>::Header::serialize(std::ostream& oStream)
 template <typename _PixelCompTy>
 IJImage<_PixelCompTy>::Header::operator std::vector<uint8_t>()
 {
-	std::vector<uint8_t> rawHeader;
-	rawHeader.resize(Header::k_headerSize);
-	rawHeader[0]  = (char)idlength;
-	rawHeader[1]  = (char)colourmaptype;
-	rawHeader[2]  = (char)datatypecode;
-	rawHeader[3]  = (char)(colourmaporigin & 0x00FF);		// 2 bytes
-	rawHeader[4]  = (char)(colourmaporigin & 0xFF00) / 256;	// 2 bytes
-	rawHeader[5]  = (char)(colourmaplength & 0x00FF);		// 2 bytes
-	rawHeader[6]  = (char)(colourmaplength & 0xFF00) / 256;	// 2 bytes
-	rawHeader[7]  = (char)colourmapdepth;
-	rawHeader[8]  = (char)(x_origin & 0x00FF);				// 2 bytes
-	rawHeader[9]  = (char)(x_origin & 0xFF00) / 256;		// 2 bytes
-	rawHeader[10] = (char)(y_origin & 0x00FF);				// 2 bytes
-	rawHeader[11] = (char)(y_origin & 0xFF00) / 256;		// 2 bytes
-	rawHeader[12] = (char)(width & 0x00FF);					// 2 bytes
-	rawHeader[13] = (char)(width & 0xFF00) / 256;			// 2 bytes
-	rawHeader[14] = (char)(height & 0x00FF);				// 2 bytes
-	rawHeader[15] = (char)(height & 0xFF00) / 256;			// 2 bytes
-	rawHeader[16] = (char)bitsperpixel; 
-	rawHeader[17] = (char)imagedescriptor;
-	return rawHeader;
+	return std::vector<uint8_t> 
+	{
+		(uint8_t)idlength;
+		(uint8_t)colourmaptype;
+		(uint8_t)datatypecode;
+		(uint8_t)(colourmaporigin & 0x00FF);		// 2 bytes
+		(uint8_t)(colourmaporigin & 0xFF00) / 256;	// 2 bytes
+		(uint8_t)(colourmaplength & 0x00FF);		// 2 bytes
+		(uint8_t)(colourmaplength & 0xFF00) / 256;	// 2 bytes
+		(uint8_t)colourmapdepth;
+		(uint8_t)(x_origin & 0x00FF);				// 2 bytes
+		(uint8_t)(x_origin & 0xFF00) / 256;		// 2 bytes
+		(uint8_t)(y_origin & 0x00FF);				// 2 bytes
+		(uint8_t)(y_origin & 0xFF00) / 256;		// 2 bytes
+		(uint8_t)(width & 0x00FF);					// 2 bytes
+		(uint8_t)(width & 0xFF00) / 256;			// 2 bytes
+		(uint8_t)(height & 0x00FF);				// 2 bytes
+		(uint8_t)(height & 0xFF00) / 256;			// 2 bytes
+		(uint8_t)bitsperpixel; 
+		(uint8_t)imagedescriptor;
+	};
 }
 
 template <typename _PixelCompTy>

@@ -4,6 +4,13 @@
 #include "ImageJuggler_config.h"
 #include <vector>
 
+#if defined(RGB_TO_YCBCR_CONVERSION__GENERAL_KOEF) || defined(YCBCR_TO_RGB_CONVERSION__GENERAL_KOEF)
+	#if !defined(IMAGE_CONVERSION_STANDARD_REC_709_BT_709) && !defined(IMAGE_CONVERSION_STANDARD_REC_601_BT_601)
+		//#define IMAGE_CONVERSION_STANDARD_REC_601_BT_601
+		#define IMAGE_CONVERSION_STANDARD_REC_709_BT_709
+	#endif 
+#endif
+
 template <typename _PixelCompTy> class IJImage;
 class IJRGBImage;
 class IJYCbCrImage444;
