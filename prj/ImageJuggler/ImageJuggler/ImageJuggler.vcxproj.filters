@@ -77,5 +77,8 @@
     <ClInclude Include="..\..\..\source\ImageJuggler\ImageJuggler_config.h">
       <Filter>source\ImageJuggler</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\ImageJuggler\IJUtils.h">
+      <Filter>source\ImageJuggler</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -69,8 +69,8 @@ void RGBToYCbCrTranslate()
 	IJYCbCrImage444* ybrImage = nullptr;
 	IJResult result = IJResult::UnknownResult;
 
-	const std::string inputFileName  = "input/tok_tile_park_stone01_df.tga";
-	const std::string outputFileName = "output/tok_tile_park_stone01_df.ybr.tga";
+	const std::string inputFileName  = "input/bar_skybox.tga";
+	const std::string outputFileName = "output/bar_skybox.ybr.tga";
 
 	{
 		dbg__profileBlock2("Loading RGB image");
@@ -127,8 +127,8 @@ void YBRToRGBTranslate()
 	IJRGBImage* rgbImage	  = nullptr;
 	IJResult result			  = IJResult::UnknownResult;
 
-	const std::string inputFileName  = "output/tok_tile_park_stone01_df.ybr.tga";
-	const std::string outputFileName = "output/tok_tile_park_stone01_df.rgb.tga";
+	const std::string inputFileName  = "output/bar_skybox.ybr.tga";
+	const std::string outputFileName = "output/bar_skybox.rgb.tga";
 
 	{
 		dbg__profileBlock2("Loading YBR Image");

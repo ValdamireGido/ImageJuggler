@@ -3,6 +3,11 @@
 #include "Image/IJYCbCrImage444.h"
 #include "Image/IJYCbCrImage422.h"
 
+#include <iostream>
+#include <iomanip>
+
+#include "IJUtils.h"
+
 #define ASSERT_PTR(ptr)\
 do {\
 	assert(ptr);\
@@ -20,11 +25,11 @@ do {\
 } while (false)
 
 #if defined(RGB_TO_YCBCR_CONVERSION__GENERAL_KOEF) || defined(YCBCR_TO_RGB_CONVERSION__GENERAL_KOEF)
-	#if defined(IMAGE_CONVERSION_STANDARD_REC_601_BT_601)
+	#if IMAGE_CONVERSION_STANDARD_REC_601_BT_601
 		static constexpr double s_koefR = 0.299;
 		static constexpr double s_koefG = 0.587;
 		static constexpr double s_koefB = 0.114;
-	#elif defined(IMAGE_CONVERSION_STANDARD_REC_709_BT_709)
+	#elif IMAGE_CONVERSION_STANDARD_REC_709_BT_709
 		static constexpr double s_koefR = 0.2126;
 		static constexpr double s_koefG = 0.7152;
 		static constexpr double s_koefB = 0.0722;
@@ -35,94 +40,62 @@ do {\
 
 std::array<uint8_t, 3> IJImageTranslator::TranslateRGBPixelToYBR(const std::vector<uint8_t>& rgbPixel)
 {
-#if defined(RGB_TO_YCBCR_CONVERSION__8BIT_SAMPLE)
-	static constexpr double yrMu	=  65.481 / 256;
-	static constexpr double ygMu	= 128.553 / 256;
-	static constexpr double ybMu	=  25.064 / 256;
-
-	static constexpr double brMu	= -37.738 / 256;
-	static constexpr double bgMu	=  74.494 / 256;
-	static constexpr double bbMu	= 112.439 / 256;
-
-	static constexpr double rrMu	=  bbMu;
-	static constexpr double rgMu	=  94.154 / 256;
-	static constexpr double rbMu	=  18.285 / 256;
-
+	double  R = rgbPixel[0], 
+			G = rgbPixel[1], 
+			B = rgbPixel[2];
 	std::array<uint8_t, 3> ybrPixel;
-	//                           R                     G                     B
-	ybrPixel[0] = uint8_t(16  + (yrMu * rgbPixel[0]  + ygMu * rgbPixel[1]  + ybMu * rgbPixel[2]));  // Y
-	ybrPixel[1] = uint8_t(128 + (brMu * rgbPixel[0]  + bgMu * rgbPixel[1]  + bbMu * rgbPixel[2]));  // B 
-	ybrPixel[2] = uint8_t(128 + (rrMu * rgbPixel[0]  + rgMu * rgbPixel[1]  + rbMu * rgbPixel[2]));  // R
+#if IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES
+	ybrPixel[0] = uint8_t( 0.299 * R  + 0.587 * G  + 0.114 * B);
+	ybrPixel[1] = uint8_t(-0.169 * R  - 0.331 * G  + 0.500 * B) + 128;
+	ybrPixel[2] = uint8_t( 0.500 * R  - 0.419 * G  - 0.081 * B) + 128;
+#elif IMAGE_CONVERSION_STANDARD_SDTV
+	ybrPixel[0] = uint8_t( 0.257 * R  + 0.504 * G  + 0.098 * B + 16 );
+	ybrPixel[1] = uint8_t(-0.148 * R  - 0.291 * G  + 0.439 * B + 128);
+	ybrPixel[2] = uint8_t( 0.439 * R  - 0.368 * G  - 0.071 * B + 128);
+#elif IMAGE_CONVERSION_STANDARD_HDTV
+	ybrPixel[0] = static_cast<uint8_t>( cusmath::clamp<double>( 0.183 * R  + 0.614 * G  + 0.062 * B + 16 , 16, 235) );
+	ybrPixel[1] = static_cast<uint8_t>( cusmath::clamp<double>(-0.101 * R  - 0.339 * G  + 0.439 * B + 128, 16, 240) );
+	ybrPixel[2] = static_cast<uint8_t>( cusmath::clamp<double>( 0.439 * R  - 0.399 * G  - 0.040 * B + 128, 16, 240) );
+#elif IMAGE_CONVERSION_CUSTOM_COCG
+	ybrPixel[0] = uint8_t( 0.33 * R + 0.33 * G + 0.33 * B);
+	ybrPixel[1] = uint8_t(			  0.5  * G + 0.5  * B);
+	ybrPixel[2] = uint8_t( 0.5  * R + 0.5  * G);
+#endif
 	return ybrPixel;
-#elif defined(RGB_TO_YCBCR_CONVERSION__GENERAL_KOEF)
-	std::array<uint8_t, 3> ybrPixel;
-	ybrPixel[0] = uint8_t(s_koefR * rgbPixel[0] + s_koefG * rgbPixel[1] + s_koefB * rgbPixel[2]);
-	ybrPixel[2] = uint8_t((rgbPixel[1] - ybrPixel[0]) * (1 - s_koefR));
-	ybrPixel[1] = uint8_t((rgbPixel[2] - ybrPixel[2]) * (1 - s_koefB));
-
-	//ybrPixel[0] = uint8_t(0.299 * rgbPixel[0] + 0.587 * rgbPixel[1] + 0.114 * rgbPixel[2]);
-	//ybrPixel[2] = uint8_t(0.713 * (rgbPixel[0] - ybrPixel[0]));
-	//ybrPixel[1] = uint8_t(0.564 * (rgbPixel[2] - ybrPixel[2]));
-	return ybrPixel;
-#endif 
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 std::array<uint8_t, 3> IJImageTranslator::TranslateYBRPixelToRGB(const std::vector<uint8_t>& ybrPixel)
 {
-#if defined(YCBCR_TO_RGB_CONVERSION__GENERAL)
-	static constexpr double rgbyMu  = 298.082 / 256;
-	static constexpr double rrMu	= 408.583 / 256;
-	static constexpr double gbMu	= 100.291 / 256;
-	static constexpr double grMu	= 208.120 / 256;
-	static constexpr double bbMu	= 516.412 / 256;
-
+	double  Y = ybrPixel[0], 
+			B = ybrPixel[1], 
+			R = ybrPixel[2];
 	std::array<uint8_t, 3> rgbPixel;
-	const double yCompMu = rgbyMu * (ybrPixel[0]);
-	//				      Y           B                       R
-	rgbPixel[0] = uint8_t(yCompMu   					    + rrMu * (ybrPixel[2]) 	- 222.921);  // R
-	rgbPixel[1] = uint8_t(yCompMu   - gbMu * (ybrPixel[1])  - grMu * (ybrPixel[2])	+ 135.576);  // G
-	rgbPixel[2] = uint8_t(yCompMu   + bbMu * (ybrPixel[1])	  						- 276.836);  // B
+#if IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES
+	uint8_t R_ = R - 128;
+	uint8_t B_ = B - 128;
+	rgbPixel[0] = uint8_t( Y				 + 1.400 * R_ );
+	rgbPixel[1] = uint8_t( Y	- 0.343 * B_ - 0.711 * R_ );
+	rgbPixel[2] = uint8_t( Y	+ 1.765 * B_			  );
+#elif IMAGE_CONVERSION_STANDARD_SDTV
+	int16_t Y_ = Y - 16,
+			B_ = B - 128, 
+			R_ = R - 128,
+			kY = Y_ * 1.164;
+	rgbPixel[0] = uint8_t(kY			  + 1.196 * R_);
+	rgbPixel[1] = uint8_t(kY - 0.392 * B_ - 0.813 * R_);
+	rgbPixel[2] = uint8_t(kY + 2.017 * B_			  );
+#elif IMAGE_CONVERSION_STANDARD_HDTV
+	double  Y_ = Y - 16, 
+			B_ = B - 128, 
+			R_ = R - 128, 
+			kY = static_cast<double>(Y_ * 1.164);
+	rgbPixel[0] = static_cast<uint8_t>( cusmath::clamp<double>(kY			   + 1.793 * R_, 0, 255) );
+	rgbPixel[1] = static_cast<uint8_t>( cusmath::clamp<double>(kY - 0.213 * B_ - 0.533 * R_, 0, 255) );
+	rgbPixel[2] = static_cast<uint8_t>( cusmath::clamp<double>(kY + 2.112 * B_			   , 0, 255) );
+#endif
 	return rgbPixel;
-#elif defined(YCBCR_TO_RGB_CONVERSION__NO_ROUNDING)
-	static constexpr double rgbyMu  = 255 / 219;
-	static constexpr double rrMu	= 255 / 112 * 0.701;
-	static constexpr double gbMu	= (255 * 0.886 * 0.114 / 112) / 0.587;
-	static constexpr double grMu	= (255 * 0.701 * 0.299 / 112) / 0.587;
-	static constexpr double bbMu	= 255 / 112 * 0.886;
-
-	std::array<uint8_t, 3> rgbPixel;
-	const double yCompMu = rgbyMu * (ybrPixel[0] - 16);
-	//				      Y           B                             R
-	rgbPixel[0] = uint8_t(yCompMu   					          + rrMu * (ybrPixel[2] - 128));  // R
-	rgbPixel[1] = uint8_t(yCompMu   - gbMu * (ybrPixel[1] - 128)  - grMu * (ybrPixel[2] - 128));  // G
-	rgbPixel[2] = uint8_t(yCompMu   + bbMu * (ybrPixel[1] - 128)	  						  );  // B
-	return rgbPixel;
-#elif defined(YCBCR_TO_RGB_CONVERSION__GENERAL_KOEF)
-	std::array<uint8_t, 3> rgbPixel;
-	/*
-	rgbPixel[0] = uint8_t(ybrPixel[0] + 1.403 * ybrPixel[2]);
-	rgbPixel[1] = uint8_t(ybrPixel[0] - 0.344 * ybrPixel[1] - 0.714 * ybrPixel[2]);
-	rgbPixel[2] = uint8_t(ybrPixel[0] + 1.770 * ybrPixel[1]);
-	*/
-
-//	rgbPixel[0] = uint8_t(ybrPixel[0] + ybrPixel[2] * (1 - s_koefR));
-//	rgbPixel[1] = uint8_t(ybrPixel[0] - ybrPixel[2] * (1 - s_koefB) * s_koefB / s_koefG - ybrPixel[1] * (1 - s_koefR) * s_koefR / s_koefG);
-//	rgbPixel[2] = uint8_t(ybrPixel[0] + ybrPixel[1] * (1 - s_koefB));
-
-//	rgbPixel[0] = uint8_t(ybrPixel[0] + 1.402 * (ybrPixel[2] - 128));
-//	rgbPixel[1] = uint8_t(ybrPixel[0] - 0.34414 * (ybrPixel[1] - 128) - 0.71414 * (ybrPixel[2] - 128));
-//	rgbPixel[2] = uint8_t(ybrPixel[0] + 1.772 * (ybrPixel[1] - 128));
-
-	 
-	rgbPixel[0] = (unsigned char)(ybrPixel[0] + 1.4075 * (ybrPixel[2] - 128));
-	rgbPixel[1] = (unsigned char)(ybrPixel[0] - 0.3455 * (ybrPixel[1]- 128) - (0.7169 * (ybrPixel[2] - 128)));
-	rgbPixel[2] = (unsigned char)(ybrPixel[0] + 1.7790 * (ybrPixel[1] - 128));
-	
-
-	return rgbPixel;
-#endif 
 }
 
 //////////////////////////////////////////////////////////////////////////
