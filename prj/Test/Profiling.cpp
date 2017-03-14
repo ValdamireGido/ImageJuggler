@@ -32,7 +32,7 @@ namespace ProfileUtils
 
 	void ProfileBlock::_PrintSummary()
 	{
-		uint32_t time = (m_endTime - m_startTime).count();
+		uint32_t time = static_cast<uint32_t>((m_endTime - m_startTime).count());
 		m_oStream << std::left;
 		m_oStream << std::setw(4 * s_level) << ">" << std::setw(12) << "File: "			 << m_fileName.c_str()	<< std::endl
 				  << std::setw(4 * s_level) << ">" << std::setw(12) << "Line: "			 << m_line				<< std::endl

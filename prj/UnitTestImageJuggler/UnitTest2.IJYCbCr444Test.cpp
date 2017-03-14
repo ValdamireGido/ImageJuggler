@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "Image/IJYCbCrImage444.h"
+#include "Image/IJYCbCrImage888.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -9,11 +9,11 @@ namespace UnitTestImageJuggler
 {
 	namespace IJYCbCrImageTest
 	{
-		IJResult LoadYBRImage(IJYCbCrImage444* image, const std::string& fileName)
+		IJResult LoadYBRImage(IJYCbCrImage888* image, const std::string& fileName)
 		{
 			if (!image)
 			{
-				image = new IJYCbCrImage444();
+				image = new IJYCbCrImage888();
 				Assert::AreNotEqual((intptr_t)nullptr, (intptr_t)image, L"Faile to create IJYCbCrImage444 instance");
 				if (!image)
 				{
@@ -24,7 +24,7 @@ namespace UnitTestImageJuggler
 			return image->Load(fileName);
 		}
 
-		IJResult SaveYBRImage(IJYCbCrImage444* image)
+		IJResult SaveYBRImage(IJYCbCrImage888* image)
 		{
 			Assert::AreNotEqual((intptr_t)nullptr, (intptr_t)image, L"Invalid input pointer IJYCbCrImage444* image");
 			if (!image)
@@ -35,7 +35,7 @@ namespace UnitTestImageJuggler
 			return image->Save();
 		}
 
-		IJResult UnloadYBRImage(IJYCbCrImage444* image)
+		IJResult UnloadYBRImage(IJYCbCrImage888* image)
 		{
 			Assert::AreNotEqual((intptr_t)nullptr, (intptr_t)image, L"Invalid input pointer IJYCbCrImage444* image");
 			if (!image)
@@ -76,7 +76,7 @@ namespace UnitTestImageJuggler
 			}
 
 		private:
-			IJYCbCrImage444*	m_image		= nullptr;
+			IJYCbCrImage888*	m_image		= nullptr;
 			std::string			m_fileName	= "input/"; // NEED TO SET
 		};
 	}

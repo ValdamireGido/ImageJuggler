@@ -8,7 +8,7 @@
 
 #include "ImageJuggler/IJImageTranslator.h"
 #include "ImageJuggler/Image/IJRGBImage.h"
-#include "ImageJuggler/Image/IJYCbCrImage444.h"
+#include "ImageJuggler/Image/IJYCbCrImage888.h"
 
 #define	PROFILING_ENABLED 1
 #include "Profiling.h"
@@ -66,7 +66,7 @@ void RGBToYCbCrTranslate()
 	dbg__profileBlock();
 
 	IJRGBImage* rgbImage = nullptr;
-	IJYCbCrImage444* ybrImage = nullptr;
+	IJYCbCrImage888* ybrImage = nullptr;
 	IJResult result = IJResult::UnknownResult;
 
 	const std::string inputFileName  = "input/bar_skybox.tga";
@@ -89,7 +89,7 @@ void RGBToYCbCrTranslate()
 
 	{
 		dbg__profileBlock2("Translation RGB -> YCbCr444");
-		ybrImage = new IJYCbCrImage444();
+		ybrImage = new IJYCbCrImage888();
 		assert(ybrImage);
 		if (ybrImage == nullptr)
 		{
@@ -123,7 +123,7 @@ void YBRToRGBTranslate()
 {
 	dbg__profileBlock();
 
-	IJYCbCrImage444* ybrImage = nullptr;
+	IJYCbCrImage888* ybrImage = nullptr;
 	IJRGBImage* rgbImage	  = nullptr;
 	IJResult result			  = IJResult::UnknownResult;
 
@@ -133,7 +133,7 @@ void YBRToRGBTranslate()
 	{
 		dbg__profileBlock2("Loading YBR Image");
 
-		ybrImage = new IJYCbCrImage444();
+		ybrImage = new IJYCbCrImage888();
 		assert(ybrImage);
 		if (!ybrImage)
 		{
@@ -190,7 +190,7 @@ void YBRToRGBTranslate()
 
 void YCbCrSplitAndDumpSeparateChanlesTest()
 {
-	IJYCbCrImage444* image;
+	IJYCbCrImage888* image;
 	IJRGBImage* yCompImage;
 	IJRGBImage* bCompImage;
 	IJRGBImage* rCompImage;
@@ -198,7 +198,7 @@ void YCbCrSplitAndDumpSeparateChanlesTest()
 
 	{
 		dbg__profileBlock2("Loading image");
-		image = new IJYCbCrImage444("output/ybr_bar_skybox.tga");
+		image = new IJYCbCrImage888("output/ybr_bar_skybox.tga");
 		if (image == nullptr)
 		{
 			DBG_REPORT_ERROR("YCbCr image contruction error");

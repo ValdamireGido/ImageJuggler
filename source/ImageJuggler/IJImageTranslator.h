@@ -10,47 +10,48 @@
 		#define IMAGE_CONVERSION_STANDARD_REC_709_BT_709 0
 		
 		#define	IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES 0
-		#define IMAGE_CONVERSION_STANDARD_SDTV 0
-		#define IMAGE_CONVERSION_STANDARD_HDTV 1
+		#define IMAGE_CONVERSION_STANDARD_SDTV 1
+		#define IMAGE_CONVERSION_STANDARD_HDTV 0
 		#define IMAGE_CONVERSION_CUSTOM_COCG 0
 	#endif 
 #endif
 
-template <typename _PixelCompTy> class IJImage;
-class IJRGBImage;
-class IJYCbCrImage444;
-class IJYCbCrImage422;
+template <typename _PixelCompTy, size_t _compsCount> class IJImageInterface;
 
-struct IJRGBPixel;
-struct IJYCbCrPixel444;
+class IJRGBImage;
+class IJYCbCrImage888;
+
+class IJYCbCrPixel888;
+class IJRGBPixel;
 
 struct IJImageTranslator
 {
 	static std::array<uint8_t, 3> TranslateRGBPixelToYBR(const std::vector<uint8_t>& rgbPixel);
 	static std::array<uint8_t, 3> TranslateYBRPixelToRGB(const std::vector<uint8_t>& ybrPixel);
 
-	static void TranslateRGBPixelToYBR(IJRGBPixel*		rgbPixel, IJYCbCrPixel444* ybrPixel);
-	static void TranslateYBRPixelToRGB(IJYCbCrPixel444* ybrPixel, IJRGBPixel*	   rgbPixel);
+	static void TranslateRGBPixelToYBR(IJRGBPixel*		rgbPixel, IJYCbCrPixel888* ybrPixel);
+	static void TranslateYBRPixelToRGB(IJYCbCrPixel888* ybrPixel, IJRGBPixel*	   rgbPixel);
 
-	static IJResult RGBToYCbCr444(IJRGBImage*		input, IJYCbCrImage444* output);
-	static IJResult YCbCr444ToRGB(IJYCbCrImage444*	input, IJRGBImage*		output);
+	static IJResult RGBToYCbCr444(IJRGBImage*		input, IJYCbCrImage888* output);
+	static IJResult YCbCr444ToRGB(IJYCbCrImage888*	input, IJRGBImage*		output);
 
 	//static IJResult RGBToYCbCr442(IJRGBImage*		input, IJYCbCrImage422* output);
 	//static IJResult YCbCr422ToRGB(IJYCbCrImage422*	input, IJRGBImage*		output);
 
-	static IJResult YCbCrCompSplit(IJYCbCrImage444*	input, std::vector<uint8_t>& yComp
+	static IJResult YCbCrCompSplit(IJYCbCrImage888*	input, std::vector<uint8_t>& yComp
 														 , std::vector<uint8_t>& bComp
 														 , std::vector<uint8_t>& rComp);
 
-	static IJResult YBRToRGBCompSlit(IJYCbCrImage444* input, std::vector<uint8_t>& yComp
+	static IJResult YBRToRGBCompSlit(IJYCbCrImage888* input, std::vector<uint8_t>& yComp
 														   , std::vector<uint8_t>& bComp
 														   , std::vector<uint8_t>& rComp);
 
-	static IJResult YBRToRGBCompSlit(IJYCbCrImage444* input, IJRGBImage* yComp
+	static IJResult YBRToRGBCompSlit(IJYCbCrImage888* input, IJRGBImage* yComp
 														   , IJRGBImage* bComp
 														   , IJRGBImage* rComp);
 
 private:
-	template <typename _PixelCompTy>
-	static void _CopyImageAttributes(IJImage<_PixelCompTy>* input, IJImage<_PixelCompTy>* output);
+	template <typename _PixelCompTy, size_t _compsCount>
+	static void _CopyImageAttributes(IJImageInterface<_PixelCompTy, _compsCount>* input, 
+									 IJImageInterface<_PixelCompTy, _compsCount>* output);
 };

@@ -23,8 +23,8 @@ enum class IJResult : uint8_t
 enum class IJImageType : uint8_t
 {
 	RGB			= 0,
-	YCbCr444	= 1, 
-	YCbCr422	= 2,
+	YCbCr888	= 1, 
+	YCbCr844	= 2,
 	YCoCg		= 3
 };
 
