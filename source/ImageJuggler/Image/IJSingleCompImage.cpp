@@ -41,7 +41,7 @@ IJResult IJSingleCompImage::Load(std::istream& iStream)
 	while (!iStream.eof())
 	{
 		Pixel_t::Comp_t comp = 0;
-		iStream.read((char*)comp, Pixel_t::k_compCount);
+		iStream.read((char*)&comp, Pixel_t::k_compCount);
 		IJSingleCompPixel* pixel = new IJSingleCompPixel(comp);
 		assert(pixel);
 		AddPixel(pixel);

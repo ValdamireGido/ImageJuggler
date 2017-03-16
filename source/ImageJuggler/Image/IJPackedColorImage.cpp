@@ -93,7 +93,7 @@ IJResult IJPackedColorImage::PackImage(IJYCbCrImage888* image, float rate)
 		SetPackRate(rate);
 	}
 
-	size_t ySize = image->GetSize();
+	size_t ySize = image->GetSize() / 3;
 
 	std::vector<uint8_t> uvComps, yComp;
 	yComp.resize(ySize);
@@ -159,7 +159,7 @@ IJResult IJPackedColorImage::UnpackImage(IJYCbCrImage888* image, float rate)
 	return image->Load(rawImage);
 }
 
-IJResult IJPackedColorImage::PackRGBImabe(IJRGBImage* image, float rate)
+IJResult IJPackedColorImage::PackRGBImage(IJRGBImage* image, float rate)
 {
 	ASSERT_PTR(image);
 

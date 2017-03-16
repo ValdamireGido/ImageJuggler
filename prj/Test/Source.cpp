@@ -9,6 +9,7 @@
 #include "ImageJuggler/IJImageTranslator.h"
 #include "ImageJuggler/Image/IJRGBImage.h"
 #include "ImageJuggler/Image/IJYCbCrImage888.h"
+#include "ImageJuggler/Image/IJPackedColorImage.h"
 
 #define	PROFILING_ENABLED 1
 #include "Profiling.h"
@@ -188,68 +189,67 @@ void YBRToRGBTranslate()
 	}
 }
 
-void YCbCrSplitAndDumpSeparateChanlesTest()
+void RGBToYUVPack()
 {
-	IJYCbCrImage888* image;
-	IJRGBImage* yCompImage;
-	IJRGBImage* bCompImage;
-	IJRGBImage* rCompImage;
+	const std::string inputFileName  = "input/tok_tile_park_stone01_df.tga";
+	const std::string outputFileName = "output/tok_tile_park_stone01_df.yuv.tga";
+
 	IJResult result = IJResult::UnknownResult;
+	IJPackedColorImage* packedImage = nullptr;
+	IJRGBImage* rgbImage = nullptr;
 
 	{
-		dbg__profileBlock2("Loading image");
-		image = new IJYCbCrImage888("output/ybr_bar_skybox.tga");
-		if (image == nullptr)
+		dbg__profileBlock2("Loading rgb image");
+
+		rgbImage = new IJRGBImage();
+		assert(rgbImage);
+
+		std::ifstream ifile(inputFileName, std::ios::in);
+		if (!ifile.is_open())
 		{
-			DBG_REPORT_ERROR("YCbCr image contruction error");
-			return;
+			DBG_REPORT_ERROR("Can't open input rgb file");
 		}
 
-		result = image->Load();
+		result = rgbImage->Load(ifile);
 		if (result != IJResult::Success)
 		{
-			DBG_REPORT_ERROR("Loading YCbCr image failed: %d", static_cast<int>(result));
-			return;
+			DBG_REPORT_ERROR("Can't load rgb image");
+		}
+
+		ifile.close();
+	}
+
+
+	{
+		dbg__profileBlock2("Translating and packing the rgb image to packed YUV image");
+		packedImage = new IJPackedColorImage();
+		assert(packedImage);
+		
+		result = packedImage->PackRGBImage(rgbImage);
+		if (result != IJResult::Success)
+		{
+			DBG_REPORT_ERROR("Can't pack the rgb to packed yuv image");
 		}
 	}
 
+
 	{
-		dbg__profileBlock2("Spliting the ybr image to three rgb images");
-		
-		yCompImage = new IJRGBImage();
-		assert(yCompImage);
-		
-		bCompImage = new IJRGBImage();
-		assert(bCompImage);
+		dbg__profileBlock2("Saving the result image");
 
-		rCompImage = new IJRGBImage();
-		assert(rCompImage);
-
-		result = IJImageTranslator::YBRToRGBCompSlit(image, yCompImage, bCompImage, rCompImage);
+		std::ofstream ofile(outputFileName, std::ios::out | std::ios::binary);
+		result = packedImage->Save(ofile);
 		if (result != IJResult::Success)
 		{
-			DBG_REPORT_ERROR("YBR split error %d", static_cast<int>(result));
+			DBG_REPORT_ERROR("Error saving packed image %s", outputFileName.c_str());
 		}
 
-		yCompImage->Save("output/ybr_bar_skybox_Y.tga");
-		bCompImage->Save("output/ybr_bar_skybox_B.tga");
-		rCompImage->Save("output/ybr_bar_skybox_R.tga");
-	}
+		ofile.close();
 
-	{
-		dbg__profileBlock2("Clearing up data - Unload images");
+		delete rgbImage; 
+		rgbImage = nullptr;
 
-		delete image;
-		image = nullptr;
-
-		delete yCompImage;
-		yCompImage = nullptr;
-
-		delete bCompImage;
-		bCompImage = nullptr;
-
-		delete rCompImage;
-		bCompImage = nullptr;
+		delete packedImage;
+		packedImage = nullptr;
 	}
 }
 
@@ -257,13 +257,10 @@ void YCbCrSplitAndDumpSeparateChanlesTest()
 
 int main(int argc, char** argv)
 {
-	//RGBLoadUnload();
-	
-	RGBToYCbCrTranslate();
-	
-	//YCbCrSplitAndDumpSeparateChanlesTest();
+	//RGBToYCbCrTranslate();
+	//YBRToRGBTranslate();
 
-	YBRToRGBTranslate();
+	RGBToYUVPack();
 
 	return EXIT_SUCCESS;
 }

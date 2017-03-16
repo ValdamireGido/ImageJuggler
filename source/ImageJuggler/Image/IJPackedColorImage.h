@@ -19,7 +19,7 @@ public:
 	IJResult PackImage(IJYCbCrImage888* image, float rate = 2.f);
 	IJResult UnpackImage(IJYCbCrImage888* image, float rate = 2.f);
 
-	IJResult PackRGBImabe(IJRGBImage* image, float rate = 2.f);
+	IJResult PackRGBImage(IJRGBImage* image, float rate = 2.f);
 	IJResult UnpackRGBImage(IJRGBImage* image, float rate = 2.f);
 
 	const std::string& GetFileName() const;
@@ -33,9 +33,13 @@ private:
 	IJResult Save();
 
 private:
-	IJSingleCompImage* m_yImage;
 	// TODO: change the storage type for the comps image fields of this class
-	IJSingleCompImage* m_uvImage; // THIS IS THE WRONG USE RIGHT NOW!!! NEED TO REWORK
+	//		there is a point to think about - how to store the image data. 
+	//		it may be just a vectors, but in case of separate classes we just 
+	//		have a special funstionality as for image. but on the other hand
+	//		this taks a bit more memmory and may take more time to precess.
+	IJSingleCompImage* m_yImage;
+	IJSingleCompImage* m_uvImage;
 	float m_packRate;
 
 	std::string	m_fileName;

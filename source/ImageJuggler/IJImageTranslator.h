@@ -35,9 +35,6 @@ struct IJImageTranslator
 	static IJResult RGBToYCbCr888(IJRGBImage*		input, IJYCbCrImage888* output);
 	static IJResult YCbCr888ToRGB(IJYCbCrImage888*	input, IJRGBImage*		output);
 
-	//static IJResult RGBToYCbCr442(IJRGBImage*		input, IJYCbCrImage422* output);
-	//static IJResult YCbCr422ToRGB(IJYCbCrImage422*	input, IJRGBImage*		output);
-
 	static IJResult YCbCrCompSplit(IJYCbCrImage888*	input, std::vector<uint8_t>& yComp
 														 , std::vector<uint8_t>& bComp
 														 , std::vector<uint8_t>& rComp);
@@ -45,10 +42,6 @@ struct IJImageTranslator
 	static IJResult YBRToRGBCompSlit(IJYCbCrImage888* input, std::vector<uint8_t>& yComp
 														   , std::vector<uint8_t>& bComp
 														   , std::vector<uint8_t>& rComp);
-
-	static IJResult YBRToRGBCompSlit(IJYCbCrImage888* input, IJRGBImage* yComp
-														   , IJRGBImage* bComp
-														   , IJRGBImage* rComp);
 
 private:
 	template <typename _PixelCompTy, size_t _compsCount>
