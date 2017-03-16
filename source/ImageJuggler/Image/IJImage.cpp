@@ -64,6 +64,7 @@ IJImage::IJImage(const std::string& fileName, IJImageType type)
 
 IJResult IJImage::Load(std::istream& iStream) 
 {
+	_LoadHeader(iStream);
 	size_t imageSize = 0u;
 	while (!iStream.eof())
 	{
@@ -96,6 +97,7 @@ IJResult IJImage::Save(std::ostream& oStream)
 		return IJResult::ImageIsEmpty;
 	}
 
+	_SaveHeader(oStream);
 	for (size_t i = 0u, size = GetPixelData().size(); i < size; i++)
 	{
 		std::vector<PixelComp_t> rawPixel = GetPixelData()[i]->serialize();
