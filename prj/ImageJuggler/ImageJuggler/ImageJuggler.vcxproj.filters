@@ -45,6 +45,9 @@
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJSingleCompImage.cpp">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\ImageJuggler\ImageJuggler.cpp">
+      <Filter>source\ImageJuggler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\gles20\gl2.h">
@@ -94,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJSingleCompImage.h">
       <Filter>source\ImageJuggler\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\ImageJuggler\ImageJuggler.h">
+      <Filter>source\ImageJuggler</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
