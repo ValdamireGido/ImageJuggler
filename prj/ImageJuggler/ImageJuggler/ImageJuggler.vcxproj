@@ -116,12 +116,12 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\source\ImageJuggler\IJImageTranslator.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\IJMainWorker.cpp" />
-    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJImageInterface.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJImage.cpp" />
+    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJImageInterface.cpp" />
+    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJPackedColorImage.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.cpp" />
-    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrCompressedImage.cpp" />
-    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage422.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage888.cpp" />
+    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJSingleCompImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\gles20\gl2.h" />
@@ -133,12 +133,12 @@
     <ClInclude Include="..\..\..\source\ImageJuggler\IJTypes.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\IJUtils.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\ImageJuggler_config.h" />
-    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImageInterface.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImage.h" />
+    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImageInterface.h" />
+    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJPackedColorImage.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.h" />
-    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrCompressedImage.h" />
-    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage422.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage888.h" />
+    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJSingleCompImage.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\stb_image_resize.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

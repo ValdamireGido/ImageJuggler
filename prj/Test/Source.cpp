@@ -96,7 +96,7 @@ void RGBToYCbCrTranslate()
 			DBG_REPORT_ERROR("YCbCr image construct failed");
 		}
 
-		result = IJImageTranslator::RGBToYCbCr444(rgbImage, ybrImage);
+		result = IJImageTranslator::RGBToYCbCr888(rgbImage, ybrImage);
 		if (result != IJResult::Success)
 		{
 			DBG_REPORT_ERROR("RGB -> YCbCr444 translation failed: %d", static_cast<int>(result));
@@ -160,7 +160,7 @@ void YBRToRGBTranslate()
 			DBG_REPORT_ERROR("Error allocating IJRGBImage %d", static_cast<int>(result));
 		}
 
-		result = IJImageTranslator::YCbCr444ToRGB(ybrImage, rgbImage);
+		result = IJImageTranslator::YCbCr888ToRGB(ybrImage, rgbImage);
 		if (result != IJResult::Success)
 		{
 			DBG_REPORT_ERROR("Error translating ybr to rgb %d", static_cast<int>(result));

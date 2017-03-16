@@ -25,7 +25,8 @@ enum class IJImageType : uint8_t
 	RGB			= 0,
 	YCbCr888	= 1, 
 	YCbCr844	= 2,
-	YCoCg		= 3
+	YCoCg		= 3, 
+	SinglComp	= 4
 };
 
 enum class CompressionType : uint8_t

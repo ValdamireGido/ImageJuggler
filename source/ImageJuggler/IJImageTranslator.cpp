@@ -7,22 +7,6 @@
 
 #include "IJUtils.h"
 
-#define ASSERT_PTR(ptr)\
-do {\
-	assert(ptr);\
-	if (!ptr) {\
-		return IJResult::BadMemoryPointer;\
-	}\
-}while(false)
-
-#define ASSERT_PTR_VOID(ptr)\
-do {\
-	assert(ptr);\
-	if (!ptr) {\
-		return;\
-	}\
-} while (false)
-
 #if defined(RGB_TO_YCBCR_CONVERSION__GENERAL_KOEF) || defined(YCBCR_TO_RGB_CONVERSION__GENERAL_KOEF)
 	#if IMAGE_CONVERSION_STANDARD_REC_601_BT_601
 		static constexpr double s_koefR = 0.299;
@@ -117,7 +101,7 @@ void IJImageTranslator::TranslateYBRPixelToRGB(IJYCbCrPixel888* ybrPixel, IJRGBP
 
 //////////////////////////////////////////////////////////////////////////
 
-IJResult IJImageTranslator::RGBToYCbCr444(IJRGBImage* input, IJYCbCrImage888* output)
+IJResult IJImageTranslator::RGBToYCbCr888(IJRGBImage* input, IJYCbCrImage888* output)
 {
 	ASSERT_PTR(input);
 	ASSERT_PTR(output);
@@ -153,7 +137,7 @@ IJResult IJImageTranslator::RGBToYCbCr444(IJRGBImage* input, IJYCbCrImage888* ou
 
 //////////////////////////////////////////////////////////////////////////
 
-IJResult IJImageTranslator::YCbCr444ToRGB(IJYCbCrImage888* input, IJRGBImage* output)
+IJResult IJImageTranslator::YCbCr888ToRGB(IJYCbCrImage888* input, IJRGBImage* output)
 {
 	ASSERT_PTR(input);
 	ASSERT_PTR(output);

@@ -26,8 +26,8 @@ public:
 	IJPixelInterface(const IJPixelInterface&  other) = default;
 	IJPixelInterface& operator=(const IJPixelInterface& other) = default;
 
-	IJPixelInterface(IJPixelInterface&& other) = delete;
-	IJPixelInterface&	operator=(IJPixelInterface&& other) = delete;
+	IJPixelInterface(IJPixelInterface&& other) = default;
+	IJPixelInterface&	operator=(IJPixelInterface&& other) = default;
 
 	virtual ~IJPixelInterface() {}
 
@@ -50,6 +50,7 @@ public:
 	using Pixel_t		= IJPixelInterface<_PixelCompTy, _compsCount>;
 	using PixelData_t	= std::vector<Pixel_t*>;
 
+	// TODO: move the header to the interface to make it possible to use headers for different formats
 	struct TGAHeader
 	{
 		static const uint8_t k_headerSize = 18;
@@ -76,8 +77,8 @@ public:
 public:
 	// C'tor
 	IJImageInterface() = default;
-	IJImageInterface(const IJImageInterface&  other) = default;
-	IJImageInterface& operator=(const IJImageInterface&  other) = default;
+	IJImageInterface(const IJImageInterface& other) = default;
+	IJImageInterface& operator=(const IJImageInterface& other) = default;
 
 	IJImageInterface(IJImageInterface&& other) = default;
 	IJImageInterface& operator=(IJImageInterface&& other) = default;
@@ -89,37 +90,37 @@ public:
 	virtual ~IJImageInterface();
 
 	// IJImageInterface interface
-			IJResult	Load();
-			IJResult	Load(const std::string& fileName);
-	virtual IJResult	Load(	   std::istream& iStream) = 0;
-			IJResult	Save();
-			IJResult	Save(const std::string& fileName);
-	virtual IJResult	Save(	   std::ostream& oStream) = 0;
+					IJResult		Load();
+					IJResult		Load(const std::string& fileName);
+	virtual			IJResult		Load(	   std::istream& iStream) = 0;
+					IJResult		Save();
+					IJResult		Save(const std::string& fileName);
+	virtual			IJResult		Save(	   std::ostream& oStream) = 0;
 
-	const std::string&	GetFileName()		const;
-		  IJImageType	GetImageType()		const;
-	const PixelData_t&	GetPixelData()		const;
-		  size_t		GetSize()			const;
-		  uint16_t		GetWidth()			const;
-		  uint16_t		GetHeight()			const;
-		  CompressionType GetCompressionType() const;
-		  uint8_t		GetBitsPerPixel()	const;
+	virtual	const	PixelData_t&	GetPixelData()			const;
+			const	std::string&	GetFileName()			const;
+					IJImageType		GetImageType()			const;
+					size_t			GetSize()				const;
+					uint16_t		GetWidth()				const;
+					uint16_t		GetHeight()				const;
+					CompressionType GetCompressionType()	const;
+					uint8_t			GetBitsPerPixel()		const;
 
 protected:
-	IJResult			_LoadHeader(std::istream& iStream);
-	IJResult			_SaveHeader(std::ostream& oStream);
+	IJResult		_LoadHeader(std::istream& iStream);
+	IJResult		_SaveHeader(std::ostream& oStream);
 
-	void				SetFileName(const std::string& fileName);
-	void				SetImageType(IJImageType type);
-	void				SetSize(size_t size);
-	void				SetWidth(uint16_t width);
-	void				SetHeight(uint16_t height);
-	void				SetCompressionType(CompressionType type);
-	void				SetBitsPerPixel(uint8_t bits);
+	void			SetFileName(const std::string& fileName);
+	void			SetImageType(IJImageType type);
+	void			SetSize(size_t size);
+	void			SetWidth(uint16_t width);
+	void			SetHeight(uint16_t height);
+	void			SetCompressionType(CompressionType type);
+	void			SetBitsPerPixel(uint8_t bits);
 
-	PixelData_t&		GetPixelData();
-	void				AddPixel(Pixel_t* pixel);
-	void				ClearPixels();
+	PixelData_t&	GetPixelData();
+	void			AddPixel(Pixel_t* pixel);
+	void			ClearPixels();
 
 private:
 	std::string		m_fileName;

@@ -30,19 +30,19 @@
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.cpp">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage422.cpp">
-      <Filter>source\ImageJuggler\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrCompressedImage.cpp">
-      <Filter>source\ImageJuggler\Image</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJImageInterface.cpp">
+      <Filter>source\ImageJuggler\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage888.cpp">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJImage.cpp">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage888.cpp">
+    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJPackedColorImage.cpp">
+      <Filter>source\ImageJuggler\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJSingleCompImage.cpp">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,9 +71,6 @@
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.h">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage422.h">
-      <Filter>source\ImageJuggler\Image</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\ImageJuggler\ImageJuggler_config.h">
       <Filter>source\ImageJuggler</Filter>
     </ClInclude>
@@ -83,16 +80,19 @@
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\stb_image_resize.h">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrCompressedImage.h">
+    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImageInterface.h">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImageInterface.h">
+    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage888.h">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImage.h">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage888.h">
+    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJPackedColorImage.h">
+      <Filter>source\ImageJuggler\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJSingleCompImage.h">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClInclude>
   </ItemGroup>

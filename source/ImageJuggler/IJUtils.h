@@ -2,6 +2,22 @@
 
 #include "IJTypes.h"
 
+#define ASSERT_PTR(ptr)\
+do {\
+	assert(ptr);\
+	if (!ptr) {\
+		return IJResult::BadMemoryPointer;\
+	}\
+}while(false)
+
+#define ASSERT_PTR_VOID(ptr)\
+do {\
+	assert(ptr);\
+	if (!ptr) {\
+		return;\
+	}\
+} while (false)
+
 namespace cusmath
 {
 	template <typename T>

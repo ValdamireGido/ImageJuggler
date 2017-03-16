@@ -32,8 +32,8 @@ struct IJImageTranslator
 	static void TranslateRGBPixelToYBR(IJRGBPixel*		rgbPixel, IJYCbCrPixel888* ybrPixel);
 	static void TranslateYBRPixelToRGB(IJYCbCrPixel888* ybrPixel, IJRGBPixel*	   rgbPixel);
 
-	static IJResult RGBToYCbCr444(IJRGBImage*		input, IJYCbCrImage888* output);
-	static IJResult YCbCr444ToRGB(IJYCbCrImage888*	input, IJRGBImage*		output);
+	static IJResult RGBToYCbCr888(IJRGBImage*		input, IJYCbCrImage888* output);
+	static IJResult YCbCr888ToRGB(IJYCbCrImage888*	input, IJRGBImage*		output);
 
 	//static IJResult RGBToYCbCr442(IJRGBImage*		input, IJYCbCrImage422* output);
 	//static IJResult YCbCr422ToRGB(IJYCbCrImage422*	input, IJRGBImage*		output);
