@@ -32,6 +32,9 @@ class IJSingleCompImage
 	: IJImageInterface<YUVPixelComp_t, 1u>
 {
 public:
+	using PixelData_t = std::vector<uint8_t>;
+
+public:
 	IJSingleCompImage();
 	virtual ~IJSingleCompImage() {}
 
