@@ -45,7 +45,7 @@ template<typename _PixelCompTy, size_t _compsCount>
 class IJImageInterface
 {
 	friend struct IJImageTranslator;
-	friend class IJPackedColorImage;
+	friend class IJPackedColourImage;
 
 public:
 	using Pixel_t		= IJPixelInterface<_PixelCompTy, _compsCount>;

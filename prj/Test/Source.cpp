@@ -9,7 +9,7 @@
 #include "ImageJuggler/IJImageTranslator.h"
 #include "ImageJuggler/Image/IJRGBImage.h"
 #include "ImageJuggler/Image/IJYCbCrImage888.h"
-#include "ImageJuggler/Image/IJPackedColorImage.h"
+#include "ImageJuggler/Image/IJPackedColourImage.h"
 
 #define	PROFILING_ENABLED 1
 #include "Profiling.h"
@@ -195,7 +195,7 @@ void RGBToYUVPack()
 	const std::string outputFileName = "output/tok_tile_park_stone01_df.yuv.tga";
 
 	IJResult result = IJResult::UnknownResult;
-	IJPackedColorImage* packedImage = nullptr;
+	IJPackedColourImage* packedImage = nullptr;
 	IJRGBImage* rgbImage = nullptr;
 
 	{
@@ -214,7 +214,7 @@ void RGBToYUVPack()
 
 	{
 		dbg__profileBlock2("Translating and packing the rgb image to packed YUV image");
-		packedImage = new IJPackedColorImage();
+		packedImage = new IJPackedColourImage();
 		assert(packedImage);
 		
 		result = packedImage->PackRGBImage(rgbImage);
@@ -251,13 +251,13 @@ void YUVpackToRGB()
 	const std::string outputFileName = "output/tok_tile_park_stone01_df.yuv.rgb.tga";
 
 	IJResult result = IJResult::UnknownResult;
-	IJPackedColorImage* packedImage = nullptr;
+	IJPackedColourImage* packedImage = nullptr;
 	IJRGBImage* rgbImage = nullptr;
 
 	{
 		dbg__profileBlock2("Loading the packed image");
 
-		packedImage = new IJPackedColorImage();
+		packedImage = new IJPackedColourImage();
 		assert(packedImage);
 
 		std::ifstream ifile(inputFileName, std::ios::in | std::ios::binary);

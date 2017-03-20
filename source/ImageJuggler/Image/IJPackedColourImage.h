@@ -7,14 +7,14 @@ class IJImage;
 class IJYCbCrImage888;
 class IJRGBImage;
 
-class IJPackedColorImage
+class IJPackedColourImage
 {
 	using TGAHeader = IJImageInterface<uint8_t, 3>::TGAHeader;
 public:
-	IJPackedColorImage();
-	IJPackedColorImage(const std::string& fileName);
-	IJPackedColorImage(const std::string& fileName, uint8_t packedRate);
-	~IJPackedColorImage();
+	IJPackedColourImage();
+	IJPackedColourImage(const std::string& fileName);
+	IJPackedColourImage(const std::string& fileName, uint8_t packedRate);
+	~IJPackedColourImage();
 
 	IJResult Load(std::istream& iStream);
 	IJResult Save(std::ostream& oStream);
@@ -59,17 +59,17 @@ private:
 };
 
 
-inline const std::string& IJPackedColorImage::GetFileName() const 
+inline const std::string& IJPackedColourImage::GetFileName() const 
 {
 	return m_fileName;
 }
 
-inline uint8_t IJPackedColorImage::GetPackRate() const
+inline uint8_t IJPackedColourImage::GetPackRate() const
 {
 	return m_packRate;
 }
 
-inline void IJPackedColorImage::SetPackRate(uint8_t packRate)
+inline void IJPackedColourImage::SetPackRate(uint8_t packRate)
 {
 	m_packRate = packRate;
 }

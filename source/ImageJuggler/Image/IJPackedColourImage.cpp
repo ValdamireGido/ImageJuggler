@@ -1,4 +1,4 @@
-#include "IJPackedColorImage.h"
+#include "IJPackedColourImage.h"
 #include "IJYCbCrImage888.h"
 #include "IJRGBImage.h"
 #include "IJImageTranslator.h"
@@ -13,7 +13,7 @@
 
 #define PACKED_COLOR_ALGORITHM_USING_STBIR 1
 
-IJPackedColorImage::IJPackedColorImage() 
+IJPackedColourImage::IJPackedColourImage() 
 	: m_yImage(nullptr)
 	, m_uImage(nullptr)
 	, m_vImage(nullptr)
@@ -21,7 +21,7 @@ IJPackedColorImage::IJPackedColorImage()
 	, m_fileName()
 {}
 
-IJPackedColorImage::IJPackedColorImage(const std::string& fileName)
+IJPackedColourImage::IJPackedColourImage(const std::string& fileName)
 	: m_yImage(nullptr)
 	, m_uImage(nullptr)
 	, m_vImage(nullptr)
@@ -29,7 +29,7 @@ IJPackedColorImage::IJPackedColorImage(const std::string& fileName)
 	, m_fileName(fileName)
 {}
 
-IJPackedColorImage::IJPackedColorImage(const std::string& fileName, uint8_t packRate)
+IJPackedColourImage::IJPackedColourImage(const std::string& fileName, uint8_t packRate)
 	: m_yImage(nullptr)
 	, m_uImage(nullptr)
 	, m_vImage(nullptr)
@@ -37,7 +37,7 @@ IJPackedColorImage::IJPackedColorImage(const std::string& fileName, uint8_t pack
 	, m_fileName(fileName)
 {}
 
-IJPackedColorImage::~IJPackedColorImage() 
+IJPackedColourImage::~IJPackedColourImage() 
 {
 	if (m_yImage)
 	{
@@ -58,7 +58,7 @@ IJPackedColorImage::~IJPackedColorImage()
 	}
 }
 
-IJResult IJPackedColorImage::Load(std::istream& istream)
+IJResult IJPackedColourImage::Load(std::istream& istream)
 {
 	if (!m_yImage)
 	{
@@ -89,7 +89,7 @@ IJResult IJPackedColorImage::Load(std::istream& istream)
 	return result;
 }
 
-IJResult IJPackedColorImage::Save(std::ostream& ostream)
+IJResult IJPackedColourImage::Save(std::ostream& ostream)
 {
 	ASSERT_PTR(m_yImage);
 	ASSERT_PTR(m_uImage);
@@ -122,7 +122,7 @@ IJResult IJPackedColorImage::Save(std::ostream& ostream)
 	return result;
 }
 
-IJResult IJPackedColorImage::PackImage(IJYCbCrImage888* image, uint8_t rate)
+IJResult IJPackedColourImage::PackImage(IJYCbCrImage888* image, uint8_t rate)
 {
 	ASSERT_PTR(image);
 	
@@ -225,7 +225,7 @@ IJResult IJPackedColorImage::PackImage(IJYCbCrImage888* image, uint8_t rate)
 	return result;
 }
 
-IJResult IJPackedColorImage::UnpackImage(IJYCbCrImage888* image, uint8_t rate)
+IJResult IJPackedColourImage::UnpackImage(IJYCbCrImage888* image, uint8_t rate)
 {
 	ASSERT_PTR(image);
 	ASSERT_PTR(m_yImage);
@@ -272,7 +272,7 @@ IJResult IJPackedColorImage::UnpackImage(IJYCbCrImage888* image, uint8_t rate)
 	return image->Load(rawImage);
 }
 
-IJResult IJPackedColorImage::PackRGBImage(IJRGBImage* image, uint8_t rate)
+IJResult IJPackedColourImage::PackRGBImage(IJRGBImage* image, uint8_t rate)
 {
 	ASSERT_PTR(image);
 
@@ -309,7 +309,7 @@ IJResult IJPackedColorImage::PackRGBImage(IJRGBImage* image, uint8_t rate)
 	return result;
 }
 
-IJResult IJPackedColorImage::UnpackRGBImage(IJRGBImage* image, uint8_t rate)
+IJResult IJPackedColourImage::UnpackRGBImage(IJRGBImage* image, uint8_t rate)
 {
 	ASSERT_PTR(image);
 	ASSERT_PTR(m_yImage);
@@ -354,7 +354,7 @@ IJResult IJPackedColorImage::UnpackRGBImage(IJRGBImage* image, uint8_t rate)
 		Private methods realization
 */
 
-void IJPackedColorImage::CreateCompImages()
+void IJPackedColourImage::CreateCompImages()
 {
 	ASSERT_PTR_VOID(!m_yImage);
 	ASSERT_PTR_VOID(!m_uImage);
@@ -370,7 +370,7 @@ void IJPackedColorImage::CreateCompImages()
 	assert(m_vImage);
 }
 
-IJResult IJPackedColorImage::Load()
+IJResult IJPackedColourImage::Load()
 {
 	assert(m_fileName.size());
 	if (m_fileName.empty())
@@ -388,7 +388,7 @@ IJResult IJPackedColorImage::Load()
 	return Load(ifile);
 }
 
-IJResult IJPackedColorImage::Save()
+IJResult IJPackedColourImage::Save()
 {
 	assert(m_fileName.size());
 	if (m_fileName.empty())
@@ -400,7 +400,7 @@ IJResult IJPackedColorImage::Save()
 	return Save(ofile);
 }
 
-IJResult IJPackedColorImage::LoadHeader(IJImageInterface<uint8_t, 3>* image)
+IJResult IJPackedColourImage::LoadHeader(IJImageInterface<uint8_t, 3>* image)
 {
 	ASSERT_PTR(image);
 
@@ -425,7 +425,7 @@ IJResult IJPackedColorImage::LoadHeader(IJImageInterface<uint8_t, 3>* image)
 	return IJResult::Success;
 }
 
-IJResult IJPackedColorImage::SaveHeader(IJImageInterface<uint8_t, 3>* image)
+IJResult IJPackedColourImage::SaveHeader(IJImageInterface<uint8_t, 3>* image)
 {
 	ASSERT_PTR(image);
 	ASSERT_PTR(m_header);
@@ -446,7 +446,7 @@ IJResult IJPackedColorImage::SaveHeader(IJImageInterface<uint8_t, 3>* image)
 	return IJResult::Success;
 }
 
-IJResult IJPackedColorImage::SaveHeader(IJImageInterface<uint8_t, 1>* image)
+IJResult IJPackedColourImage::SaveHeader(IJImageInterface<uint8_t, 1>* image)
 {
 	ASSERT_PTR(image);
 	ASSERT_PTR(m_header);

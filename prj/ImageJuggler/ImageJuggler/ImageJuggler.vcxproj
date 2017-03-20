@@ -119,7 +119,7 @@
     <ClCompile Include="..\..\..\source\ImageJuggler\ImageJuggler.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJImage.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJImageInterface.cpp" />
-    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJPackedColorImage.cpp" />
+    <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJPackedColourImage.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage888.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJSingleCompImage.cpp" />
@@ -137,7 +137,7 @@
     <ClInclude Include="..\..\..\source\ImageJuggler\ImageJuggler_config.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImage.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImageInterface.h" />
-    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJPackedColorImage.h" />
+    <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJPackedColourImage.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJRGBImage.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJYCbCrImage888.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJSingleCompImage.h" />
