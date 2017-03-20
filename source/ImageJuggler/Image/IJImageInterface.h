@@ -45,6 +45,7 @@ template<typename _PixelCompTy, size_t _compsCount>
 class IJImageInterface
 {
 	friend struct IJImageTranslator;
+	friend class IJPackedColorImage;
 
 public:
 	using Pixel_t		= IJPixelInterface<_PixelCompTy, _compsCount>;
@@ -90,9 +91,11 @@ public:
 	virtual ~IJImageInterface();
 
 	// IJImageInterface interface
+					IJResult		LoadWithHeader(std::istream& istream);
 					IJResult		Load();
 					IJResult		Load(const std::string& fileName);
 	virtual			IJResult		Load(	   std::istream& iStream) = 0;
+					IJResult		SaveWithHeader(std::ostream& ostream);
 					IJResult		Save();
 					IJResult		Save(const std::string& fileName);
 	virtual			IJResult		Save(	   std::ostream& oStream) = 0;
@@ -106,9 +109,9 @@ public:
 					CompressionType GetCompressionType()	const;
 					uint8_t			GetBitsPerPixel()		const;
 
+					IJResult		LoadHeader(std::istream& iStream);
+					IJResult		SaveHeader(std::ostream& oStream);
 protected:
-	IJResult		_LoadHeader(std::istream& iStream);
-	IJResult		_SaveHeader(std::ostream& oStream);
 
 	void			SetFileName(const std::string& fileName);
 	void			SetImageType(IJImageType type);
@@ -242,6 +245,18 @@ IJImageInterface<_PixelCompTy, _compsCount>::~IJImageInterface()
 }
 
 template <typename _PixelCompTy, size_t _compsCount>
+IJResult IJImageInterface<_PixelCompTy, _compsCount>::LoadWithHeader(std::istream& istream)
+{
+	IJResult result = LoadHeader(istream);
+	if (result != IJResult::Success)
+	{
+		return result;
+	}
+
+	return result = Load(istream);
+}
+
+template <typename _PixelCompTy, size_t _compsCount>
 IJResult IJImageInterface<_PixelCompTy, _compsCount>::Load()
 {
 	if (m_fileName.empty())
@@ -268,10 +283,21 @@ IJResult IJImageInterface<_PixelCompTy, _compsCount>::Load(const std::string& fi
 		return IJResult::UnableToOpenFile;
 	}
 
-	IJResult result = _LoadHeader(inputFileStream);
-	result = Load(inputFileStream);
+	IJResult result = LoadWithHeader(inputFileStream);
 	inputFileStream.close();
 	return result;
+}
+
+template <typename _PixelCompTy, size_t _compsCount> 
+IJResult IJImageInterface<_PixelCompTy, _compsCount>::SaveWithHeader(std::ostream& ostream)
+{
+	IJResult result = SaveHeader(ostream);
+	if (result != IJResult::Success)
+	{
+		return result;
+	}
+
+	return result = Save(ostream);
 }
 
 template <typename _PixelCompTy, size_t _compsCount>
@@ -295,8 +321,7 @@ IJResult IJImageInterface<_PixelCompTy, _compsCount>::Save(const std::string& fi
 
 	SetFileName(fileName);
 	std::ofstream outputFile(fileName, std::ios::out | std::ios::binary);
-	IJResult result = _SaveHeader(outputFile);
-	result = Save(outputFile);
+	IJResult result = SaveWithHeader(outputFile);
 	outputFile.close();
 	return result;
 }
@@ -350,14 +375,14 @@ inline uint8_t IJImageInterface<_PixelCompTy, _compsCount>::GetBitsPerPixel() co
 }
 
 template <typename _PixelCompTy, size_t _compsCount>
-inline IJResult IJImageInterface<_PixelCompTy, _compsCount>::_LoadHeader(std::istream& iStream)
+inline IJResult IJImageInterface<_PixelCompTy, _compsCount>::LoadHeader(std::istream& iStream)
 {
 	m_header.deserialize(iStream);
 	return IJResult::Success;
 }
 
 template <typename _PixelCompTy, size_t _compsCount>
-inline IJResult IJImageInterface<_PixelCompTy, _compsCount>::_SaveHeader(std::ostream& oStream)
+inline IJResult IJImageInterface<_PixelCompTy, _compsCount>::SaveHeader(std::ostream& oStream)
 {
 	m_header.serialize(oStream);
 	return IJResult::Success;

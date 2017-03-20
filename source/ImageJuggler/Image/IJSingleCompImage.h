@@ -29,17 +29,27 @@ public:
 		Has three different collections for every component. 
 */
 class IJSingleCompImage
-	: IJImageInterface<YUVPixelComp_t, 1u>
+	: public IJImageInterface<YUVPixelComp_t, 1u>
 {
 public:
 	using PixelData_t = std::vector<uint8_t>;
+
+	enum CompIdx
+	{
+		R = 1, 
+		G = 1 << 1, 
+		B = 1 << 2
+	};
 
 public:
 	IJSingleCompImage();
 	virtual ~IJSingleCompImage() {}
 
 	IJResult Load(std::istream& iStream) override;
+	IJResult Load(std::istream& istream, size_t size);
 	IJResult Save(std::ostream& oStream) override;
+
+	IJResult DebugSave(const std::string& fileName, uint8_t compsToDump = R|G|B);
 
 	using IJImageInterface<YUVPixelComp_t, Pixel_t::k_compCount>::GetPixelData;
 	using IJImageInterface<YUVPixelComp_t, Pixel_t::k_compCount>::Load;

@@ -204,19 +204,11 @@ void RGBToYUVPack()
 		rgbImage = new IJRGBImage();
 		assert(rgbImage);
 
-		std::ifstream ifile(inputFileName, std::ios::in);
-		if (!ifile.is_open())
-		{
-			DBG_REPORT_ERROR("Can't open input rgb file");
-		}
-
-		result = rgbImage->Load(ifile);
+		result = rgbImage->Load(inputFileName);
 		if (result != IJResult::Success)
 		{
 			DBG_REPORT_ERROR("Can't load rgb image");
 		}
-
-		ifile.close();
 	}
 
 
@@ -253,6 +245,64 @@ void RGBToYUVPack()
 	}
 }
 
+void YUVpackToRGB()
+{
+	const std::string inputFileName  = "output/tok_tile_park_stone01_df.yuv.tga";
+	const std::string outputFileName = "output/tok_tile_park_stone01_df.yuv.rgb.tga";
+
+	IJResult result = IJResult::UnknownResult;
+	IJPackedColorImage* packedImage = nullptr;
+	IJRGBImage* rgbImage = nullptr;
+
+	{
+		dbg__profileBlock2("Loading the packed image");
+
+		packedImage = new IJPackedColorImage();
+		assert(packedImage);
+
+		std::ifstream ifile(inputFileName, std::ios::in | std::ios::binary);
+		if (!ifile.is_open())
+		{
+			DBG_REPORT_ERROR("Cannot open input file");
+		}
+
+		result = packedImage->Load(ifile);
+		if (result != IJResult::Success)
+		{
+			DBG_REPORT_ERROR("Cannot load yuv packed image");
+		}
+	}
+
+	{
+		dbg__profileBlock2("Unpacking the image");
+
+		rgbImage = new IJRGBImage();
+		assert(rgbImage);
+
+		result = packedImage->UnpackRGBImage(rgbImage);
+		if (result != IJResult::Success)
+		{
+			DBG_REPORT_ERROR("Cannot unpack the yuv image to rgb");
+		}
+	}
+
+	{
+		dbg__profileBlock2("Clean up");
+
+		result = rgbImage->Save(outputFileName);
+		if (result != IJResult::Success)
+		{
+			DBG_REPORT_ERROR("Cannot save rgb file");
+		}
+
+		delete rgbImage;
+		rgbImage = nullptr;
+
+		delete packedImage;
+		packedImage = nullptr;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char** argv)
@@ -261,6 +311,7 @@ int main(int argc, char** argv)
 	//YBRToRGBTranslate();
 
 	RGBToYUVPack();
+	YUVpackToRGB();
 
 	return EXIT_SUCCESS;
 }
