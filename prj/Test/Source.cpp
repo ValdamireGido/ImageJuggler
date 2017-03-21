@@ -191,8 +191,8 @@ void YBRToRGBTranslate()
 
 void RGBToYUVPack()
 {
-	const std::string inputFileName  = "input/tok_tile_park_stone01_df.tga";
-	const std::string outputFileName = "output/tok_tile_park_stone01_df.yuv.tga";
+	const std::string inputFileName  = "input/Lenna.tga";
+	const std::string outputFileName = "output/Lenna.yuv.tga";
 
 	IJResult result = IJResult::UnknownResult;
 	IJPackedColourImage* packedImage = nullptr;
@@ -247,8 +247,8 @@ void RGBToYUVPack()
 
 void YUVpackToRGB()
 {
-	const std::string inputFileName  = "output/tok_tile_park_stone01_df.yuv.tga";
-	const std::string outputFileName = "output/tok_tile_park_stone01_df.yuv.rgb.tga";
+	const std::string inputFileName  = "output/Lenna.yuv.tga";
+	const std::string outputFileName = "output/Lenna.yuv.rgb8.tga";
 
 	IJResult result = IJResult::UnknownResult;
 	IJPackedColourImage* packedImage = nullptr;

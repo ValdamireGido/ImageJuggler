@@ -7,8 +7,28 @@ class IJImage;
 class IJYCbCrImage888;
 class IJRGBImage;
 
+
+/*
+		IJPackedColourImage class 
+		Stores the image data in packed format: 
+		- converted to YUV colour space image 
+		- splited to three compenents 
+		- U and V components resized to the original image size / pack rate of the final image
+		- and stored in the next order: 
+		---------------- -------- --------
+		|			   | |  U   | |  V   |
+		|			   | | comps| |comps |
+		|			   | |		| |		 |
+		|	Y comps    | -------- --------
+		|			   |
+		|			   |
+		----------------
+
+		(splited by component). 
+*/
 class IJPackedColourImage
 {
+	static const int k_defaultPackRate = 8;
 	using TGAHeader = IJImageInterface<uint8_t, 3>::TGAHeader;
 public:
 	IJPackedColourImage();
@@ -19,11 +39,11 @@ public:
 	IJResult Load(std::istream& iStream);
 	IJResult Save(std::ostream& oStream);
 
-	IJResult PackImage(IJYCbCrImage888* image, uint8_t rate = 2);
-	IJResult UnpackImage(IJYCbCrImage888* image, uint8_t rate = 2);
+	IJResult PackImage(IJYCbCrImage888* image, uint8_t rate = k_defaultPackRate);
+	IJResult UnpackImage(IJYCbCrImage888* image, uint8_t rate = k_defaultPackRate);
 
-	IJResult PackRGBImage(IJRGBImage* image, uint8_t rate = 2);
-	IJResult UnpackRGBImage(IJRGBImage* image, uint8_t rate = 2);
+	IJResult PackRGBImage(IJRGBImage* image, uint8_t rate = k_defaultPackRate);
+	IJResult UnpackRGBImage(IJRGBImage* image, uint8_t rate = k_defaultPackRate);
 
 	const std::string& GetFileName() const;
 	uint8_t GetPackRate() const;
@@ -35,9 +55,11 @@ private:
 	IJResult Load();
 	IJResult Save();
 
-	IJResult LoadHeader(IJImageInterface<uint8_t, 3>* image);
-	IJResult SaveHeader(IJImageInterface<uint8_t, 3>* image);
-	IJResult SaveHeader(IJImageInterface<uint8_t, 1>* image);
+	template <typename _PixelTy, size_t _nComps>
+	IJResult LoadHeader(IJImageInterface<_PixelTy, _nComps>* image);
+
+	template <typename _PixelTy, size_t _nComps>
+	IJResult SaveHeader(IJImageInterface<_PixelTy, _nComps>* image);
 
 private:
 	// TODO: change the storage type for the comps image fields of this class
@@ -72,4 +94,64 @@ inline uint8_t IJPackedColourImage::GetPackRate() const
 inline void IJPackedColourImage::SetPackRate(uint8_t packRate)
 {
 	m_packRate = packRate;
+}
+
+template <typename _PixelTy, size_t _nComps>
+IJResult IJPackedColourImage::LoadHeader(IJImageInterface<_PixelTy, _nComps>* image)
+{
+	assert(image);
+	if (!image)
+	{
+		return IJResult::BadMemoryPointer;
+	}
+
+	if (!m_header)
+	{
+		m_header = new TGAHeader();
+		ASSERT_PTR(m_header);
+	}
+
+	m_header->idlength			= image->m_header.idlength;
+	m_header->colourmaptype		= image->m_header.colourmaptype;
+	m_header->datatypecode		= image->GetCompressionType();
+	m_header->colourmaporigin	= image->m_header.colourmaporigin;
+	m_header->colourmaplength	= image->m_header.colourmaplength;
+	m_header->colourmapdepth	= image->m_header.colourmapdepth;
+	m_header->x_origin			= image->m_header.x_origin;
+	m_header->y_origin			= image->m_header.y_origin;
+	m_header->width				= image->GetWidth();
+	m_header->height			= image->GetHeight();
+	m_header->bitsperpixel		= image->GetBitsPerPixel();
+	m_header->imagedescriptor	= image->m_header.imagedescriptor;
+	return IJResult::Success;
+}
+
+template <typename _PixelTy, size_t _nComps>
+IJResult IJPackedColourImage::SaveHeader(IJImageInterface<_PixelTy, _nComps>* image)
+{
+	assert(image);
+	if (!image)
+	{
+		return IJResult::BadMemoryPointer;
+	}
+
+	assert(m_header);
+	if (!m_header)
+	{
+		return IJResult::BadMemoryPointer;
+	}
+
+	image->m_header.idlength		= m_header->idlength;
+	image->m_header.colourmaptype	= m_header->colourmaptype;
+	image->m_header.datatypecode	= m_header->datatypecode;
+	image->m_header.colourmaporigin	= m_header->colourmaporigin;
+	image->m_header.colourmaplength	= m_header->colourmaplength;
+	image->m_header.colourmapdepth	= m_header->colourmapdepth;
+	image->m_header.x_origin		= m_header->x_origin;
+	image->m_header.y_origin		= m_header->y_origin;
+	image->m_header.width			= m_header->width;
+	image->m_header.height			= m_header->height;
+	image->m_header.bitsperpixel	= m_header->bitsperpixel;
+	image->m_header.imagedescriptor	= m_header->imagedescriptor;
+	return IJResult::Success;
 }

@@ -18,5 +18,4 @@ public:
 	IJRGBImage();
 	IJRGBImage(const std::string& fileName);
 	IJRGBImage(const std::vector<PixelComp_t>& rawImage);
-	~IJRGBImage();
 };

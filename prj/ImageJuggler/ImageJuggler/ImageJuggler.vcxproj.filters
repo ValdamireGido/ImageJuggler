@@ -101,5 +101,8 @@
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJPackedColourImage.h">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\ImageJuggler\Fixed.h">
+      <Filter>source\ImageJuggler</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

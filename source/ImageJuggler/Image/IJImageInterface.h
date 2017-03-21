@@ -41,15 +41,15 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 
-template<typename _PixelCompTy, size_t _compsCount>
+template<class _PixelClassTy, size_t _compsCount>
 class IJImageInterface
 {
 	friend struct IJImageTranslator;
 	friend class IJPackedColourImage;
 
 public:
-	using Pixel_t		= IJPixelInterface<_PixelCompTy, _compsCount>;
-	using PixelData_t	= std::vector<Pixel_t*>;
+	using Pixel_t		= _PixelClassTy;
+	using PixelData_t	= std::vector<Pixel_t>;
 
 	// TODO: move the header to the interface to make it possible to use headers for different formats
 	struct TGAHeader
@@ -100,17 +100,17 @@ public:
 					IJResult		Save(const std::string& fileName);
 	virtual			IJResult		Save(	   std::ostream& oStream) = 0;
 
-	virtual	const	PixelData_t&	GetPixelData()			const;
-			const	std::string&	GetFileName()			const;
-					IJImageType		GetImageType()			const;
-					size_t			GetSize()				const;
-					uint16_t		GetWidth()				const;
-					uint16_t		GetHeight()				const;
-					CompressionType GetCompressionType()	const;
-					uint8_t			GetBitsPerPixel()		const;
+	virtual	const PixelData_t&	  GetData()			const;
+			const std::string&	  GetFileName()				const;
+				  IJImageType	  GetImageType()			const;
+				  size_t		  GetSize()					const;
+				  uint16_t		  GetWidth()				const;
+				  uint16_t		  GetHeight()				const;
+				  CompressionType GetCompressionType()		const;
+				  uint8_t		  GetBitsPerPixel()			const;
 
-					IJResult		LoadHeader(std::istream& iStream);
-					IJResult		SaveHeader(std::ostream& oStream);
+				  IJResult		  LoadHeader(std::istream& iStream);
+				  IJResult		  SaveHeader(std::ostream& oStream);
 protected:
 
 	void			SetFileName(const std::string& fileName);
@@ -121,8 +121,8 @@ protected:
 	void			SetCompressionType(CompressionType type);
 	void			SetBitsPerPixel(uint8_t bits);
 
-	PixelData_t&	GetPixelData();
-	void			AddPixel(Pixel_t* pixel);
+	PixelData_t&	GetData();
+	void			AddPixel(Pixel_t& pixel);
 	void			ClearPixels();
 
 private:
@@ -135,8 +135,8 @@ private:
 
 // Inline realization
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline IJImageInterface<_PixelCompTy, _compsCount>::TGAHeader::TGAHeader()
+template <class _PixelClassTy, size_t _compsCount>
+inline IJImageInterface<_PixelClassTy, _compsCount>::TGAHeader::TGAHeader()
 	: idlength(uint8_t(0))
 	, colourmaptype(uint8_t(0))
 	, datatypecode(CompressionType::UncompressedRGB)
@@ -151,8 +151,8 @@ inline IJImageInterface<_PixelCompTy, _compsCount>::TGAHeader::TGAHeader()
 	, imagedescriptor(uint8_t(0))
 {}
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline void IJImageInterface<_PixelCompTy, _compsCount>::TGAHeader::deserialize(std::istream& iStream)
+template <class _PixelClassTy, size_t _compsCount>
+inline void IJImageInterface<_PixelClassTy, _compsCount>::TGAHeader::deserialize(std::istream& iStream)
 {
 	iStream.read((char*)&idlength		, 1);
 	iStream.read((char*)&colourmaptype	, 1);
@@ -168,8 +168,8 @@ inline void IJImageInterface<_PixelCompTy, _compsCount>::TGAHeader::deserialize(
 	iStream.read((char*)&imagedescriptor, 1);
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline void IJImageInterface<_PixelCompTy, _compsCount>::TGAHeader::serialize(std::ostream& oStream)
+template <class _PixelClassTy, size_t _compsCount>
+inline void IJImageInterface<_PixelClassTy, _compsCount>::TGAHeader::serialize(std::ostream& oStream)
 {
 	oStream.write((const char*)&idlength		, 1);
 	oStream.write((const char*)&colourmaptype	, 1);
@@ -185,8 +185,8 @@ inline void IJImageInterface<_PixelCompTy, _compsCount>::TGAHeader::serialize(st
 	oStream.write((const char*)&imagedescriptor	, 1);
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-IJImageInterface<_PixelCompTy, _compsCount>::TGAHeader::operator std::vector<uint8_t>()
+template <class _PixelClassTy, size_t _compsCount>
+IJImageInterface<_PixelClassTy, _compsCount>::TGAHeader::operator std::vector<uint8_t>()
 {
 	return std::vector<uint8_t> 
 	{
@@ -211,8 +211,8 @@ IJImageInterface<_PixelCompTy, _compsCount>::TGAHeader::operator std::vector<uin
 	};
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-IJImageInterface<_PixelCompTy, _compsCount>::IJImageInterface(IJImageType type)
+template <class _PixelClassTy, size_t _compsCount>
+IJImageInterface<_PixelClassTy, _compsCount>::IJImageInterface(IJImageType type)
 	: m_fileName()
 	, m_header()
 	, m_pixels()
@@ -220,8 +220,8 @@ IJImageInterface<_PixelCompTy, _compsCount>::IJImageInterface(IJImageType type)
 	, m_imageType(type)
 {}
 
-template <typename _PixelCompTy, size_t _compsCount>
-IJImageInterface<_PixelCompTy, _compsCount>::IJImageInterface(const std::string& fileName, IJImageType type)
+template <class _PixelClassTy, size_t _compsCount>
+IJImageInterface<_PixelClassTy, _compsCount>::IJImageInterface(const std::string& fileName, IJImageType type)
 	: m_fileName(fileName)
 	, m_header()
 	, m_pixels()
@@ -229,23 +229,14 @@ IJImageInterface<_PixelCompTy, _compsCount>::IJImageInterface(const std::string&
 	, m_imageType(type)
 {}
 
-template <typename _PixelCompTy, size_t _compsCount>
-IJImageInterface<_PixelCompTy, _compsCount>::~IJImageInterface()
+template <class _PixelClassTy, size_t _compsCount>
+IJImageInterface<_PixelClassTy, _compsCount>::~IJImageInterface()
 {
-	for (size_t i = 0, size = m_pixels.size(); i < size; ++i)
-	{
-		if (m_pixels[i])
-		{
-			delete m_pixels[i];
-			m_pixels[i] = nullptr;
-		}
-	}
-
 	m_pixels.clear();
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-IJResult IJImageInterface<_PixelCompTy, _compsCount>::LoadWithHeader(std::istream& istream)
+template <class _PixelClassTy, size_t _compsCount>
+IJResult IJImageInterface<_PixelClassTy, _compsCount>::LoadWithHeader(std::istream& istream)
 {
 	IJResult result = LoadHeader(istream);
 	if (result != IJResult::Success)
@@ -256,8 +247,8 @@ IJResult IJImageInterface<_PixelCompTy, _compsCount>::LoadWithHeader(std::istrea
 	return result = Load(istream);
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-IJResult IJImageInterface<_PixelCompTy, _compsCount>::Load()
+template <class _PixelClassTy, size_t _compsCount>
+IJResult IJImageInterface<_PixelClassTy, _compsCount>::Load()
 {
 	if (m_fileName.empty())
 	{
@@ -267,8 +258,8 @@ IJResult IJImageInterface<_PixelCompTy, _compsCount>::Load()
 	return Load(m_fileName);
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-IJResult IJImageInterface<_PixelCompTy, _compsCount>::Load(const std::string& fileName)
+template <class _PixelClassTy, size_t _compsCount>
+IJResult IJImageInterface<_PixelClassTy, _compsCount>::Load(const std::string& fileName)
 {
 	if (fileName.empty())
 	{
@@ -288,8 +279,8 @@ IJResult IJImageInterface<_PixelCompTy, _compsCount>::Load(const std::string& fi
 	return result;
 }
 
-template <typename _PixelCompTy, size_t _compsCount> 
-IJResult IJImageInterface<_PixelCompTy, _compsCount>::SaveWithHeader(std::ostream& ostream)
+template <class _PixelClassTy, size_t _compsCount> 
+IJResult IJImageInterface<_PixelClassTy, _compsCount>::SaveWithHeader(std::ostream& ostream)
 {
 	IJResult result = SaveHeader(ostream);
 	if (result != IJResult::Success)
@@ -300,8 +291,8 @@ IJResult IJImageInterface<_PixelCompTy, _compsCount>::SaveWithHeader(std::ostrea
 	return result = Save(ostream);
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-IJResult IJImageInterface<_PixelCompTy, _compsCount>::Save()
+template <class _PixelClassTy, size_t _compsCount>
+IJResult IJImageInterface<_PixelClassTy, _compsCount>::Save()
 {
 	if (m_fileName.empty())
 	{
@@ -311,8 +302,8 @@ IJResult IJImageInterface<_PixelCompTy, _compsCount>::Save()
 	return Save(m_fileName);
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-IJResult IJImageInterface<_PixelCompTy, _compsCount>::Save(const std::string& fileName)
+template <class _PixelClassTy, size_t _compsCount>
+IJResult IJImageInterface<_PixelClassTy, _compsCount>::Save(const std::string& fileName)
 {
 	if (fileName.empty())
 	{
@@ -326,124 +317,124 @@ IJResult IJImageInterface<_PixelCompTy, _compsCount>::Save(const std::string& fi
 	return result;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline const std::string& IJImageInterface<_PixelCompTy, _compsCount>::GetFileName() const 
+template <class _PixelClassTy, size_t _compsCount>
+inline const std::string& IJImageInterface<_PixelClassTy, _compsCount>::GetFileName() const 
 {
 	return m_fileName;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline IJImageType IJImageInterface<_PixelCompTy, _compsCount>::GetImageType() const 
+template <class _PixelClassTy, size_t _compsCount>
+inline IJImageType IJImageInterface<_PixelClassTy, _compsCount>::GetImageType() const 
 {
 	return m_imageType;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline const typename IJImageInterface<_PixelCompTy, _compsCount>::PixelData_t& IJImageInterface<_PixelCompTy, _compsCount>::GetPixelData() const
+template <class _PixelClassTy, size_t _compsCount>
+inline const typename IJImageInterface<_PixelClassTy, _compsCount>::PixelData_t& IJImageInterface<_PixelClassTy, _compsCount>::GetData() const
 {
 	return m_pixels;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline size_t IJImageInterface<_PixelCompTy, _compsCount>::GetSize() const
+template <class _PixelClassTy, size_t _compsCount>
+inline size_t IJImageInterface<_PixelClassTy, _compsCount>::GetSize() const
 {
 	return m_imageSize;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline uint16_t IJImageInterface<_PixelCompTy, _compsCount>::GetWidth() const 
+template <class _PixelClassTy, size_t _compsCount>
+inline uint16_t IJImageInterface<_PixelClassTy, _compsCount>::GetWidth() const 
 {
 	return m_header.width;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline uint16_t IJImageInterface<_PixelCompTy, _compsCount>::GetHeight() const
+template <class _PixelClassTy, size_t _compsCount>
+inline uint16_t IJImageInterface<_PixelClassTy, _compsCount>::GetHeight() const
 {
 	return m_header.height;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline CompressionType IJImageInterface<_PixelCompTy, _compsCount>::GetCompressionType() const 
+template <class _PixelClassTy, size_t _compsCount>
+inline CompressionType IJImageInterface<_PixelClassTy, _compsCount>::GetCompressionType() const 
 {
 	return m_header.datatypecode;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline uint8_t IJImageInterface<_PixelCompTy, _compsCount>::GetBitsPerPixel() const
+template <class _PixelClassTy, size_t _compsCount>
+inline uint8_t IJImageInterface<_PixelClassTy, _compsCount>::GetBitsPerPixel() const
 {
 	return m_header.bitsperpixel;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline IJResult IJImageInterface<_PixelCompTy, _compsCount>::LoadHeader(std::istream& iStream)
+template <class _PixelClassTy, size_t _compsCount>
+inline IJResult IJImageInterface<_PixelClassTy, _compsCount>::LoadHeader(std::istream& iStream)
 {
 	m_header.deserialize(iStream);
 	return IJResult::Success;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline IJResult IJImageInterface<_PixelCompTy, _compsCount>::SaveHeader(std::ostream& oStream)
+template <class _PixelClassTy, size_t _compsCount>
+inline IJResult IJImageInterface<_PixelClassTy, _compsCount>::SaveHeader(std::ostream& oStream)
 {
 	m_header.serialize(oStream);
 	return IJResult::Success;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline void IJImageInterface<_PixelCompTy, _compsCount>::SetFileName(const std::string& fileName)
+template <class _PixelClassTy, size_t _compsCount>
+inline void IJImageInterface<_PixelClassTy, _compsCount>::SetFileName(const std::string& fileName)
 {
 	m_fileName = fileName;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline void IJImageInterface<_PixelCompTy, _compsCount>::SetImageType(IJImageType imageType)
+template <class _PixelClassTy, size_t _compsCount>
+inline void IJImageInterface<_PixelClassTy, _compsCount>::SetImageType(IJImageType imageType)
 {
 	m_imageType = imageType;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline void IJImageInterface<_PixelCompTy, _compsCount>::SetSize(size_t size)
+template <class _PixelClassTy, size_t _compsCount>
+inline void IJImageInterface<_PixelClassTy, _compsCount>::SetSize(size_t size)
 {
 	m_imageSize = size;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline void IJImageInterface<_PixelCompTy, _compsCount>::SetWidth(uint16_t width)
+template <class _PixelClassTy, size_t _compsCount>
+inline void IJImageInterface<_PixelClassTy, _compsCount>::SetWidth(uint16_t width)
 {
 	m_header.width = width;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline void IJImageInterface<_PixelCompTy, _compsCount>::SetHeight(uint16_t height)
+template <class _PixelClassTy, size_t _compsCount>
+inline void IJImageInterface<_PixelClassTy, _compsCount>::SetHeight(uint16_t height)
 {
 	m_header.height = height;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline void IJImageInterface<_PixelCompTy, _compsCount>::SetCompressionType(CompressionType type)
+template <class _PixelClassTy, size_t _compsCount>
+inline void IJImageInterface<_PixelClassTy, _compsCount>::SetCompressionType(CompressionType type)
 {
 	m_header.datatypecode = type;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline void IJImageInterface<_PixelCompTy, _compsCount>::SetBitsPerPixel(uint8_t bits)
+template <class _PixelClassTy, size_t _compsCount>
+inline void IJImageInterface<_PixelClassTy, _compsCount>::SetBitsPerPixel(uint8_t bits)
 {
 	m_header.bitsperpixel = bits;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline typename IJImageInterface<_PixelCompTy, _compsCount>::PixelData_t& IJImageInterface<_PixelCompTy, _compsCount>::GetPixelData() 
+template <class _PixelClassTy, size_t _compsCount>
+inline typename IJImageInterface<_PixelClassTy, _compsCount>::PixelData_t& IJImageInterface<_PixelClassTy, _compsCount>::GetData() 
 {
 	return m_pixels;
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline void IJImageInterface<_PixelCompTy, _compsCount>::AddPixel(typename IJImageInterface<_PixelCompTy, _compsCount>::Pixel_t* pPixel)
+template <class _PixelClassTy, size_t _compsCount>
+inline void IJImageInterface<_PixelClassTy, _compsCount>::AddPixel(typename IJImageInterface<_PixelClassTy, _compsCount>::Pixel_t& pPixel)
 {
 	m_pixels.push_back(pPixel);
 }
 
-template <typename _PixelCompTy, size_t _compsCount>
-inline void IJImageInterface<_PixelCompTy, _compsCount>::ClearPixels()
+template <class _PixelClassTy, size_t _compsCount>
+inline void IJImageInterface<_PixelClassTy, _compsCount>::ClearPixels()
 {
 	m_pixels.clear();
 }

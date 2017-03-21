@@ -69,9 +69,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)..\..\..\source\ImageJuggler;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\..\source\ImageJuggler;$(ProjectDir)..\..\..\source\boost;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\ImageJugglerLib\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(ProjectDir)..\..\..\source\boost;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -94,6 +97,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\source\boost;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -129,6 +133,7 @@
     <ClInclude Include="..\..\..\source\gles20\GLES2\gl2ext.h" />
     <ClInclude Include="..\..\..\source\gles20\GLES2\gl2platform.h" />
     <ClInclude Include="..\..\..\source\gles20\KHR\khrplatform.h" />
+    <ClInclude Include="..\..\..\source\ImageJuggler\Fixed.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\IJImageTranslator.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\IJMainWorker.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\IJTypes.h" />

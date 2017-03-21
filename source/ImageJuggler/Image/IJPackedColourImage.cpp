@@ -4,6 +4,9 @@
 #include "IJImageTranslator.h"
 #include "IJUtils.h"
 
+#define PROFILING_ENABLED 1
+#include "../../../prj/Test/Profiling.h"
+
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize.h"
 
@@ -104,21 +107,12 @@ IJResult IJPackedColourImage::Save(std::ostream& ostream)
 	result = m_yImage->Save(ostream);
 	assert(result == IJResult::Success);
 
-	SaveHeader(m_yImage);
-	m_yImage->DebugSave("output/dbg/y_image.dbg.tga");
-
 	result = m_uImage->Save(ostream);
 	assert(result == IJResult::Success);
 
-	SaveHeader(m_uImage);
-	m_uImage->DebugSave("output/dbg/u_image.dbg.tga", IJSingleCompImage::G);
-
 	result = m_vImage->Save(ostream);
 	assert(result == IJResult::Success);
-
-	SaveHeader(m_vImage);
-	m_vImage->DebugSave("output/dbg/v_image.dbg.tga", IJSingleCompImage::B);
-
+	
 	return result;
 }
 
@@ -138,7 +132,7 @@ IJResult IJPackedColourImage::PackImage(IJYCbCrImage888* image, uint8_t rate)
 
 	LoadHeader(image);
 
-	size_t size = image->GetPixelData().size();
+	size_t size = image->GetWidth() * image->GetHeight();
 
 	std::vector<uint8_t> yComp, uComp, vComp;
 	yComp.resize(size);
@@ -147,54 +141,38 @@ IJResult IJPackedColourImage::PackImage(IJYCbCrImage888* image, uint8_t rate)
 
 	for (size_t i = 0; i < size; i++)
 	{
-		auto& pixel = (*image->GetPixelData()[i]);
+		auto& pixel = image->GetData()[i];
 		yComp[i] = pixel[0];
 		uComp[i] = pixel[1];
 		vComp[i] = pixel[2];
 	}
 
-	{
-		image->Save("output/dbg/debug_yuv_image.tga");
-
-		IJSingleCompImage dbgimage;
-		SaveHeader(&dbgimage);
-
-		std::strstream dbg_ystream((char*)&yComp.front(), yComp.size(), std::ios::in | std::ios::binary);
-		dbgimage.ClearPixels();
-		dbgimage.Load(dbg_ystream);
-		dbgimage.Save("output/dbg/y_full_image.tga"/*, IJSingleCompImage::B*/);
-
-		std::strstream dbg_ustream((char*)&uComp.front(), uComp.size(), std::ios::in | std::ios::binary);
-		dbgimage.ClearPixels();
-		dbgimage.Load(dbg_ustream);
-		dbgimage.DebugSave("output/dbg/u_full_image.tga");
-
-		std::strstream dbg_vstream((char*)&vComp.front(), vComp.size(), std::ios::in | std::ios::binary);
-		dbgimage.ClearPixels();
-		dbgimage.Load(dbg_vstream);
-		dbgimage.DebugSave("output/dbg/v_full_image.tga");
-	}
+#if defined(_DEBUG)
+	image->Save("output/dbg/debug_yuv_image.tga");
+#endif
 
 	{
+		dbg__profileBlock2("Comps resize: Separate components resize. ");
+
 		std::vector<uint8_t> tempVec;
 		tempVec.resize(uComp.size());
-		int outputSizeW = image->GetWidth() / m_packRate;
-		int outputSizeH = image->GetHeight() / m_packRate;
-		size_t outputSize = static_cast<size_t>(outputSizeW * outputSizeH);
+		float outputSizeW = (float)image->GetWidth() / m_packRate;
+		float outputSizeH = (float)image->GetHeight() / m_packRate;
+		size_t outputSize = static_cast<size_t>(outputSizeW * outputSizeH) + 1;
 
 		stbir__resize_arbitrary(nullptr,
 								(const void*)&uComp.front(), image->GetWidth(), image->GetHeight(), 0,
-								(void*)&tempVec.front(), outputSizeW, outputSizeH, 0,
+								(void*)&tempVec.front(), (int)outputSizeW, (int)outputSizeH, 0,
 								0, 0, 1, 1, nullptr, 1, -1, 0,
 								STBIR_TYPE_UINT8, STBIR_FILTER_DEFAULT, STBIR_FILTER_DEFAULT,
 								STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);
-		
+
 		std::swap(uComp, tempVec);
 		assert(uComp.size());
 
 		stbir__resize_arbitrary(nullptr,
-								(const void*)&vComp.front(), image->GetWidth(), image->GetHeight(), 0,
-								(void*)&tempVec.front(), outputSizeW, outputSizeH, 0,
+			(const void*)&vComp.front(), image->GetWidth(), image->GetHeight(), 0,
+								(void*)&tempVec.front(), (int)outputSizeW, (int)outputSizeH, 0,
 								0, 0, 1, 1, nullptr, 1, -1, 0,
 								STBIR_TYPE_UINT8, STBIR_FILTER_DEFAULT, STBIR_FILTER_DEFAULT,
 								STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);
@@ -202,24 +180,24 @@ IJResult IJPackedColourImage::PackImage(IJYCbCrImage888* image, uint8_t rate)
 		std::swap(vComp, tempVec);
 		assert(vComp.size());
 
-		m_uvSize = outputSize;
 		uComp.resize(outputSize);
 		vComp.resize(outputSize);
+		m_uvSize = uComp.size();
 	}
 
 	IJResult result = IJResult::UnknownResult;
 	m_ySize = yComp.size();
 
 	std::strstream yStream((char*)&yComp.front(), yComp.size(), std::ios::in | std::ios::binary);
-	result = m_yImage->Load(yStream);
+	result = m_yImage->Load(yStream, yComp.size());
 	assert(result == IJResult::Success);
 
 	std::strstream uvStream((char*)&uComp.front(), uComp.size(), std::ios::in | std::ios::binary);
-	result = m_uImage->Load(uvStream);
+	result = m_uImage->Load(uvStream, uComp.size());
 	assert(result == IJResult::Success);
 
 	std::strstream vStream((char*)&vComp.front(), vComp.size(), std::ios::in | std::ios::binary);
-	result = m_vImage->Load(vStream);
+	result = m_vImage->Load(vStream, vComp.size());
 	assert(result == IJResult::Success);
 
 	return result;
@@ -236,37 +214,98 @@ IJResult IJPackedColourImage::UnpackImage(IJYCbCrImage888* image, uint8_t rate)
 	assert(m_vImage->GetSize());
 
 	std::vector<uint8_t> rawImage;
+	auto& Y = *m_yImage;
+	auto& U = *m_uImage;
+	auto& V = *m_vImage;
 	size_t W = static_cast<size_t>(m_header->width);
 	size_t H = static_cast<size_t>(m_header->height);
 	size_t packedW = static_cast<size_t>(m_header->width / m_packRate);
 
-	for (size_t i = 0, uvi = 0, uvidx = 0; i < W; i++)
+#define PACKED_COLOUR_IMAGE_UNPACK_WAY_TEST_1 0
+#define PACKED_COLOUR_IMAGE_UNPACK_WAY_TEST_2 0
+#define PACKED_COLOUR_IMAGE_UNPACK_WAY_TEST_3 0
+#define PACKED_COLOUR_IMAGE_UNPACK_WAY_TEST_4 1
+#if PACKED_COLOUR_IMAGE_UNPACK_WAY_TEST_1
+	for (size_t j = 0, uvj = 0; j < H; j++)
 	{
-		if (i % m_packRate == 0
-			&& i != 0)
+		if (j % m_packRate == 0	&& j != 0)
 		{
-			++uvi;
+			++uvj;
 		}
 
-		for (size_t j = 0, uvj = 0; j < H; j++)
+		for (size_t i = 0, uvi = 0, uvidx = 0; i < W; i++)
 		{
-			auto& yPixel = *m_yImage->GetPixelData()[i*j];
-			
-			if (j % m_packRate == 0
-				&& j != 0)
+			if (i % m_packRate == 0	&& i != 0)
 			{
-				++uvj;
+				++uvi;
 			}
 
 			uvidx = uvi + packedW * uvj;
-			auto& uPixel = *m_uImage->GetPixelData()[uvidx];
-			auto& vPixel = *m_vImage->GetPixelData()[uvidx];
-
-			rawImage.push_back(yPixel[0]);
-			rawImage.push_back(yPixel[0]);
-			rawImage.push_back(yPixel[0]);
+			rawImage.push_back(Y[i*j]);
+			rawImage.push_back(U[uvidx]);
+			rawImage.push_back(V[uvidx]);
 		}
 	}
+#elif PACKED_COLOUR_IMAGE_UNPACK_WAY_TEST_2
+	for (size_t i = 0, uvi = 0; i < Y.GetSize(); i++)
+	{
+		uvi = i / (m_packRate*m_packRate);
+		
+		rawImage.push_back(Y[i]);
+		rawImage.push_back(U[uvi]);
+		rawImage.push_back(V[uvi]);
+	}
+#elif PACKED_COLOUR_IMAGE_UNPACK_WAY_TEST_3
+	for (size_t i = 0, 
+		 j = 0, 
+		 uvi = 0, 
+		 uvidx = 0; i < Y.GetSize(); i++)
+	{
+		if (i % (W*2) == 0)
+		{
+			++j;
+			uvi = 0;
+		}
+
+		uvidx = (uvi/m_packRate) + ((j-1)*packedW);
+
+		rawImage.push_back(Y[i]);
+		rawImage.push_back(U[uvi]);
+		rawImage.push_back(V[uvi]);
+
+		++uvi;
+	}
+#elif PACKED_COLOUR_IMAGE_UNPACK_WAY_TEST_4
+	std::vector<uint8_t> uC;
+	std::vector<uint8_t> vC;
+	uC.resize(Y.GetSize());
+	vC.resize(Y.GetSize());
+
+	{
+		dbg__profileBlock2("Comps resize upsameple");
+
+		stbir__resize_arbitrary(nullptr, 
+								(const void*)&U[0], packedW, packedW, 0, 
+								(void*)&uC.front(), W, H, 0, 
+								0, 0, 1, 1, nullptr, 1, -1, 0,
+								STBIR_TYPE_UINT8, STBIR_FILTER_DEFAULT, STBIR_FILTER_DEFAULT,
+								STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);
+
+		stbir__resize_arbitrary(nullptr, 
+								(const void*)&V[0], packedW, packedW, 0, 
+								(void*)&vC.front(), W, H, 0, 
+								0, 0, 1, 1, nullptr, 1, -1, 0,
+								STBIR_TYPE_UINT8, STBIR_FILTER_DEFAULT, STBIR_FILTER_DEFAULT,
+								STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);
+	}
+
+	for (size_t i = 0; i < Y.GetSize(); i++)
+	{
+		rawImage.push_back(Y[i]);
+		rawImage.push_back(uC[i]);
+		rawImage.push_back(vC[i]);
+	}
+#endif
 
 	SaveHeader(image);
 	return image->Load(rawImage);
@@ -286,20 +325,22 @@ IJResult IJPackedColourImage::PackRGBImage(IJRGBImage* image, uint8_t rate)
 		SetPackRate(rate);
 	}
 
+	IJYCbCrImage888* yuvImage = nullptr;
 	IJResult result = IJResult::UnknownResult;
-
-	IJYCbCrImage888* yuvImage = new IJYCbCrImage888();
-	result = IJImageTranslator::RGBToYCbCr888(image, yuvImage);
-	if (result != IJResult::Success)
 	{
-		return result;
+		dbg__profileBlock2("RGB -> YUV translation");
+		yuvImage = new IJYCbCrImage888();
+		result = IJImageTranslator::RGBToYCbCr888(image, yuvImage);
+		if (result != IJResult::Success)
+		{
+			return result;
+		}
 	}
 
-#if defined(_DEBUG)
-	yuvImage->Save("output/dbg/yuv_debug_output.tga");
-#endif
-
-	result = PackImage(yuvImage, m_packRate);
+	{
+		dbg__profileBlock2("YUV comp pack");
+		result = PackImage(yuvImage, m_packRate);
+	}
 
 	if (yuvImage)
 	{
@@ -400,69 +441,3 @@ IJResult IJPackedColourImage::Save()
 	return Save(ofile);
 }
 
-IJResult IJPackedColourImage::LoadHeader(IJImageInterface<uint8_t, 3>* image)
-{
-	ASSERT_PTR(image);
-
-	if (!m_header)
-	{
-		m_header = new TGAHeader();
-		ASSERT_PTR(m_header);
-	}
-
-	m_header->idlength			= image->m_header.idlength;
-	m_header->colourmaptype		= image->m_header.colourmaptype;
-	m_header->datatypecode		= image->GetCompressionType();
-	m_header->colourmaporigin	= image->m_header.colourmaporigin;
-	m_header->colourmaplength	= image->m_header.colourmaplength;
-	m_header->colourmapdepth	= image->m_header.colourmapdepth;
-	m_header->x_origin			= image->m_header.x_origin;
-	m_header->y_origin			= image->m_header.y_origin;
-	m_header->width				= image->GetWidth();
-	m_header->height			= image->GetHeight();
-	m_header->bitsperpixel		= image->GetBitsPerPixel();
-	m_header->imagedescriptor	= image->m_header.imagedescriptor;
-	return IJResult::Success;
-}
-
-IJResult IJPackedColourImage::SaveHeader(IJImageInterface<uint8_t, 3>* image)
-{
-	ASSERT_PTR(image);
-	ASSERT_PTR(m_header);
-
-	image->m_header.idlength		= m_header->idlength;
-	image->m_header.colourmaptype	= m_header->colourmaptype;
-	image->m_header.datatypecode	= m_header->datatypecode;
-	image->m_header.colourmaporigin	= m_header->colourmaporigin;
-	image->m_header.colourmaplength	= m_header->colourmaplength;
-	image->m_header.colourmapdepth	= m_header->colourmapdepth;
-	image->m_header.x_origin		= m_header->x_origin;
-	image->m_header.y_origin		= m_header->y_origin;
-	image->m_header.width			= m_header->width;
-	image->m_header.height			= m_header->height;
-	image->m_header.bitsperpixel	= m_header->bitsperpixel;
-	image->m_header.imagedescriptor	= m_header->imagedescriptor;
-
-	return IJResult::Success;
-}
-
-IJResult IJPackedColourImage::SaveHeader(IJImageInterface<uint8_t, 1>* image)
-{
-	ASSERT_PTR(image);
-	ASSERT_PTR(m_header);
-
-	image->m_header.idlength		= m_header->idlength;
-	image->m_header.colourmaptype	= m_header->colourmaptype;
-	image->m_header.datatypecode	= m_header->datatypecode;
-	image->m_header.colourmaporigin	= m_header->colourmaporigin;
-	image->m_header.colourmaplength	= m_header->colourmaplength;
-	image->m_header.colourmapdepth	= m_header->colourmapdepth;
-	image->m_header.x_origin		= m_header->x_origin;
-	image->m_header.y_origin		= m_header->y_origin;
-	image->m_header.width			= m_header->width;
-	image->m_header.height			= m_header->height;
-	image->m_header.bitsperpixel	= m_header->bitsperpixel;
-	image->m_header.imagedescriptor	= m_header->imagedescriptor;
-
-	return IJResult::Success;
-}

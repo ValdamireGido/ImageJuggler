@@ -68,11 +68,10 @@ private:
 */
 
 class IJImage
-	: public IJImageInterface<comp_8_t, IJPixel::k_compCount>
+	: public IJImageInterface<IJPixel, IJPixel::k_compCount>
 {
 public:
 	using PixelComp_t	= comp_8_t;
-	using Pixel_t		= IJPixelInterface<PixelComp_t, IJPixel::k_compCount>;
 	using IJPixelPtr_t	= IJPixel*;
 
 public:
@@ -94,9 +93,9 @@ public:
 	virtual IJResult Load(const std::vector<PixelComp_t>& rawImage);
 	virtual IJResult Save(		std::vector<PixelComp_t>& rawImage);
 
-	using IJImageInterface<comp_8_t, IJPixel::k_compCount>::GetPixelData;
-	using IJImageInterface<comp_8_t, IJPixel::k_compCount>::Load;
-	using IJImageInterface<comp_8_t, IJPixel::k_compCount>::Save;
+	using IJImageInterface<IJPixel, IJPixel::k_compCount>::GetData;
+	using IJImageInterface<IJPixel, IJPixel::k_compCount>::Load;
+	using IJImageInterface<IJPixel, IJPixel::k_compCount>::Save;
 };
 
 
@@ -105,11 +104,10 @@ public:
 */
 
 class IJImageAlpha
-	: IJImageInterface<comp_8_t, IJPixelAlpha::k_compCount>
+	: IJImageInterface<IJPixelAlpha, IJPixelAlpha::k_compCount>
 {
 public:
 	using PixelComp_t		= comp_8_t;
-	using Pixel_t			= IJPixelInterface<PixelComp_t, IJPixelAlpha::k_compCount>;
 	using IJPixelAlphaPtr_t	= IJPixelAlpha*;
 
 public:
@@ -128,7 +126,7 @@ public:
 	virtual IJResult Load(const std::vector<PixelComp_t>& rawImage);
 	virtual IJResult Save(		std::vector<PixelComp_t>& rawImage);
 
-	using IJImageInterface<comp_8_t, IJPixelAlpha::k_compCount>::GetPixelData;
-	using IJImageInterface<comp_8_t, IJPixelAlpha::k_compCount>::Load;
-	using IJImageInterface<comp_8_t, IJPixelAlpha::k_compCount>::Save;
+	using IJImageInterface<IJPixelAlpha, IJPixelAlpha::k_compCount>::GetData;
+	using IJImageInterface<IJPixelAlpha, IJPixelAlpha::k_compCount>::Load;
+	using IJImageInterface<IJPixelAlpha, IJPixelAlpha::k_compCount>::Save;
 };

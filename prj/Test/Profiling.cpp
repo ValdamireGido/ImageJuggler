@@ -36,8 +36,8 @@ namespace ProfileUtils
 		m_oStream << std::left;
 		m_oStream << std::setw(4 * s_level) << ">" << std::setw(12) << "File: "			 << m_fileName.c_str()	<< std::endl
 				  << std::setw(4 * s_level) << ">" << std::setw(12) << "Line: "			 << m_line				<< std::endl
-				  << std::setw(4 * s_level) << ">" << std::setw(12) << "Function: "		 << m_funcName.c_str()	<< std::endl 
+				  //<< std::setw(4 * s_level) << ">" << std::setw(12) << "Function: "		 << m_funcName.c_str()	<< std::endl 
 				  << std::setw(4 * s_level) << ">" << std::setw(16) << "Time spent(ms): " << time << std::endl;
-		m_oStream << std::setw(4 * s_level - 1)	<< ">" << "} ==== Block: " << m_blockName.c_str() << std::endl;
+		m_oStream << std::setw(4 * s_level - 1)	<< ">" << "} " << std::endl;
 	}
 }

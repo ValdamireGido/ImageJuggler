@@ -29,7 +29,7 @@ public:
 		Has three different collections for every component. 
 */
 class IJSingleCompImage
-	: public IJImageInterface<YUVPixelComp_t, 1u>
+	: public IJImageInterface<uint8_t, 1>
 {
 public:
 	using PixelData_t = std::vector<uint8_t>;
@@ -49,10 +49,34 @@ public:
 	IJResult Load(std::istream& istream, size_t size);
 	IJResult Save(std::ostream& oStream) override;
 
+	const PixelData_t& data() const;
+	uint8_t& operator [] (size_t idx);
+
 	IJResult DebugSave(const std::string& fileName, uint8_t compsToDump = R|G|B);
 
-	using IJImageInterface<YUVPixelComp_t, Pixel_t::k_compCount>::GetPixelData;
-	using IJImageInterface<YUVPixelComp_t, Pixel_t::k_compCount>::Load;
-	using IJImageInterface<YUVPixelComp_t, Pixel_t::k_compCount>::Save;
-	using IJImageInterface<YUVPixelComp_t, Pixel_t::k_compCount>::GetSize;
+	using IJImageInterface<uint8_t, 1>::GetData;
+	using IJImageInterface<uint8_t, 1>::Load;
+	using IJImageInterface<uint8_t, 1>::Save;
+	using IJImageInterface<uint8_t, 1>::GetSize;
+
+private:
+	PixelData_t& data();
+
+private:
+	PixelData_t m_data;
 };
+
+inline const IJSingleCompImage::PixelData_t& IJSingleCompImage::data() const 
+{
+	return m_data;
+}
+
+inline uint8_t& IJSingleCompImage::operator [] (size_t idx)
+{
+	return data()[idx];
+}
+
+inline IJSingleCompImage::PixelData_t& IJSingleCompImage::data() 
+{
+	return m_data;
+}

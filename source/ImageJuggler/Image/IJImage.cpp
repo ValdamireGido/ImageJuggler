@@ -55,11 +55,11 @@ inline IJPixelAlpha::Comp_t& IJPixelAlpha::operator [] (size_t compIdx)
 */
 
 IJImage::IJImage(IJImageType type)
-	: IJImageInterface<PixelComp_t, IJPixel::k_compCount>(type)
+	: IJImageInterface<IJPixel, IJPixel::k_compCount>(type)
 {}
 
 IJImage::IJImage(const std::string& fileName, IJImageType type)
-	: IJImageInterface<PixelComp_t, IJPixel::k_compCount>(fileName, type)
+	: IJImageInterface<IJPixel, IJPixel::k_compCount>(fileName, type)
 {}
 
 IJResult IJImage::Load(std::istream& iStream) 
@@ -69,9 +69,8 @@ IJResult IJImage::Load(std::istream& iStream)
 	{
 		std::array<PixelComp_t, IJPixel::k_compCount> rawPixel;
 		iStream.read((char*)&rawPixel.front(), IJPixel::k_compCount);
-		IJPixel* pixel = new IJPixel();
-		assert(pixel);
-		pixel->deserialize(rawPixel);
+		IJPixel pixel;
+		pixel.deserialize(rawPixel);
 		AddPixel(pixel);
 		imageSize += IJPixel::k_compCount;
 	}
@@ -83,7 +82,7 @@ IJResult IJImage::Load(std::istream& iStream)
 IJResult IJImage::Load(const std::vector<PixelComp_t>& rawImage)
 {
 	assert(!rawImage.empty());
-	assert(GetPixelData().empty());
+	assert(GetData().empty());
 
 	std::strstream stream((char*)&rawImage.front(), rawImage.size(), std::ios::in);
 	return Load(stream);
@@ -91,14 +90,14 @@ IJResult IJImage::Load(const std::vector<PixelComp_t>& rawImage)
 
 IJResult IJImage::Save(std::ostream& oStream) 
 {
-	if (GetPixelData().empty())
+	if (GetData().empty())
 	{
 		return IJResult::ImageIsEmpty;
 	}
 
-	for (size_t i = 0u, size = GetPixelData().size(); i < size; i++)
+	for (size_t i = 0u, size = GetData().size(); i < size; i++)
 	{
-		std::vector<PixelComp_t> rawPixel = GetPixelData()[i]->serialize();
+		std::vector<PixelComp_t> rawPixel = GetData()[i]->serialize();
 		oStream.write((char*)&rawPixel.front(), IJPixel::k_compCount);
 	}
 
@@ -107,14 +106,14 @@ IJResult IJImage::Save(std::ostream& oStream)
 
 IJResult IJImage::Save(std::vector<PixelComp_t>& rawImage)
 {
-	assert(!GetPixelData().empty());
-	if (GetPixelData().empty())
+	assert(!GetData().empty());
+	if (GetData().empty())
 	{
 		return IJResult::ImageIsEmpty;
 	}
 
-	auto it = GetPixelData().begin();
-	while (it != GetPixelData().end())
+	auto it = GetData().begin();
+	while (it != GetData().end())
 	{
 		std::vector<PixelComp_t> rawPixel = (*it)->serialize();
 		rawImage.insert(rawImage.end(), rawPixel.begin(), rawPixel.end());
@@ -150,7 +149,7 @@ IJResult IJImageAlpha::Load(std::istream& iStream)
 IJResult IJImageAlpha::Load(const std::vector<PixelComp_t>& rawImage)
 {
 	assert(!rawImage.empty());
-	assert(GetPixelData().empty());
+	assert(GetData().empty());
 
 	std::strstream stream((char*)&rawImage.front(), rawImage.size(), std::ios::in);
 	return Load(stream);
@@ -158,14 +157,14 @@ IJResult IJImageAlpha::Load(const std::vector<PixelComp_t>& rawImage)
 
 IJResult IJImageAlpha::Save(std::ostream& oStream)
 {
-	if (GetPixelData().empty())
+	if (GetData().empty())
 	{
 		return IJResult::ImageIsEmpty;
 	}
 
-	for (size_t i = 0, size = GetPixelData().size(); i < size; ++i)
+	for (size_t i = 0, size = GetData().size(); i < size; ++i)
 	{
-		std::vector<PixelComp_t> rawPixel = GetPixelData()[i]->serialize();
+		std::vector<PixelComp_t> rawPixel = GetData()[i]->serialize();
 		oStream.write((char*)&rawPixel.front(), IJPixel::k_compCount);
 	}
 	return IJResult::Success;
@@ -173,14 +172,14 @@ IJResult IJImageAlpha::Save(std::ostream& oStream)
 
 IJResult IJImageAlpha::Save(std::vector<PixelComp_t>& rawImage)
 {
-	assert(!GetPixelData().empty());
-	if (GetPixelData().empty())
+	assert(!GetData().empty());
+	if (GetData().empty())
 	{
 		return IJResult::ImageIsEmpty;
 	}
 
-	auto it = GetPixelData().begin();
-	while (it != GetPixelData().end())
+	auto it = GetData().begin();
+	while (it != GetData().end())
 	{
 		std::vector<PixelComp_t> rawPixel = (*it)->serialize();
 		rawImage.insert(rawImage.end(), rawPixel.begin(), rawPixel.end());

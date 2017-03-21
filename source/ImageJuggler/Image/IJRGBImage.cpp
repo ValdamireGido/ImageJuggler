@@ -20,18 +20,3 @@ IJRGBImage::IJRGBImage(const std::vector<PixelComp_t>& rawImage)
 	IJResult result = Load(rawImage);
 	assert(result == IJResult::Success);
 }
-
-IJRGBImage::~IJRGBImage()
-{
-	auto it = GetPixelData().begin();
-	for ( ; it != GetPixelData().end(); it++)
-	{
-		Pixel_t* pixel = *it;
-		if (pixel)
-		{
-			delete pixel;
-		}
-	}
-
-	GetPixelData().clear();
-}

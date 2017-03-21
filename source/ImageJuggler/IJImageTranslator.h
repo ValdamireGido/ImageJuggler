@@ -5,15 +5,10 @@
 #include <vector>
 
 #if defined(RGB_TO_YCBCR_CONVERSION__GENERAL_KOEF) || defined(YCBCR_TO_RGB_CONVERSION__GENERAL_KOEF)
-	#if !defined(IMAGE_CONVERSION_STANDARD_REC_709_BT_709) && !defined(IMAGE_CONVERSION_STANDARD_REC_601_BT_601)
-		#define IMAGE_CONVERSION_STANDARD_REC_601_BT_601 0
-		#define IMAGE_CONVERSION_STANDARD_REC_709_BT_709 0
-		
-		#define	IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES 0
-		#define IMAGE_CONVERSION_STANDARD_SDTV 1
-		#define IMAGE_CONVERSION_STANDARD_HDTV 0
-		#define IMAGE_CONVERSION_CUSTOM_COCG 0
-	#endif 
+	#define	IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES 0
+	#define IMAGE_CONVERSION_STANDARD_SDTV 0
+	#define IMAGE_CONVERSION_STANDARD_HDTV 1
+	#define IMAGE_CONVERSION_CUSTOM_COCG 0
 #endif
 
 template <typename _PixelCompTy, size_t _compsCount> class IJImageInterface;
@@ -31,6 +26,11 @@ struct IJImageTranslator
 
 	static void TranslateRGBPixelToYBR(IJRGBPixel*		rgbPixel, IJYCbCrPixel888* ybrPixel);
 	static void TranslateYBRPixelToRGB(IJYCbCrPixel888* ybrPixel, IJRGBPixel*	   rgbPixel);
+
+	/*static void TranslateRGBToYBRArray(IJRGBImage::PixelData_t::iterator rgbbegin, IJRGBImage::PixelData_t::iterator rgbend, 
+									   IJYCbCrImage888::PixelData_t::iterator ybrbegin, IJYCbCrImage888::PixelData_t::iterator ybrend);
+	static void TranslateYBRToRGBArray(IJYCbCrImage888::PixelData_t::iterator ybrbegin, IJYCbCrImage888::PixelData_t::iterator ybrend, 
+									   IJRGBImage::PixelData_t::iterator rgbbegin, IJRGBImage::PixelData_t::iterator rgbend);*/
 
 	static IJResult RGBToYCbCr888(IJRGBImage*		input, IJYCbCrImage888* output);
 	static IJResult YCbCr888ToRGB(IJYCbCrImage888*	input, IJRGBImage*		output);
