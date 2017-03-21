@@ -16,7 +16,6 @@ IJRGBImage::IJRGBImage(const std::string& fileName)
 
 IJRGBImage::IJRGBImage(const std::vector<PixelComp_t>& rawImage)
 {
-	SetSize(rawImage.size());
 	IJResult result = Load(rawImage);
 	assert(result == IJResult::Success);
 }

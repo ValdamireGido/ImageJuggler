@@ -16,6 +16,7 @@ template <typename _PixelCompTy, size_t _compsCount> class IJImageInterface;
 class IJRGBImage;
 class IJYCbCrImage888;
 
+struct IJPixel;
 class IJYCbCrPixel888;
 class IJRGBPixel;
 
@@ -24,13 +25,13 @@ struct IJImageTranslator
 	static std::array<uint8_t, 3> TranslateRGBPixelToYBR(const std::vector<uint8_t>& rgbPixel);
 	static std::array<uint8_t, 3> TranslateYBRPixelToRGB(const std::vector<uint8_t>& ybrPixel);
 
-	static void TranslateRGBPixelToYBR(IJRGBPixel*		rgbPixel, IJYCbCrPixel888* ybrPixel);
-	static void TranslateYBRPixelToRGB(IJYCbCrPixel888* ybrPixel, IJRGBPixel*	   rgbPixel);
+	static void TranslateRGBPixelToYBR(IJPixel& rgbPixel, IJPixel& ybrPixel);
+	static void TranslateYBRPixelToRGB(IJPixel& ybrPixel, IJPixel& rgbPixel);
 
-	/*static void TranslateRGBToYBRArray(IJRGBImage::PixelData_t::iterator rgbbegin, IJRGBImage::PixelData_t::iterator rgbend, 
-									   IJYCbCrImage888::PixelData_t::iterator ybrbegin, IJYCbCrImage888::PixelData_t::iterator ybrend);
-	static void TranslateYBRToRGBArray(IJYCbCrImage888::PixelData_t::iterator ybrbegin, IJYCbCrImage888::PixelData_t::iterator ybrend, 
-									   IJRGBImage::PixelData_t::iterator rgbbegin, IJRGBImage::PixelData_t::iterator rgbend);*/
+	static void TranslateRGBToYBRArray(std::vector<IJPixel>::iterator rgbbegin, std::vector<IJPixel>::iterator rgbend, 
+									   std::vector<IJPixel>::iterator ybrbegin, std::vector<IJPixel>::iterator ybrend);
+	static void TranslateYBRToRGBArray(std::vector<IJPixel>::iterator ybrbegin, std::vector<IJPixel>::iterator ybrend, 
+									   std::vector<IJPixel>::iterator rgbbegin, std::vector<IJPixel>::iterator rgbend);
 
 	static IJResult RGBToYCbCr888(IJRGBImage*		input, IJYCbCrImage888* output);
 	static IJResult YCbCr888ToRGB(IJYCbCrImage888*	input, IJRGBImage*		output);

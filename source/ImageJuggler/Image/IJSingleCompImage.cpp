@@ -16,31 +16,29 @@ IJResult IJSingleCompImage::Load(std::istream& iStream)
 	size_t size = (size_t)iStream.tellg();
 	iStream.seekg(std::ios::beg);
 
-	m_data.resize(size);
-	iStream.read((char*)&m_data.front(), size);
-	SetSize(size);
+	GetData().resize(size);
+	iStream.read((char*)&GetData().front(), size);
 	
 	return IJResult::Success;
 }
 
 IJResult IJSingleCompImage::Load(std::istream& istream, size_t size)
 {
-	SetSize(size);
-	m_data.resize(size);
-	istream.read((char*)&m_data.front(), size);
+	GetData().resize(size);
+	istream.read((char*)&GetData().front(), size);
 	
 	return IJResult::Success;
 }
 
 IJResult IJSingleCompImage::Save(std::ostream& oStream)
 {
-	assert(!m_data.empty());
-	if (m_data.empty())
+	assert(!GetData().empty());
+	if (GetData().empty())
 	{
 		return IJResult::ImageIsEmpty;
 	}
 
-	oStream.write((const char*)&m_data.front(), m_data.size());
+	oStream.write((const char*)&GetData().front(), GetData().size());
 	return IJResult::Success;
 }
 
@@ -52,17 +50,17 @@ IJResult IJSingleCompImage::DebugSave(const std::string& fileName, uint8_t comps
 	{
 		static char zeroStr = 0;
 		if ((compsToDump & B) == B)
-			ofile.write((char*)&m_data[i], 1);
+			ofile.write((char*)&GetData()[i], 1);
 		else 
 			ofile.write(&zeroStr, 1);
 
 		if ((compsToDump & G) == G)
-			ofile.write((char*)&m_data[i], 1);
+			ofile.write((char*)&GetData()[i], 1);
 		else 
 			ofile.write(&zeroStr, 1);
 
 		if ((compsToDump& R) == R)
-			ofile.write((char*)&m_data[i], 1);
+			ofile.write((char*)&GetData()[i], 1);
 		else 
 			ofile.write(&zeroStr, 1);
 	}

@@ -2,6 +2,10 @@
 
 #include "IJTypes.h"
 
+#include <functional>
+#include <thread>
+#include <future>
+
 #define ASSERT_PTR(ptr)\
 do {\
 	assert(ptr);\
@@ -33,5 +37,48 @@ namespace cusmath
 		}
 		else
 			return val;
+	}
+}
+
+namespace parallel
+{
+	inline void asyncForeach(int _start,
+							 int _end,
+							 std::function<void(int _i)> _func, 
+							 const size_t _nThreads = 4)
+	{
+		if (!_func)
+		{
+			return;
+		}
+
+		if (_start == _end)
+		{
+			return;
+		}
+
+		std::vector<std::future<void> > handles;
+		handles.resize(_nThreads);
+		int size = _end - _start;
+		int sizePerThread = size / _nThreads;
+		for (size_t handleIdx = 0; handleIdx < _nThreads; handleIdx++)
+		{
+			size_t offset = sizePerThread * handleIdx;
+			size_t start = _start + offset;
+			size_t end = start + sizePerThread;
+			handles[handleIdx] = std::async(std::launch::async, 
+											[start, end, &_func] () 
+			{
+				for (size_t i = start; i < end; i++)
+				{
+					_func(i);
+				}
+			});
+		}
+
+		for (auto& handle : handles)
+		{
+			handle.wait();
+		}
 	}
 }

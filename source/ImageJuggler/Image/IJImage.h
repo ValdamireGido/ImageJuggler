@@ -8,29 +8,14 @@
 
 using comp_8_t = uint8_t;
 
-class IJPixel
-	: public IJPixelInterface<comp_8_t, 3>
+struct IJPixel
+	//: public IJPixelInterface<comp_8_t, 3>
 {
-public:
-	using CompData_t = std::array<Comp_t, k_compCount>;
+	uint8_t c1;
+	uint8_t c2;
+	uint8_t c3;
 
-public:
-	IJPixel() = default;
-	IJPixel(const IJPixel& rhs) = default;
-	IJPixel& operator=(const IJPixel& rhs) = default;
-
-	IJPixel(IJPixel&& rhs) = delete;
-	IJPixel& operator=(IJPixel&& rhs) = delete;
-
-	virtual ~IJPixel() {}
-
-	virtual std::vector<Comp_t> serialize() const override;
-	virtual void deserialize(const std::array<Comp_t, k_compCount>& rawPixel);
-
-	virtual Comp_t& operator [] (size_t compIdx) override;
-
-private:
-	CompData_t	m_comps;
+	static const size_t k_compCount = 3;
 };
 
 
@@ -49,8 +34,8 @@ public:
 	IJPixelAlpha(const IJPixelAlpha& rhs) = default;
 	IJPixelAlpha& operator = (const IJPixelAlpha& rhs) = default;
 
-	IJPixelAlpha(IJPixelAlpha&& rhs) = delete;
-	IJPixelAlpha& operator = (IJPixelAlpha&& rhs) = delete;
+	IJPixelAlpha(IJPixelAlpha&& rhs) = default;
+	IJPixelAlpha& operator = (IJPixelAlpha&& rhs) = default;
 
 	virtual ~IJPixelAlpha() {}
 

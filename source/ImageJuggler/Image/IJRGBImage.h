@@ -8,9 +8,6 @@
 // IJRGBPixel
 
 class IJRGBPixel : public IJPixel {};
-
-// IJRGBImage
-
 class IJRGBImage
 	: public IJImage
 {

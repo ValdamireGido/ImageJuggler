@@ -29,6 +29,7 @@ class IJRGBImage;
 class IJPackedColourImage
 {
 	static const int k_defaultPackRate = 8;
+	static const int k_workingThreadCount = 8;
 	using TGAHeader = IJImageInterface<uint8_t, 3>::TGAHeader;
 public:
 	IJPackedColourImage();
@@ -99,7 +100,6 @@ inline void IJPackedColourImage::SetPackRate(uint8_t packRate)
 template <typename _PixelTy, size_t _nComps>
 IJResult IJPackedColourImage::LoadHeader(IJImageInterface<_PixelTy, _nComps>* image)
 {
-	assert(image);
 	if (!image)
 	{
 		return IJResult::BadMemoryPointer;
@@ -108,7 +108,6 @@ IJResult IJPackedColourImage::LoadHeader(IJImageInterface<_PixelTy, _nComps>* im
 	if (!m_header)
 	{
 		m_header = new TGAHeader();
-		ASSERT_PTR(m_header);
 	}
 
 	m_header->idlength			= image->m_header.idlength;
@@ -129,13 +128,11 @@ IJResult IJPackedColourImage::LoadHeader(IJImageInterface<_PixelTy, _nComps>* im
 template <typename _PixelTy, size_t _nComps>
 IJResult IJPackedColourImage::SaveHeader(IJImageInterface<_PixelTy, _nComps>* image)
 {
-	assert(image);
 	if (!image)
 	{
 		return IJResult::BadMemoryPointer;
 	}
 
-	assert(m_header);
 	if (!m_header)
 	{
 		return IJResult::BadMemoryPointer;
