@@ -2,27 +2,6 @@
 
 #include "IJImageInterface.h"
 
-/* 
-		YUV Single component pixel
-		Created to store every component in a single storage.
-*/
-
-using YUVPixelComp_t = uint8_t;
-class IJSingleCompPixel
-	: public IJPixelInterface<YUVPixelComp_t, 1u>
-{
-public:
-	IJSingleCompPixel() = default;
-	IJSingleCompPixel(Comp_t comp);
-	virtual ~IJSingleCompPixel() {}
-
-	std::vector<Comp_t>		serialize() const override;
-	void					deserialize(const std::array<Comp_t, k_compCount>& rawPixel) override;
-	Comp_t&					operator [] (size_t idx) override;
-
-	Comp_t c;
-};
-
 
 /* 
 		YUV Single Component Image

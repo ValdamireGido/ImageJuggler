@@ -14,7 +14,6 @@ struct IJPixel
 	uint8_t c1;
 	uint8_t c2;
 	uint8_t c3;
-
 	static const size_t k_compCount = 3;
 };
 
@@ -23,28 +22,13 @@ struct IJPixel
 		IJPixelAlpha definition
 */
 
-class IJPixelAlpha
-	: public IJPixelInterface<comp_8_t, 4>
+struct IJPixelAlpha
 {
-public:
-	using CompData_t = std::array<Comp_t, k_compCount>;
-
-public:
-	IJPixelAlpha() = default;
-	IJPixelAlpha(const IJPixelAlpha& rhs) = default;
-	IJPixelAlpha& operator = (const IJPixelAlpha& rhs) = default;
-
-	IJPixelAlpha(IJPixelAlpha&& rhs) = default;
-	IJPixelAlpha& operator = (IJPixelAlpha&& rhs) = default;
-
-	virtual ~IJPixelAlpha() {}
-
-	virtual std::vector<Comp_t> serialize() const override;
-	virtual void deserialize(const std::array<Comp_t, k_compCount>& rawPixel);
-	virtual Comp_t& operator [] (size_t compIdx) override;
-
-private:
-	CompData_t m_comps;
+	uint8_t c1;
+	uint8_t c2; 
+	uint8_t c3;
+	uint8_t a;
+	static const size_t k_compCount = 4;
 };
 
 

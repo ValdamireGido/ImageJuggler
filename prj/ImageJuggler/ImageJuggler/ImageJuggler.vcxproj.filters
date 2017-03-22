@@ -48,6 +48,9 @@
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJPackedColourImage.cpp">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\ImageJuggler\IJYUVPackedConverter.cpp">
+      <Filter>source\ImageJuggler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\gles20\gl2.h">
@@ -80,9 +83,6 @@
     <ClInclude Include="..\..\..\source\ImageJuggler\IJUtils.h">
       <Filter>source\ImageJuggler</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\ImageJuggler\Image\stb_image_resize.h">
-      <Filter>source\ImageJuggler\Image</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImageInterface.h">
       <Filter>source\ImageJuggler\Image</Filter>
     </ClInclude>
@@ -102,6 +102,12 @@
       <Filter>source\ImageJuggler\Image</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\ImageJuggler\Fixed.h">
+      <Filter>source\ImageJuggler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\ImageJuggler\IJYUVPackedConverter.h">
+      <Filter>source\ImageJuggler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\ImageJuggler\stb_image_resize.h">
       <Filter>source\ImageJuggler</Filter>
     </ClInclude>
   </ItemGroup>

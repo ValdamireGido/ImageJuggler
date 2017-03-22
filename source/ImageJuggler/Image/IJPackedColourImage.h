@@ -28,6 +28,8 @@ class IJRGBImage;
 */
 class IJPackedColourImage
 {
+	friend struct IJYUVPackedConverter;
+
 	static const int k_defaultPackRate = 8;
 	static const int k_workingThreadCount = 8;
 	using TGAHeader = IJImageInterface<uint8_t, 3>::TGAHeader;

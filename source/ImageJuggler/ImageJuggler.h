@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IJTypes.h"
-
+#include "ImageJuggler_config.h"
 #include <vector>
 
 namespace image_juggler

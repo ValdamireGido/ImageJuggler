@@ -17,6 +17,9 @@
 
 #define PACKED_COLOR_ALGORITHM_USING_STBIR 1
 
+#define PACKED_COLOUR_IMAGE_UNPACK_ALGORITH_TEST_1 0
+#define PACKED_COLOUR_IMAGE_UNPACK_ALGORITH_TEST_2 1
+
 IJPackedColourImage::IJPackedColourImage() 
 	: m_yImage(nullptr)
 	, m_uImage(nullptr)
@@ -189,6 +192,45 @@ IJResult IJPackedColourImage::PackImage(IJYCbCrImage888* image, uint8_t rate)
 	return IJResult::Success;
 }
 
+IJResult IJPackedColourImage::PackRGBImage(IJRGBImage* image, uint8_t rate)
+{
+	ASSERT_PTR(image);
+
+	if (!m_yImage)
+	{
+		CreateCompImages();
+	}
+
+	if (rate != GetPackRate())
+	{
+		SetPackRate(rate);
+	}
+
+	IJYCbCrImage888* yuvImage = nullptr;
+	IJResult result = IJResult::UnknownResult;
+	{
+		dbg__profileBlock2("RGB -> YUV translation");
+		yuvImage = new IJYCbCrImage888();
+		result = IJImageTranslator::RGBToYCbCr888(image, yuvImage);
+		if (result != IJResult::Success)
+		{
+			return result;
+		}
+	}
+
+	{
+		dbg__profileBlock2("YUV comp pack");
+		result = PackImage(yuvImage, m_packRate);
+	}
+
+	if (yuvImage)
+	{
+		delete yuvImage;
+		yuvImage = nullptr;
+	}
+	return result;
+}
+
 IJResult IJPackedColourImage::UnpackImage(IJYCbCrImage888* image, uint8_t rate)
 {
 	ASSERT_PTR(image);
@@ -244,45 +286,6 @@ IJResult IJPackedColourImage::UnpackImage(IJYCbCrImage888* image, uint8_t rate)
 	return IJResult::Success;
 }
 
-IJResult IJPackedColourImage::PackRGBImage(IJRGBImage* image, uint8_t rate)
-{
-	ASSERT_PTR(image);
-
-	if (!m_yImage)
-	{
-		CreateCompImages();
-	}
-
-	if (rate != GetPackRate())
-	{
-		SetPackRate(rate);
-	}
-
-	IJYCbCrImage888* yuvImage = nullptr;
-	IJResult result = IJResult::UnknownResult;
-	{
-		dbg__profileBlock2("RGB -> YUV translation");
-		yuvImage = new IJYCbCrImage888();
-		result = IJImageTranslator::RGBToYCbCr888(image, yuvImage);
-		if (result != IJResult::Success)
-		{
-			return result;
-		}
-	}
-
-	{
-		dbg__profileBlock2("YUV comp pack");
-		result = PackImage(yuvImage, m_packRate);
-	}
-
-	if (yuvImage)
-	{
-		delete yuvImage;
-		yuvImage = nullptr;
-	}
-	return result;
-}
-
 IJResult IJPackedColourImage::UnpackRGBImage(IJRGBImage* image, uint8_t rate)
 {
 	ASSERT_PTR(image);
@@ -298,8 +301,10 @@ IJResult IJPackedColourImage::UnpackRGBImage(IJRGBImage* image, uint8_t rate)
 		SetPackRate(rate);
 	}
 
+#if PACKED_COLOUR_IMAGE_UNPACK_ALGORITH_TEST_1 
 	IJYCbCrImage888* yuvImage = new IJYCbCrImage888();
 	ASSERT_PTR(yuvImage);
+	SaveHeader(yuvImage);
 
 	IJResult result = IJResult::UnknownResult;
 	{
@@ -313,7 +318,7 @@ IJResult IJPackedColourImage::UnpackRGBImage(IJRGBImage* image, uint8_t rate)
 
 	{
 		dbg__profileBlock2("YUV -> RGB translation");
-		SaveHeader(yuvImage);
+
 		result = IJImageTranslator::YCbCr888ToRGB(yuvImage, image);
 	}
 
@@ -324,6 +329,30 @@ IJResult IJPackedColourImage::UnpackRGBImage(IJRGBImage* image, uint8_t rate)
 	}
 
 	return result;
+#elif PACKED_COLOUR_IMAGE_UNPACK_ALGORITH_TEST_2
+	SaveHeader(image);
+	auto& rgb = image->GetData();
+	image->Resize(m_ySize);
+	auto& Y = *m_yImage;
+	auto& U = *m_uImage;
+	auto& V = *m_vImage;
+	size_t W = m_header->width;
+
+	//for (size_t j = 0; j < W; j++)
+	std::function<void(int)> interation = [&Y, &U, &V, W, &rgb, this] (int j) 
+	{
+		size_t uvj = (j / m_packRate) * (W / m_packRate);
+		for (size_t i = 0; i < W; i++)
+		{
+			size_t yi = j * W + i;
+			size_t uvi = uvj + (i / m_packRate);
+			IJImageTranslator::TranslateYUVToRGB(Y[yi], U[uvi], V[uvi], rgb[yi].c1, rgb[yi].c2, rgb[yi].c3);
+		}
+	};
+	parallel::asyncForeach(0, W, interation, k_workingThreadCount);
+
+	return IJResult::Success;
+#endif //
 }
 
 
