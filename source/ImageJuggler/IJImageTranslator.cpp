@@ -21,168 +21,54 @@ using fixed_int = numeric::Fixed<16, 16>;
 
 //////////////////////////////////////////////////////////////////////////
 
-std::array<uint8_t, 3> IJImageTranslator::TranslateRGBPixelToYBR(const std::vector<uint8_t>& rgbPixel)
-{
-	std::array<uint8_t, 3> ybrPixel;
-#if TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION
-		fixed_int R = rgbPixel[0], G = rgbPixel[1], B = rgbPixel[2];
-	#if IMAGE_CONVERSION_STANDARD_SDTV
-		ybrPixel[0] = cusmath::clamp<fixed_int>(R * 0.257f    + G * 0.504f    + B * 0.098f    + 16 , 16, 235).to_uint();
-		ybrPixel[1] = cusmath::clamp<fixed_int>(R * (-0.169f) + G * (-0.291f) + B * 0.439f    + 128, 16, 240).to_uint();
-		ybrPixel[2] = cusmath::clamp<fixed_int>(R * 0.439f    + G * (-0.368f) + B * (-0.071f) + 128, 16, 240).to_uint();
-	#elif IMAGE_CONVERSION_STANDARD_HDTV
-		static fixed_int yrk = 0.183f, ygk = 0.614f, ybk = 0.062f, 
-						 brk = -0.101f, bgk = -0.399f, bbk = 0.439f, 
-						 rrk = 0.439f, rgk = -0.399f, rbk = -0.040f, 
-						incY = 16, incUV = 128, lower = 16, upperY = 235, upperUV = 240;
-		ybrPixel[0] = cusmath::clamp<fixed_int>(R * yrk + G * ygk + B * ybk + incY , lower, upperY).to_uint();
-		ybrPixel[1] = cusmath::clamp<fixed_int>(R * brk + G * bgk + B * bbk + incUV, lower, upperUV).to_uint();
-		ybrPixel[2] = cusmath::clamp<fixed_int>(R * rrk + G * rgk + B * rbk + incUV, lower, upperUV).to_uint();
-	#endif // IMAGE_CONVERSION_STANDRARD_SDTV
-#else
-		float R = rgbPixel[0],
-			  G = rgbPixel[1],
-			  B = rgbPixel[2];
-	#if IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES
-		ybrPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>( 0.299f * R + 0.587f * G + 0.114f * B, 0, 255));
-		ybrPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(-0.169f * R - 0.331f * G + 0.500f * B + 128, 0, 255));
-		ybrPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>( 0.500f * R - 0.419f * G - 0.081f * B + 128, 0, 255));
-	#elif IMAGE_CONVERSION_STANDARD_SDTV
-		ybrPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(0.257f * R + 0.504f * G + 0.098f * B + 16, 16, 235));
-		ybrPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(-0.148f * R - 0.291f * G + 0.439f * B + 128, 16, 240));
-		ybrPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(0.439f * R - 0.368f * G - 0.071f * B + 128, 16, 240));
-	#elif IMAGE_CONVERSION_STANDARD_HDTV
-		ybrPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(0.183f * R + 0.614f * G + 0.062f * B + 16, 16, 235));
-		ybrPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(-0.101f * R - 0.339f * G + 0.439f * B + 128, 16, 240));
-		ybrPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(0.439f * R - 0.399f * G - 0.040f * B + 128, 16, 240));
-	#elif IMAGE_CONVERSION_CUSTOM_COCG
-		ybrPixel[0] = uint8_t(0.33 * R + 0.33 * G + 0.33 * B);
-		ybrPixel[1] = uint8_t(0.5  * G + 0.5  * B);
-		ybrPixel[2] = uint8_t(0.5  * R + 0.5  * G);
-	#endif
-#endif // TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION
-	return ybrPixel;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-std::array<uint8_t, 3> IJImageTranslator::TranslateYBRPixelToRGB(const std::vector<uint8_t>& ybrPixel)
-{
-	std::array<uint8_t, 3> rgbPixel;
-
-#if TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION
-		fixed_int Y = ybrPixel[0], B = ybrPixel[1], R = ybrPixel[2];
-	#if IMAGE_CONVERSION_STANDARD_SDTV
-		fixed_int Y_ = Y - 16, 
-				  kY = Y_ * 1.164f, 
-				  B_ = B - 128, 
-				  R_ = R - 128;
-		rgbPixel[0] = cusmath::clamp<fixed_int>(kY + R_ * 1.196f, 0, 255).to_uint();
-		rgbPixel[1] = cusmath::clamp<fixed_int>(kY + B_ * (-0.392f) + R_ * (-0.813f), 0, 255).to_uint();
-		rgbPixel[2] = cusmath::clamp<fixed_int>(kY + B_ * 2.017f, 0, 255).to_uint();
-	#elif IMAGE_CONVERSION_STANDARD_HDTV
-		static fixed_int rrk = 1.793f, 
-						 gbk = -0.213f, grk = -0.533f, 
-						 bbk = 2.112f, 
-						lower = 0, upper = 255;
-		fixed_int Y_ = Y - 16, 
-				  kY = Y_ * 1.164f, 
-				  B_ = B - 128, 
-				  R_ = R - 128;
-		rgbPixel[0] = cusmath::clamp<fixed_int>(kY + R_ * rrk, lower, upper).to_uint();
-		rgbPixel[1] = cusmath::clamp<fixed_int>(kY + B_ * gbk + R_ * grk, lower, upper).to_uint();
-		rgbPixel[2] = cusmath::clamp<fixed_int>(kY + B_ * bbk, lower, upper).to_uint();
-	#endif
-#else 
-		float Y = ybrPixel[0] * 1.04f,
-			B = ybrPixel[1],
-			R = ybrPixel[2];
-	
-	#if IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES
-		double R_ = R - 128,
-			B_ = B - 128;
-		rgbPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(Y + 1.400f * R_, 0, 255));
-		rgbPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(Y - 0.343f * B_ - 0.711f * R_, 0, 255));
-		rgbPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(Y + 1.765f * B_, 0, 255));
-	#elif IMAGE_CONVERSION_STANDARD_SDTV
-		float Y_ = Y - 16,
-			B_ = B - 128,
-			R_ = R - 128,
-			kY = Y_ * 1.164f;
-		rgbPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(kY + 1.196f * R_, 0, 255));
-		rgbPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(kY - 0.392f * B_ - 0.813f * R_, 0, 255));
-		rgbPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(kY + 2.017f * B_, 0, 255));
-	#elif IMAGE_CONVERSION_STANDARD_HDTV
-		float Y_ = Y - 16,
-			  B_ = B - 128,
-			  R_ = R - 128,
-			  kY = Y_ * 1.164f;
-		rgbPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(kY + 1.793f * R_, 0, 255));
-		rgbPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(kY - 0.213f * B_ - 0.533f * R_, 0, 255));
-		rgbPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(kY + 2.112f * B_, 0, 255));
-	#endif  
-#endif // TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION
-
-	return rgbPixel;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void IJImageTranslator::TranslateRGBPixelToYBR(IJPixel& rgbPixel, IJPixel& ybrPixel)
+void IJImageTranslator::TranslateRGBToYUV(uint8_t R, uint8_t G, uint8_t B, 
+										  uint8_t& y, uint8_t& u, uint8_t& v)
 {
 #if TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION
-		fixed_int R = rgbPixel.c1, G = rgbPixel.c2, B = rgbPixel.c3;
 	#if IMAGE_CONVERSION_STANDARD_SDTV
-		ybrPixel[0] = cusmath::clamp<fixed_int>(R * 0.257f    + G * 0.504f    + B * 0.098f    + 16 , 16, 235).to_uint();
-		ybrPixel[1] = cusmath::clamp<fixed_int>(R * (-0.169f) + G * (-0.291f) + B * 0.439f    + 128, 16, 240).to_uint();
-		ybrPixel[2] = cusmath::clamp<fixed_int>(R * 0.439f    + G * (-0.368f) + B * (-0.071f) + 128, 16, 240).to_uint();
+		y = cusmath::clamp<fixed_int>(R * 0.257f    + G * 0.504f    + B * 0.098f    + 16 , 16, 235).to_uint();
+		u = cusmath::clamp<fixed_int>(R * (-0.169f) + G * (-0.291f) + B * 0.439f    + 128, 16, 240).to_uint();
+		v = cusmath::clamp<fixed_int>(R * 0.439f    + G * (-0.368f) + B * (-0.071f) + 128, 16, 240).to_uint();
 	#elif IMAGE_CONVERSION_STANDARD_HDTV
 		static fixed_int yrk =  0.2126f , ygk =  0.7152f , ybk =  0.0722f, 
 						 brk = -0.09991f, bgk = -0.33609f, bbk =  0.436f, 
 						 rrk =  0.615f  , rgk = -0.55861f, rbk = -0.05639f, 
 						incY = 16, incUV = 128, lower = 16, upperY = 235, upperUV = 240;
-		ybrPixel.c1 = cusmath::clamp<fixed_int>(R * yrk + G * ygk + B * ybk + incY , lower, upperY).to_uint();
-		ybrPixel.c2 = cusmath::clamp<fixed_int>(R * brk + G * bgk + B * bbk + incUV, lower, upperUV).to_uint();
-		ybrPixel.c3 = cusmath::clamp<fixed_int>(R * rrk + G * rgk + B * rbk + incUV, lower, upperUV).to_uint();
+		y = cusmath::clamp<fixed_int>(R * yrk + G * ygk + B * ybk + incY , lower, upperY).to_uint();
+		u = cusmath::clamp<fixed_int>(R * brk + G * bgk + B * bbk + incUV, lower, upperUV).to_uint();
+		v = cusmath::clamp<fixed_int>(R * rrk + G * rgk + B * rbk + incUV, lower, upperUV).to_uint();
 	#endif // IMAGE_CONVERSION_STANDRARD_SDTV
 #else
-		float R = rgbPixel[0],
-			  G = rgbPixel[1],
-			  B = rgbPixel[2];
 	#if IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES
-		ybrPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>( 0.299f * R + 0.587f * G + 0.114f * B, 0, 255));
-		ybrPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(-0.169f * R - 0.331f * G + 0.500f * B + 128, 0, 255));
-		ybrPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>( 0.500f * R - 0.419f * G - 0.081f * B + 128, 0, 255));
+		y = static_cast<uint8_t>(cusmath::clamp<float>( 0.299f * R + 0.587f * G + 0.114f * B, 0, 255));
+		u = static_cast<uint8_t>(cusmath::clamp<float>(-0.169f * R - 0.331f * G + 0.500f * B + 128, 0, 255));
+		v = static_cast<uint8_t>(cusmath::clamp<float>( 0.500f * R - 0.419f * G - 0.081f * B + 128, 0, 255));
 	#elif IMAGE_CONVERSION_STANDARD_SDTV
-		ybrPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(0.257f * R + 0.504f * G + 0.098f * B + 16, 16, 235));
-		ybrPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(-0.148f * R - 0.291f * G + 0.439f * B + 128, 16, 240));
-		ybrPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(0.439f * R - 0.368f * G - 0.071f * B + 128, 16, 240));
+		y = static_cast<uint8_t>(cusmath::clamp<float>(0.257f * R + 0.504f * G + 0.098f * B + 16, 16, 235));
+		u = static_cast<uint8_t>(cusmath::clamp<float>(-0.148f * R - 0.291f * G + 0.439f * B + 128, 16, 240));
+		v = static_cast<uint8_t>(cusmath::clamp<float>(0.439f * R - 0.368f * G - 0.071f * B + 128, 16, 240));
 	#elif IMAGE_CONVERSION_STANDARD_HDTV
-		ybrPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(0.183f * R + 0.614f * G + 0.062f * B + 16, 16, 235));
-		ybrPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(-0.101f * R - 0.339f * G + 0.439f * B + 128, 16, 240));
-		ybrPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(0.439f * R - 0.399f * G - 0.040f * B + 128, 16, 240));
-	#elif IMAGE_CONVERSION_CUSTOM_COCG
-		ybrPixel[0] = uint8_t(0.33 * R + 0.33 * G + 0.33 * B);
-		ybrPixel[1] = uint8_t(0.5  * G + 0.5  * B);
-		ybrPixel[2] = uint8_t(0.5  * R + 0.5  * G);
+		y = static_cast<uint8_t>(cusmath::clamp<float>(0.183f * R + 0.614f * G + 0.062f * B + 16, 16, 235));
+		u = static_cast<uint8_t>(cusmath::clamp<float>(-0.101f * R - 0.339f * G + 0.439f * B + 128, 16, 240));
+		v = static_cast<uint8_t>(cusmath::clamp<float>(0.439f * R - 0.399f * G - 0.040f * B + 128, 16, 240));
 	#endif
 #endif // TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-void IJImageTranslator::TranslateYBRPixelToRGB(IJPixel& ybrPixel, IJPixel& rgbPixel)
+void IJImageTranslator::TranslateYUVToRGB(uint8_t Y, uint8_t U, uint8_t V, 
+										  uint8_t& r, uint8_t& g, uint8_t& b)
 {
-	#if TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION
-		fixed_int Y = ybrPixel.c1, B = ybrPixel.c2, R = ybrPixel.c3;
+#if TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION
 	#if IMAGE_CONVERSION_STANDARD_SDTV
 		fixed_int Y_ = Y - 16, 
 				  kY = Y_ * 1.164f, 
-				  B_ = B - 128, 
-				  R_ = R - 128;
-		rgbPixel[0] = cusmath::clamp<fixed_int>(kY + R_ * 1.196f, 0, 255).to_uint();
-		rgbPixel[1] = cusmath::clamp<fixed_int>(kY + B_ * (-0.392f) + R_ * (-0.813f), 0, 255).to_uint();
-		rgbPixel[2] = cusmath::clamp<fixed_int>(kY + B_ * 2.017f, 0, 255).to_uint();
+				  U_ = B - 128, 
+				  V_ = R - 128;
+		rgbPixel[0] = cusmath::clamp<fixed_int>(kY + V_ * 1.196f, 0, 255).to_uint();
+		rgbPixel[1] = cusmath::clamp<fixed_int>(kY + U_ * (-0.392f) + V_ * (-0.813f), 0, 255).to_uint();
+		rgbPixel[2] = cusmath::clamp<fixed_int>(kY + U_ * 2.017f, 0, 255).to_uint();
 	#elif IMAGE_CONVERSION_STANDARD_HDTV
 		static fixed_int rrk = 1.13983f, 
 						 gbk = -0.39465f, grk = -0.58060f, 
@@ -190,55 +76,69 @@ void IJImageTranslator::TranslateYBRPixelToRGB(IJPixel& ybrPixel, IJPixel& rgbPi
 						yMu = 1.f, yDec = 16, uvDec = 128,
 						lower = 0, upper = 255;
 		fixed_int kY = (Y - yDec) * yMu, 
-				  B_ = B - uvDec, 
-				  R_ = R - uvDec;
-		rgbPixel.c1 = cusmath::clamp<fixed_int>(kY + R_ * rrk, lower, upper).to_uint();
-		rgbPixel.c2 = cusmath::clamp<fixed_int>(kY + B_ * gbk + R_ * grk, lower, upper).to_uint();
-		rgbPixel.c3 = cusmath::clamp<fixed_int>(kY + B_ * bbk, lower, upper).to_uint();
+				  U_ = U - uvDec, 
+				  V_ = V - uvDec;
+		r = cusmath::clamp<fixed_int>(kY + V_ * rrk, lower, upper).to_uint();
+		g = cusmath::clamp<fixed_int>(kY + U_ * gbk + V_ * grk, lower, upper).to_uint();
+		b = cusmath::clamp<fixed_int>(kY + U_ * bbk, lower, upper).to_uint();
 	#endif
-#else 
-		float Y = ybrPixel[0] * 1.04f,
-			B = ybrPixel[1],
-			R = ybrPixel[2];
-	
+#else 	
 	#if IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES
-		double R_ = R - 128,
-			B_ = B - 128;
-		rgbPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(Y + 1.400f * R_, 0, 255));
-		rgbPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(Y - 0.343f * B_ - 0.711f * R_, 0, 255));
-		rgbPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(Y + 1.765f * B_, 0, 255));
+		double V_ = R - 128,
+			U_ = B - 128;
+		rgbPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(Y + 1.400f * V_, 0, 255));
+		rgbPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(Y - 0.343f * U_ - 0.711f * V_, 0, 255));
+		rgbPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(Y + 1.765f * U_, 0, 255));
 	#elif IMAGE_CONVERSION_STANDARD_SDTV
 		float Y_ = Y - 16,
-			B_ = B - 128,
-			R_ = R - 128,
+			U_ = B - 128,
+			V_ = R - 128,
 			kY = Y_ * 1.164f;
-		rgbPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(kY + 1.196f * R_, 0, 255));
-		rgbPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(kY - 0.392f * B_ - 0.813f * R_, 0, 255));
-		rgbPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(kY + 2.017f * B_, 0, 255));
+		rgbPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(kY + 1.196f * V_, 0, 255));
+		rgbPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(kY - 0.392f * U_ - 0.813f * V_, 0, 255));
+		rgbPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(kY + 2.017f * U_, 0, 255));
 	#elif IMAGE_CONVERSION_STANDARD_HDTV
 		float Y_ = Y - 16,
-			  B_ = B - 128,
-			  R_ = R - 128,
+			  U_ = B - 128,
+			  V_ = R - 128,
 			  kY = Y_ * 1.164f;
-		rgbPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(kY + 1.793f * R_, 0, 255));
-		rgbPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(kY - 0.213f * B_ - 0.533f * R_, 0, 255));
-		rgbPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(kY + 2.112f * B_, 0, 255));
+		rgbPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(kY + 1.793f * V_, 0, 255));
+		rgbPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(kY - 0.213f * U_ - 0.533f * V_, 0, 255));
+		rgbPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(kY + 2.112f * U_, 0, 255));
 	#endif  
 #endif // TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-void IJImageTranslator::TranslateRGBToYBRArray(IJRGBImage::PixelData_t::iterator rgbbegin, IJRGBImage::PixelData_t::iterator rgbend, IJYCbCrImage888::PixelData_t::iterator ybrbegin, IJYCbCrImage888::PixelData_t::iterator ybrend)
+std::array<uint8_t, 3> IJImageTranslator::TranslateRGBPixelToYUV(const std::vector<uint8_t>& rgb)
 {
-
+	std::array<uint8_t, 3> yuv;
+	TranslateRGBToYUV(rgb[0], rgb[1], rgb[2], yuv[0], yuv[1], yuv[2]);
+	return yuv;
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-void IJImageTranslator::TranslateYBRToRGBArray(IJYCbCrImage888::PixelData_t::iterator ybrbegin, IJYCbCrImage888::PixelData_t::iterator ybrend, IJRGBImage::PixelData_t::iterator rgbbegin, IJRGBImage::PixelData_t::iterator rgbend)
+std::array<uint8_t, 3> IJImageTranslator::TranslateYUVPixelToRGB(const std::vector<uint8_t>& yuv)
 {
+	std::array<uint8_t, 3> rgb;
+	TranslateYUVToRGB(yuv[0], yuv[1], yuv[2], rgb[0], rgb[1], rgb[2]);
+	return rgb;
+}
 
+//////////////////////////////////////////////////////////////////////////
+
+void IJImageTranslator::TranslateRGBPixelToYUV(IJPixel& rgb, IJPixel& yuv)
+{
+	TranslateRGBToYUV(rgb.c1, rgb.c2, rgb.c3, yuv.c1, yuv.c2, yuv.c3);
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+void IJImageTranslator::TranslateYUVPixelToRGB(IJPixel& ybr, IJPixel& rgb)
+{
+	TranslateYUVToRGB(ybr.c1, ybr.c2, ybr.c3, rgb.c1, rgb.c2, rgb.c3);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -263,7 +163,7 @@ IJResult IJImageTranslator::RGBToYCbCr888(IJRGBImage* input, IJYCbCrImage888* ou
 	{
 		IJPixel& rgbPixel = input->GetData()[_i];
 		IJPixel& ybrPixel = output->GetData()[_i];
-		TranslateRGBPixelToYBR(rgbPixel, ybrPixel);
+		TranslateRGBPixelToYUV(rgbPixel, ybrPixel);
 	};
 	parallel::asyncForeach(0, nPixels, iteration, TRANSLATOR_AVAILABLE_THREADS);
 #else 
@@ -271,7 +171,7 @@ IJResult IJImageTranslator::RGBToYCbCr888(IJRGBImage* input, IJYCbCrImage888* ou
 	{
 		IJPixel& rgbPixel = input->GetData()[idx];
 		IJPixel& ybrPixel = output->GetData()[idx];
-		TranslateRGBPixelToYBR(rgbPixel, ybrPixel);
+		TranslateRGBPixelToYUV(rgbPixel, ybrPixel);
 	}
 #endif // TRANSLATOR_USING_THREADS
 
@@ -300,7 +200,7 @@ IJResult IJImageTranslator::YCbCr888ToRGB(IJYCbCrImage888* input, IJRGBImage* ou
 	{
 		IJPixel& ybrPixel = input->GetData()[_i];
 		IJPixel& rgbPixel = output->GetData()[_i];
-		TranslateYBRPixelToRGB(ybrPixel, rgbPixel);
+		TranslateYUVPixelToRGB(ybrPixel, rgbPixel);
 	};
 	parallel::asyncForeach(0, nPixels, iteration, TRANSLATOR_AVAILABLE_THREADS);
 #else
@@ -308,7 +208,7 @@ IJResult IJImageTranslator::YCbCr888ToRGB(IJYCbCrImage888* input, IJRGBImage* ou
 	{
 		IJPixel& ybrPixel = input->GetData()[i];
 		IJPixel& rgbPixel = output->GetData()[i];
-		TranslateYBRPixelToRGB(ybrPixel, rgbPixel);
+		TranslateYUVPixelToRGB(ybrPixel, rgbPixel);
 	}
 #endif // TRANSLATOR_USING_THREADS
 
@@ -350,13 +250,13 @@ IJResult IJImageTranslator::YBRToRGBCompSlit(IJYCbCrImage888* input, std::vector
 		rawPixel[1]	= pixel.c2;
 		rawPixel[2] = pixel.c3;
 				
-		std::array<uint8_t, 3> ypixel = IJImageTranslator::TranslateYBRPixelToRGB( {rawPixel[0], 128		, 128} );
+		std::array<uint8_t, 3> ypixel = IJImageTranslator::TranslateYUVPixelToRGB( {rawPixel[0], 128		, 128} );
 		yComp.insert(yComp.end(), ypixel.begin(), ypixel.end());
 
-		std::array<uint8_t, 3> bpixel = IJImageTranslator::TranslateYBRPixelToRGB( {235		   , rawPixel[1], 128} );
+		std::array<uint8_t, 3> bpixel = IJImageTranslator::TranslateYUVPixelToRGB( {235		   , rawPixel[1], 128} );
 		bComp.insert(bComp.end(), bpixel.begin(), bpixel.end());
 
-		std::array<uint8_t, 3> rpixel = IJImageTranslator::TranslateYBRPixelToRGB( {235		   , 128		, rawPixel[2]} );
+		std::array<uint8_t, 3> rpixel = IJImageTranslator::TranslateYUVPixelToRGB( {235		   , 128		, rawPixel[2]} );
 		rComp.insert(rComp.end(), rpixel.begin(), rpixel.end());
 	}
 

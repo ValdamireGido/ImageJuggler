@@ -22,16 +22,16 @@ class IJRGBPixel;
 
 struct IJImageTranslator
 {
-	static std::array<uint8_t, 3> TranslateRGBPixelToYBR(const std::vector<uint8_t>& rgbPixel);
-	static std::array<uint8_t, 3> TranslateYBRPixelToRGB(const std::vector<uint8_t>& ybrPixel);
+	static void TranslateRGBToYUV(uint8_t r, uint8_t g, uint8_t b, 
+								  uint8_t& y, uint8_t& u, uint8_t& v);
+	static void TranslateYUVToRGB(uint8_t y, uint8_t u, uint8_t v, 
+								  uint8_t& r, uint8_t& g, uint8_t& b);
 
-	static void TranslateRGBPixelToYBR(IJPixel& rgbPixel, IJPixel& ybrPixel);
-	static void TranslateYBRPixelToRGB(IJPixel& ybrPixel, IJPixel& rgbPixel);
+	static std::array<uint8_t, 3> TranslateRGBPixelToYUV(const std::vector<uint8_t>& rgbPixel);
+	static std::array<uint8_t, 3> TranslateYUVPixelToRGB(const std::vector<uint8_t>& ybrPixel);
 
-	static void TranslateRGBToYBRArray(std::vector<IJPixel>::iterator rgbbegin, std::vector<IJPixel>::iterator rgbend, 
-									   std::vector<IJPixel>::iterator ybrbegin, std::vector<IJPixel>::iterator ybrend);
-	static void TranslateYBRToRGBArray(std::vector<IJPixel>::iterator ybrbegin, std::vector<IJPixel>::iterator ybrend, 
-									   std::vector<IJPixel>::iterator rgbbegin, std::vector<IJPixel>::iterator rgbend);
+	static void TranslateRGBPixelToYUV(IJPixel& rgbPixel, IJPixel& ybrPixel);
+	static void TranslateYUVPixelToRGB(IJPixel& ybrPixel, IJPixel& rgbPixel);
 
 	static IJResult RGBToYCbCr888(IJRGBImage*		input, IJYCbCrImage888* output);
 	static IJResult YCbCr888ToRGB(IJYCbCrImage888*	input, IJRGBImage*		output);
