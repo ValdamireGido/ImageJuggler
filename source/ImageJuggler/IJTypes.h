@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-enum class IJResult : uint8_t
+enum class IJResult : int
 {
 	UnknownResult			= 255u,
 	Success					= 0, 
@@ -20,7 +20,7 @@ enum class IJResult : uint8_t
 	InvalidImageFormat		= 17
 };
 
-enum class IJImageType : uint8_t
+enum class IJImageType : int
 {
 	RGB			= 0,
 	YCbCr888	= 1, 
@@ -29,7 +29,7 @@ enum class IJImageType : uint8_t
 	SinglComp	= 4
 };
 
-enum class CompressionType : uint8_t
+enum class CompressionType : int
 {
 	NoImageData							= 0, 
 	UncompressedColorMapped				= 1, 

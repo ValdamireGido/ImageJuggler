@@ -8,7 +8,6 @@
 #define PROFILING_ENABLED 1
 #include "../../../prj/Test/Profiling.h"
 
-#define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize.h"
 
 #include <fstream>
@@ -19,12 +18,11 @@
 
 #define PACKED_COLOUR_IMAGE_UNPACK_ALGORITH_TEST_1 0
 #define PACKED_COLOUR_IMAGE_UNPACK_ALGORITH_TEST_2 1
-
 IJPackedColourImage::IJPackedColourImage() 
 	: m_yImage(nullptr)
 	, m_uImage(nullptr)
 	, m_vImage(nullptr)
-	, m_packRate(2)
+	, m_packRate(k_defaultPackRate)
 	, m_fileName()
 {}
 
@@ -32,7 +30,7 @@ IJPackedColourImage::IJPackedColourImage(const std::string& fileName)
 	: m_yImage(nullptr)
 	, m_uImage(nullptr)
 	, m_vImage(nullptr)
-	, m_packRate(2)
+	, m_packRate(k_defaultPackRate)
 	, m_fileName(fileName)
 {}
 
@@ -163,22 +161,30 @@ IJResult IJPackedColourImage::PackImage(IJYCbCrImage888* image, uint8_t rate)
 		float outputSizeH = (float)image->GetHeight() / m_packRate;
 		size_t outputSize = static_cast<size_t>(outputSizeW * outputSizeH) + 1;
 
-		stbir__resize_arbitrary(nullptr,
+		stbir_resize_uint8_generic((const unsigned char*)&uComp.front(), image->GetWidth(), image->GetHeight(), 0,
+								   (unsigned char*)&tempVec.front(), (int)outputSizeW, (int)outputSizeH, 0,
+								   1, -1, 0, STBIR_EDGE_CLAMP, STBIR_FILTER_DEFAULT, STBIR_COLORSPACE_LINEAR, nullptr);
+
+		/*stbir__resize_arbitrary(nullptr,
 								(const void*)&uComp.front(), image->GetWidth(), image->GetHeight(), 0,
 								(void*)&tempVec.front(), (int)outputSizeW, (int)outputSizeH, 0,
 								0, 0, 1, 1, nullptr, 1, -1, 0,
 								STBIR_TYPE_UINT8, STBIR_FILTER_DEFAULT, STBIR_FILTER_DEFAULT,
-								STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);
+								STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);*/
 
 		std::swap(uComp, tempVec);
 		assert(uComp.size());
 
-		stbir__resize_arbitrary(nullptr,
-			(const void*)&vComp.front(), image->GetWidth(), image->GetHeight(), 0,
+		/*stbir__resize_arbitrary(nullptr,
+								(const void*)&vComp.front(), image->GetWidth(), image->GetHeight(), 0,
 								(void*)&tempVec.front(), (int)outputSizeW, (int)outputSizeH, 0,
 								0, 0, 1, 1, nullptr, 1, -1, 0,
 								STBIR_TYPE_UINT8, STBIR_FILTER_DEFAULT, STBIR_FILTER_DEFAULT,
-								STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);
+								STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);*/
+
+		stbir_resize_uint8_generic((const unsigned char*)&vComp.front(), image->GetWidth(), image->GetHeight(), 0,
+								   (unsigned char*)&tempVec.front(), (int)outputSizeW, (int)outputSizeH, 0,
+								   1, -1, 0, STBIR_EDGE_CLAMP, STBIR_FILTER_DEFAULT, STBIR_COLORSPACE_LINEAR, nullptr);
 
 		std::swap(vComp, tempVec);
 		assert(vComp.size());
@@ -256,7 +262,7 @@ IJResult IJPackedColourImage::UnpackImage(IJYCbCrImage888* image, uint8_t rate)
 
 	{
 		dbg__profileBlock2("Comps resize upsameple");
-		stbir__resize_arbitrary(nullptr, 
+		/*stbir__resize_arbitrary(nullptr, 
 								(const void*)&U[0], packedW, packedW, 0, 
 								(void*)&uC.front(), W, H, 0, 
 								0, 0, 1, 1, nullptr, 1, -1, 0,
@@ -268,7 +274,17 @@ IJResult IJPackedColourImage::UnpackImage(IJYCbCrImage888* image, uint8_t rate)
 								(void*)&vC.front(), W, H, 0, 
 								0, 0, 1, 1, nullptr, 1, -1, 0,
 								STBIR_TYPE_UINT8, STBIR_FILTER_DEFAULT, STBIR_FILTER_DEFAULT,
-								STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);
+								STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);*/
+
+		stbir_resize_uint8_generic((const unsigned char*)&U[0], packedW, packedW, 0, 
+								   (unsigned char*)&uC.front(), W, H, 0, 
+								   1, -1, 0, STBIR_EDGE_CLAMP, STBIR_FILTER_DEFAULT, STBIR_COLORSPACE_LINEAR,
+								   nullptr);
+
+		stbir_resize_uint8_generic((const unsigned char*)&V[0], packedW, packedW, 0, 
+								   (unsigned char*)&vC.front(), W, H, 0, 
+								   1, -1, 0, STBIR_EDGE_CLAMP, STBIR_FILTER_DEFAULT, STBIR_COLORSPACE_LINEAR,
+								   nullptr);
 	}
 
 	image->Resize(m_yImage->GetPixelCount());

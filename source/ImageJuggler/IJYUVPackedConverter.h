@@ -12,7 +12,7 @@ using fixed_int = numeric::Fixed<16, 16>;
 class IJRGBImage;
 class IJPackedColourImage;
 
-struct IJYUVPackedConverter
+struct IJYuvPackedConverter
 {
 	enum dither_type
 	{
@@ -21,29 +21,34 @@ struct IJYUVPackedConverter
 
 	struct context_rgb2yuv
 	{
-		const uint8_t* pRgb;
-		size_t chanels;
-		size_t rgbSize;
-		size_t rgbW;
-		size_t rgbH;
-		uint8_t* pPacked;
-		size_t packRate;
-		size_t* ySize;
-		size_t* uvSize;
+		const unsigned char* pRgb;
+		unsigned chanels;
+		unsigned rgbSize;
+		unsigned rgbW;
+		unsigned rgbH;
+		unsigned char* pPacked;
+		unsigned packRate;
+		unsigned* ySize;
+		unsigned* uvSize;
 		dither_type ditherType;
 	};
 
 	struct context_yuv2rgb
 	{
-		const uint8_t* pPacked;
-		size_t ySize;
-		size_t uvSize;
-		size_t packRate;
-		uint8_t* pRgb;
-		size_t* W;
-		size_t* H;
-		size_t* rgbSize;
-		//dither_type ditherType; // -- ???
+		const unsigned char* pPacked;
+		unsigned ySize;
+		unsigned uvSize;
+		unsigned packRate;
+		unsigned char* pRgb;
+		unsigned* W;
+		unsigned* H;
+		unsigned* rgbSize;
+
+		float packedW;
+		float* pCoefs;
+		unsigned coefRange;
+		float pixelRadius;
+		
 	};
 
 	struct pixel
@@ -77,20 +82,27 @@ struct IJYUVPackedConverter
 	};
 
 	static int pack(context_rgb2yuv* ctx);
-
-	static int pack(const uint8_t* rgbSrc, size_t rgbSize, size_t rgbW, size_t rgbH,
-					uint8_t* packedImage, size_t packRate, size_t* ySize, size_t* uvSize);
-
+	static int pack(const unsigned char* rgbSrc, unsigned rgbSize, unsigned rgbW, unsigned rgbH,
+					unsigned char* packedImage, unsigned packRate, unsigned* ySize, unsigned* uvSize);
 	static int pack(IJRGBImage* rgb, IJPackedColourImage* packedImage);
 
-	static int unpack(context_yuv2rgb* ctx);
 
-	static int unpack(const uint8_t* pPacked, size_t ySize, size_t uvSize, size_t packRate, uint8_t* pRgb, size_t* W, size_t* H, size_t* rgbSize);
+	static void	 allocate_coefs_memory(context_yuv2rgb* ctx);
+	static float calculate_coef_distance(float _X, float _Y);
+	static void  calculate_coef(float* coef, float _X, float _Y);
+	static void  calculate_coefs_upsample_range(context_yuv2rgb* ctx, float pixelRadius);
+	static void  calculate_coefs_upsample(context_yuv2rgb* ctx);
+	static void  calculate_coef_idx(context_yuv2rgb* ctx, unsigned _pui, float* coefX, float* coefY);
+
+	static int   unpack(context_yuv2rgb* ctx);
+	static int   unpack(const unsigned char* pPacked, unsigned ySize, unsigned uvSize, unsigned packRate, 
+						unsigned char* pRgb, unsigned* W, unsigned* H, unsigned* rgbSize);
+	static int   unpack(IJPackedColourImage* packedImage, IJRGBImage* rgbImage);
 
 private:
 
-	static float get_dither_coef(size_t idx, context_rgb2yuv* ctx);
-
-	static void dither(pixel target, pixel pxlR, pixel pxlLL, pixel pxlL, pixel pxlLR, context_rgb2yuv* ctx);
+	static float get_dither_coef(context_rgb2yuv* ctx, size_t idx);
+	static void dither(context_rgb2yuv* ctx, pixel target, pixel pxlR, pixel pxlLL, 
+					   pixel pxlL, pixel pxlLR);
 
 };

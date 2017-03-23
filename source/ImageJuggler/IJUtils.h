@@ -22,6 +22,14 @@ do {\
 	}\
 } while (false)
 
+#define ASSERT_PTR_INT(ptr)\
+do {\
+	assert(ptr);\
+	if (!ptr) {\
+		return 3;\
+	}\
+}while(false)
+
 namespace cusmath
 {
 	template <typename T>

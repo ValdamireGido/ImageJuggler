@@ -18,7 +18,7 @@ IJImage::IJImage(const std::string& fileName, IJImageType type)
 IJResult IJImage::Load(std::istream& iStream) 
 {
 	iStream.seekg(0, iStream.end);
-	int streamSize = iStream.tellg();
+	int streamSize = (int)iStream.tellg();
 	iStream.seekg(18, iStream.beg);
 
 	size_t size = streamSize / IJPixel::k_compCount;
@@ -75,7 +75,7 @@ IJResult IJImage::Save(std::vector<PixelComp_t>& rawImage)
 IJResult IJImageAlpha::Load(std::istream& iStream)
 {
 	iStream.seekg(0, iStream.end);
-	int streamSize = iStream.tellg();
+	int streamSize = (int)iStream.tellg();
 	iStream.seekg(18, iStream.beg);
 
 	size_t size = streamSize / IJPixelAlpha::k_compCount;

@@ -46,6 +46,7 @@ class IJImageInterface
 {
 	friend struct IJImageTranslator;
 	friend class IJPackedColourImage;
+	friend struct IJYuvPackedConverter;
 
 public:
 	using Pixel_t		= _PixelClassTy;

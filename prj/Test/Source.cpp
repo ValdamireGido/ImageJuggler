@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include "ImageJuggler/IJImageTranslator.h"
+#include "ImageJuggler/IJYUVPackedConverter.h"
 #include "ImageJuggler/Image/IJRGBImage.h"
 #include "ImageJuggler/Image/IJYCbCrImage888.h"
 #include "ImageJuggler/Image/IJPackedColourImage.h"
@@ -279,11 +280,20 @@ void YUVpackToRGB()
 		rgbImage = new IJRGBImage();
 		assert(rgbImage);
 
+#define TESTING_THE_NEW_GENERIC_ALGORITHM 1
+		int error = IJYuvPackedConverter::unpack(packedImage, rgbImage);
+		if (error)
+		{
+			DBG_REPORT_ERROR("error upacking the yuv packed image");
+		}
+#if TESTING_THE_NEW_GENERIC_ALGORITHM
+#else 
 		result = packedImage->UnpackRGBImage(rgbImage);
 		if (result != IJResult::Success)
 		{
 			DBG_REPORT_ERROR("Cannot unpack the yuv image to rgb");
 		}
+#endif
 	}
 
 	{
@@ -310,7 +320,7 @@ int main(int argc, char** argv)
 	//RGBToYCbCrTranslate();
 	//YBRToRGBTranslate();
 
-	RGBToYUVPack();
+//	RGBToYUVPack();
 	YUVpackToRGB();
 
 	return EXIT_SUCCESS;
