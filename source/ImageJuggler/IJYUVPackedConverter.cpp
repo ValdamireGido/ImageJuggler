@@ -59,11 +59,11 @@ int IJYuvPackedConverter::pack(context_rgb2yuv* ctx)
 	uint8_t pr = 0;
 	uint8_t pg = 0; 
 	uint8_t pb = 0;
-	uint8_t* py = ctx->pPacked;
+	uint8_t* py = ctx->pY;
 	uint8_t* pu = py + pxlSize;
 	uint8_t* pv = pu + pxlSize;
 	pixel yuv;
-	yuv.y = ctx->pPacked;
+	yuv.y = ctx->pY;
 	yuv.u = py + pxlSize;
 	yuv.v = pu + pxlSize;
 	for (size_t pxlIdx = 0; pxlIdx < pxlSize; pxlIdx += ctx->chanels)
@@ -91,7 +91,7 @@ int IJYuvPackedConverter::pack(const unsigned char* rgbSrc, unsigned rgbSize, un
 	ctx->rgbSize = rgbSize;
 	ctx->rgbW = rgbW;
 	ctx->rgbH = rgbH;
-	ctx->pPacked = packedImage;
+	ctx->pY = packedImage;
 	ctx->packRate = packRate;
 	ctx->ySize = ySize;
 	ctx->uvSize = uvSize;
@@ -110,12 +110,12 @@ int IJYuvPackedConverter::pack(IJRGBImage* rgb, IJPackedColourImage* packedImage
 	size_t rgbSize = rgb->GetSize();
 	size_t rgbW = rgb->GetWidth();
 	size_t rgbH = rgb->GetHeight();
-	uint8_t* pPacked = &packedImage->m_yImage->GetData()[0];
+	uint8_t* pY = &packedImage->m_yImage->GetData()[0];
 	size_t packRate = packedImage->GetPackRate();
 	size_t* ySize = &packedImage->m_ySize;
 	size_t* uvSize = &packedImage->m_uvSize;
 	return pack(pRgb, rgbSize, rgbW, rgbH, 
-				pPacked, packRate, ySize, uvSize);
+				pY, packRate, ySize, uvSize);
 }
 
 
@@ -172,8 +172,55 @@ void IJYuvPackedConverter::calculate_coef_idx(context_yuv2rgb* ctx, unsigned _pu
 	*coefY = (float)*ctx->W / ctx->coefRange;
 
 	float pdi = (float)_pui / ctx->packRate;
-	float coefIdx = (*coefX + ctx->pixelRadius + (2*ctx->pixelRadius + 1) * (*coefY + ctx->pixelRadius));
+	//float coefIdx = ;
+}
 
+
+float IJYuvPackedConverter::get_coef(context_yuv2rgb* ctx, int _X, int _Y)
+{
+	return ctx->pCoefs[(int)(_X + ctx->pixelRadius + (2*ctx->pixelRadius + 1) * (_Y + ctx->pixelRadius))];
+}
+
+
+void IJYuvPackedConverter::calculate_pixel_upsample(context_yuv2rgb* ctx, int pux, int puy)
+{
+	float pdx = (float)pux / ctx->packRate;
+	float pdy = (float)puy / ctx->packRate;
+	
+	unsigned char accum_u = 0;
+	unsigned char accum_v = 0;
+	for (int cy = puy - (int)ctx->pixelRadius; cy < puy + ctx->pixelRadius; cy++)
+	{
+		if (cy < 0)
+		{
+			continue;
+		}
+
+		for (int cx = pux - (int)ctx->pixelRadius; cx < pux + ctx->pixelRadius; cx++)
+		{
+			if (cx < 0)
+			{
+				continue;
+			}
+
+			// hard check TODO: replace with more clever way
+			if (cx%ctx->packRate == 0 && cy%ctx->packRate == 0)
+			{
+				float coef = get_coef(ctx, cx - pux, cy - puy);
+				int uvi = (int)(cx + cy * ctx->packedW); // TODO :: fix
+				accum_u += (unsigned char)(ctx->pU[uvi] * coef);
+				accum_v += (unsigned char)(ctx->pV[uvi] * coef);
+			}
+		}
+	}
+
+	if (accum_u != 0 && accum_v != 0)
+	{
+		int yi = pux + puy * (*ctx->W);
+		ctx->pRgb[yi + 0] = ctx->pY[yi];
+		ctx->pRgb[yi + 1] = accum_u;
+		ctx->pRgb[yi + 2] = accum_v;
+	}
 }
 
 
@@ -181,36 +228,21 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 {
 	ASSERT_PTR_INT(ctx);
 	
-	
 	// pdi - pixel downsampled index
 	// pui - pixel upsampled index
 	int pui = 0;
 	int pdi = 0;
 	unsigned char* pOut = ctx->pRgb;
-	unsigned char* pYIn = (unsigned char*)ctx->pPacked;
-	unsigned char* pUIn = pYIn + ctx->ySize;
-	unsigned char* pVIn = pUIn + ctx->uvSize;
 	float W = *ctx->W = sqrtf((float)ctx->ySize);
 	*ctx->H = *ctx->W;
 	ctx->packedW = sqrtf((float)ctx->uvSize);
-
-	int pdy = 0;
-	int pdx = 0;
 	calculate_coefs_upsample(ctx);
 	for (int puy = 0; puy < *ctx->H; puy++)
 	{
-		pdy = puy/ctx->packRate;
 		for (int pux = 0; pux < *ctx->W; pux++)
 		{
-			pui = pux + puy * (*ctx->W);
-			pdx = pux / ctx->packRate;
-			pdi = pdx + pdy * ctx->packedW;
-
-
-			// coef downsampled idx x, y
-			int cdx = pdx * ctx->packRate;
-			int cdy = pdy * ctx->packRate;
-
+			calculate_pixel_upsample(ctx, pux, puy);
+			/// .... 
 		}
 	}
 
@@ -218,11 +250,14 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 }
 
 
-int IJYuvPackedConverter::unpack(const unsigned char* pPacked, unsigned ySize, unsigned uvSize, unsigned packRate,
+int IJYuvPackedConverter::unpack(const unsigned char* pY, const unsigned char* pU, const unsigned char* pV,
+								 unsigned ySize, unsigned uvSize, unsigned packRate,
 								 unsigned char* pRgb, unsigned* W, unsigned* H, unsigned* rgbSize)
 {
 	context_yuv2rgb* ctx = new context_yuv2rgb();
-	ctx->pPacked = pPacked;
+	ctx->pY = pY;
+	ctx->pU = pU;
+	ctx->pV = pV;
 	ctx->ySize = ySize;
 	ctx->uvSize = uvSize;
 	ctx->packRate = packRate;
@@ -247,6 +282,15 @@ int IJYuvPackedConverter::unpack(IJPackedColourImage* packedImage, IJRGBImage* r
 	{
 		rgbImage->Resize(packedImage->m_ySize);
 	}
-	return unpack((const unsigned char*)&packedImage->m_yImage->GetData().front(), (unsigned)packedImage->m_ySize, (unsigned)packedImage->m_uvSize, (unsigned)packedImage->GetPackRate(), 
-		(unsigned char*)&rgbImage->GetData().front().c1, (unsigned*)&rgbImage->m_header.width, (unsigned*)&rgbImage->m_header.height, (unsigned*)&size);
+	return unpack(
+		(const unsigned char*)&packedImage->m_yImage->GetData().front(), 
+		(const unsigned char*)&packedImage->m_uImage->GetData().front(),
+		(const unsigned char*)&packedImage->m_vImage->GetData().front(),
+		(unsigned)packedImage->m_ySize, 
+		(unsigned)packedImage->m_uvSize, 
+		(unsigned)packedImage->GetPackRate(), 
+		(unsigned char*)&rgbImage->GetData().front().c1, 
+		(unsigned*)&rgbImage->m_header.width, 
+		(unsigned*)&rgbImage->m_header.height, 
+		(unsigned*)&size);
 }

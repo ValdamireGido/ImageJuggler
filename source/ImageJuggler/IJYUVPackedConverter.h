@@ -26,7 +26,7 @@ struct IJYuvPackedConverter
 		unsigned rgbSize;
 		unsigned rgbW;
 		unsigned rgbH;
-		unsigned char* pPacked;
+		unsigned char* pY;
 		unsigned packRate;
 		unsigned* ySize;
 		unsigned* uvSize;
@@ -35,7 +35,9 @@ struct IJYuvPackedConverter
 
 	struct context_yuv2rgb
 	{
-		const unsigned char* pPacked;
+		const unsigned char* pY;
+		const unsigned char* pU;
+		const unsigned char* pV;
 		unsigned ySize;
 		unsigned uvSize;
 		unsigned packRate;
@@ -93,9 +95,12 @@ struct IJYuvPackedConverter
 	static void  calculate_coefs_upsample_range(context_yuv2rgb* ctx, float pixelRadius);
 	static void  calculate_coefs_upsample(context_yuv2rgb* ctx);
 	static void  calculate_coef_idx(context_yuv2rgb* ctx, unsigned _pui, float* coefX, float* coefY);
+	static float get_coef(context_yuv2rgb* ctx, int _X, int _Y);
+	static void  calculate_pixel_upsample(context_yuv2rgb* ctx, int pux, int puy);
 
 	static int   unpack(context_yuv2rgb* ctx);
-	static int   unpack(const unsigned char* pPacked, unsigned ySize, unsigned uvSize, unsigned packRate, 
+	static int   unpack(const unsigned char* pY, const unsigned char* pU, const unsigned char* pV, 
+						unsigned ySize, unsigned uvSize, unsigned packRate, 
 						unsigned char* pRgb, unsigned* W, unsigned* H, unsigned* rgbSize);
 	static int   unpack(IJPackedColourImage* packedImage, IJRGBImage* rgbImage);
 
