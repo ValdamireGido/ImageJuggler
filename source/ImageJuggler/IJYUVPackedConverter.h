@@ -31,6 +31,14 @@ struct IJYuvPackedConverter
 		unsigned* ySize;
 		unsigned* uvSize;
 		dither_type ditherType;
+
+		~context_rgb2yuv()
+		{
+			pRgb = nullptr;
+			pY = nullptr;
+			ySize = nullptr;
+			uvSize = nullptr;
+		}
 	};
 
 	struct context_yuv2rgb
@@ -42,15 +50,39 @@ struct IJYuvPackedConverter
 		unsigned uvSize;
 		unsigned packRate;
 		unsigned char* pRgb;
-		unsigned* W;
-		unsigned* H;
-		unsigned* rgbSize;
+		unsigned short* W;
+		unsigned short* H;
 
 		float packedW;
 		float* pCoefs;
 		unsigned coefRange;
 		float pixelRadius;
 		
+		context_yuv2rgb()
+			: pY(nullptr)
+			, pU(nullptr)
+			, pV(nullptr)
+			, ySize(0)
+			, uvSize(0)
+			, packRate(0)
+			, pRgb(nullptr)
+			, W(nullptr)
+			, H(nullptr)
+			, coefRange(0)
+			, pCoefs(nullptr)
+			, pixelRadius(0)
+		{}
+
+		~context_yuv2rgb()
+		{
+			pY = nullptr;
+			pU = nullptr;
+			pV = nullptr;
+			pRgb = nullptr;
+			W = nullptr;
+			H = nullptr;
+			pCoefs = nullptr;
+		}
 	};
 
 	struct pixel
@@ -90,18 +122,18 @@ struct IJYuvPackedConverter
 
 
 	static void	 allocate_coefs_memory(context_yuv2rgb* ctx);
+	static void  deallocate_coefs_memory(context_yuv2rgb* ctx);
 	static float calculate_coef_distance(float _X, float _Y);
 	static void  calculate_coef(float* coef, float _X, float _Y);
 	static void  calculate_coefs_upsample_range(context_yuv2rgb* ctx, float pixelRadius);
 	static void  calculate_coefs_upsample(context_yuv2rgb* ctx);
-	static void  calculate_coef_idx(context_yuv2rgb* ctx, unsigned _pui, float* coefX, float* coefY);
 	static float get_coef(context_yuv2rgb* ctx, int _X, int _Y);
 	static void  calculate_pixel_upsample(context_yuv2rgb* ctx, int pux, int puy);
 
 	static int   unpack(context_yuv2rgb* ctx);
 	static int   unpack(const unsigned char* pY, const unsigned char* pU, const unsigned char* pV, 
 						unsigned ySize, unsigned uvSize, unsigned packRate, 
-						unsigned char* pRgb, unsigned* W, unsigned* H, unsigned* rgbSize);
+						unsigned char* pRgb, unsigned short* W, unsigned short* H);
 	static int   unpack(IJPackedColourImage* packedImage, IJRGBImage* rgbImage);
 
 private:
