@@ -124,11 +124,11 @@ struct IJYuvPackedConverter
 	static void	 allocate_coefs_memory(context_yuv2rgb* ctx);
 	static void  deallocate_coefs_memory(context_yuv2rgb* ctx);
 	static float calculate_coef_distance(float _X, float _Y);
+	static void  calculate_coef(float* coef, float _X);
 	static void  calculate_coef(float* coef, float _X, float _Y);
 	static void  calculate_coefs_upsample_range(context_yuv2rgb* ctx, float pixelRadius);
 	static void  calculate_coefs_upsample(context_yuv2rgb* ctx);
-	static float get_coef(context_yuv2rgb* ctx, int _X, int _Y);
-	static void  calculate_pixel_upsample(context_yuv2rgb* ctx, int pux, int puy);
+	static float get_coef(context_yuv2rgb* ctx, int idx);
 
 	static int   unpack(context_yuv2rgb* ctx);
 	static int   unpack(const unsigned char* pY, const unsigned char* pU, const unsigned char* pV, 

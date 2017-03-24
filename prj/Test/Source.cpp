@@ -192,8 +192,8 @@ void YBRToRGBTranslate()
 
 void RGBToYUVPack()
 {
-	const std::string inputFileName  = "input/SourceR.tga";
-	const std::string outputFileName = "output/SourceR.yuv.tga";
+	const std::string inputFileName  = "input/Lenna.tga";
+	const std::string outputFileName = "output/Lenna.yuv.tga";
 
 	IJResult result = IJResult::UnknownResult;
 	IJPackedColourImage* packedImage = nullptr;
@@ -248,8 +248,8 @@ void RGBToYUVPack()
 
 void YUVpackToRGB()
 {
-	const std::string inputFileName  = "output/SourceR.yuv.tga";
-	const std::string outputFileName = "output/SourceR.yuv.rgb.tga";
+	const std::string inputFileName  = "output/Lenna.yuv.tga";
+	const std::string outputFileName = "output/Lenna.yuv.rgb.tga";
 
 	IJResult result = IJResult::UnknownResult;
 	IJPackedColourImage* packedImage = nullptr;
@@ -281,12 +281,12 @@ void YUVpackToRGB()
 		assert(rgbImage);
 
 #define TESTING_THE_NEW_GENERIC_ALGORITHM 1
+#if TESTING_THE_NEW_GENERIC_ALGORITHM
 		int error = IJYuvPackedConverter::unpack(packedImage, rgbImage);
 		if (error)
 		{
 			DBG_REPORT_ERROR("error upacking the yuv packed image");
 		}
-#if TESTING_THE_NEW_GENERIC_ALGORITHM
 #else 
 		result = packedImage->UnpackRGBImage(rgbImage);
 		if (result != IJResult::Success)
@@ -320,7 +320,7 @@ int main(int argc, char** argv)
 	//RGBToYCbCrTranslate();
 	//YBRToRGBTranslate();
 
-//	RGBToYUVPack();
+	//RGBToYUVPack();
 	YUVpackToRGB();
 
 	return EXIT_SUCCESS;
