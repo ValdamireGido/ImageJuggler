@@ -1,15 +1,12 @@
 #pragma once
 
 #include "IJTypes.h"
-#include "ImageJuggler_config.h"
 #include <vector>
 
-#if defined(RGB_TO_YCBCR_CONVERSION__GENERAL_KOEF) || defined(YCBCR_TO_RGB_CONVERSION__GENERAL_KOEF)
-	#define	IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES 0
-	#define IMAGE_CONVERSION_STANDARD_SDTV 0
-	#define IMAGE_CONVERSION_STANDARD_HDTV 1
-	#define IMAGE_CONVERSION_CUSTOM_COCG 0
-#endif
+#define	IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES 0
+#define IMAGE_CONVERSION_STANDARD_SDTV 0
+#define IMAGE_CONVERSION_STANDARD_HDTV 1
+#define IMAGE_CONVERSION_CUSTOM_COCG 0
 
 template <typename _PixelCompTy, size_t _compsCount> class IJImageInterface;
 

@@ -16,7 +16,8 @@ using fixed_int = numeric::Fixed<16, 16>;
 #define TRANSLATOR_USING_THREADS 1
 #if TRANSLATOR_USING_THREADS
 #define TRANSLATOR_AVAILABLE_THREADS 8
-#include <thread>
+#else 
+#define TRANSLATOR_AVAILABLE_THREADS 0
 #endif
 
 //////////////////////////////////////////////////////////////////////////

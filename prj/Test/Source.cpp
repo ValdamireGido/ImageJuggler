@@ -197,8 +197,8 @@ void YBRToRGBTranslate()
 
 void RGBToYUVPack()
 {
-	const std::string inputFileName  = "input/SourceR.tga";
-	const std::string outputFileName = "output/SourceR.yuv.tga";
+	const std::string inputFileName  = "input/bar_skybox2.tga";
+	const std::string outputFileName = "output/bar_skybox2.yuv.tga";
 
 	IJResult result = IJResult::UnknownResult;
 	IJPackedColourImage* packedImage = nullptr;

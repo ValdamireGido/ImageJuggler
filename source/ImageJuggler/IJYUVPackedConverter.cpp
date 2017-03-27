@@ -324,9 +324,9 @@ int IJYuvPackedConverter::unpack(IJPackedColourImage* packedImage, IJRGBImage* r
 		(const unsigned char*)&packedImage->m_yImage->GetData().front(), 
 		(const unsigned char*)&packedImage->m_uImage->GetData().front(),
 		(const unsigned char*)&packedImage->m_vImage->GetData().front(),
-		(unsigned)packedImage->m_ySize, 
-		(unsigned)packedImage->m_uvSize, 
-		(unsigned)packedImage->GetPackRate(), 
+		(int)packedImage->m_ySize, 
+		(int)packedImage->m_uvSize, 
+		(int)packedImage->GetPackRate(), 
 		(unsigned char*)&rgbImage->GetData().front().c1, 
 		(unsigned short*)&rgbImage->m_header.width, 
 		(unsigned short*)&rgbImage->m_header.height);
