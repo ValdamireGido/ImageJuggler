@@ -6,6 +6,7 @@
 //#include "Fixed.h"
 
 #include <cmath>
+#include <algorithm>
 
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize.h"
@@ -125,7 +126,7 @@ int IJYuvPackedConverter::pack(IJRGBImage* rgb, IJPackedColourImage* packedImage
 void IJYuvPackedConverter::allocate_coefs_memory(context_yuv2rgb* ctx)
 {
 	ASSERT_PTR_VOID(!ctx->pCoefs);
-	ctx->pCoefs = new float[ctx->coefRange*sizeof(float)];
+	ctx->pCoefs = new float[ctx->coefsRange];
 }
 
 
@@ -142,42 +143,58 @@ float IJYuvPackedConverter::calculate_coef_distance(float _X, float _Y)
 }
 
 
-void IJYuvPackedConverter::calculate_coef(float* coef, float _X)
+void IJYuvPackedConverter::calculate_coef(context_yuv2rgb* ctx, float* coef, float _X)
 {
-	*coef = stbir__filter_mitchell(_X, 0);
+	switch (ctx->filterType)
+	{
+		case filter_type::Mitchell: 
+			*coef = stbir__filter_mitchell(_X, 0);
+			break;
+
+		case filter_type::Catmullrom:
+			*coef = stbir__filter_catmullrom(_X, 0);
+			break;
+
+		default:break;
+	}
 }
 
 
-void IJYuvPackedConverter::calculate_coef(float* coef, float _X, float _Y)
+void IJYuvPackedConverter::calculate_coef(context_yuv2rgb* ctx, float* coef, float _X, float _Y)
 {
 	float pxlIdx = calculate_coef_distance(_X, _Y);
-	*coef = stbir__filter_mitchell(pxlIdx, 0);
-}
+	switch (ctx->filterType)
+	{
+		case filter_type::Mitchell:
+			*coef = stbir__filter_mitchell(pxlIdx, 0);
+			break;
 
+		case filter_type::Catmullrom:
+			*coef = stbir__filter_catmullrom(pxlIdx, 0);
 
-void IJYuvPackedConverter::calculate_coefs_upsample_range(context_yuv2rgb* ctx, float pixelRadius)
-{
-	ctx->coefRange = (int)pixelRadius;
+		default: break;
+	}
 }
 
 
 void IJYuvPackedConverter::calculate_coefs_upsample(context_yuv2rgb* ctx)
 {
-	ctx->pixelRadius = (float)ctx->packRate*2;
-	calculate_coefs_upsample_range(ctx, ctx->pixelRadius);
+	ctx->pixelRadius = ctx->packRate<<1;
+	ctx->coefsRange = ctx->pixelRadius;
 	allocate_coefs_memory(ctx);
 	unsigned coefIdx = 0;
-	// coesf from nearest to furthest
-	for (int y = 0; y < ctx->pixelRadius; y++)
+	// coefs from nearest to furthest
+	for (int y = 0; y < ctx->coefsRange; y++)
 	{
-		calculate_coef(&ctx->pCoefs[y], (float)y/ctx->packRate);
+		float distance = (float)y/(ctx->packRate);
+		calculate_coef(ctx, &ctx->pCoefs[y], distance);
 	}
 }
 
 
 float IJYuvPackedConverter::get_coef(context_yuv2rgb* ctx, int coefIdx)
 {
-	return coefIdx < ctx->pixelRadius ? ctx->pCoefs[coefIdx] : 0.f;
+	return coefIdx < ctx->coefsRange ? ctx->pCoefs[coefIdx] : 0.f;
 }
 
 
@@ -188,58 +205,72 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 	int upsample_idx = 0;
 	int pixel_upsample_idx = 0;
 	int pixel_downsample_idx = 0;
+	unsigned char u = 0, v = 0;
 
-	*ctx->W = (unsigned short)sqrtf((float)ctx->ySize);
+	*ctx->W = (unsigned short)sqrt(ctx->ySize);
 	*ctx->H = *ctx->W;
-	ctx->packedW = sqrtf((float)ctx->uvSize);
+	ctx->packedW = (int)sqrt(ctx->uvSize);
 	calculate_coefs_upsample(ctx);
 	for (int pixel_upsample_y = 0; pixel_upsample_y < *ctx->H; pixel_upsample_y++)
 	{
 		for (int pixel_upsample_x = 0; pixel_upsample_x < *ctx->W; pixel_upsample_x++)
 		{
+			// update pixel upsampled idx
 			pixel_upsample_idx = pixel_upsample_x + pixel_upsample_y * (*ctx->W);
+			// update absolute upsample idx
 			upsample_idx = pixel_upsample_idx * 3;
 
+			// put Y comp to the R chanel
 			ctx->pRgb[upsample_idx] = ctx->pY[pixel_upsample_idx];
+
 			// upsample horizontal
-			for (int k = -2; k < 2; k++)
+			for (int k = -2; k <= 2; k++)
 			{
-				pixel_downsample_idx = (int)(pixel_upsample_x / ctx->packRate + pixel_upsample_y / ctx->packRate * ctx->packedW) + k;
-				if (pixel_downsample_idx < 0 || pixel_downsample_idx % (int)ctx->packedW > ctx->packedW)
+				int pixel_downsample_x = pixel_upsample_x / ctx->packRate + k;
+				int pixel_downsample_y = pixel_upsample_y / ctx->packRate;
+				pixel_downsample_idx = pixel_downsample_x + pixel_downsample_y * ctx->packedW;
+				if (pixel_downsample_x < 0)
 				{
 					continue;
 				}
 
-				int pixel_upsample_idx_normalized = pixel_upsample_idx % (*ctx->W);
-				int pixel_downsample_idx_noramlized = pixel_downsample_idx % (int)ctx->packedW;
+				if (pixel_downsample_x >= ctx->packedW)
+				{
+					pixel_downsample_idx = pixel_upsample_x / ctx->packRate - k + pixel_downsample_y * ctx->packedW;
+				}
 
-				int coefIdx = abs((int)(pixel_downsample_idx_noramlized*ctx->packRate) - pixel_upsample_idx_normalized);
+				int coefIdx = abs(pixel_downsample_x*ctx->packRate - pixel_upsample_x);
 				float coef = get_coef(ctx, coefIdx);
 				ctx->pRgb[upsample_idx + 1] += (unsigned char)(ctx->pU[pixel_downsample_idx] * coef);
 				ctx->pRgb[upsample_idx + 2] += (unsigned char)(ctx->pV[pixel_downsample_idx] * coef);
 			}
 
-			unsigned char u = 0;
-			unsigned char v = 0;
 			// upsample vertical
-			for (int k = -2; k < 2; k++)
+			u = 0;
+			v = 0;
+			for (int k = -2; k <= 2; k++)
 			{
-				pixel_downsample_idx = (int)(pixel_upsample_y / ctx->packRate + pixel_upsample_x / ctx->packRate * ctx->packedW) + k;
-				if (pixel_downsample_idx  < 0 || pixel_downsample_idx % (int)ctx->packedW > ctx->packedW)
+				int pixel_downsample_x = pixel_upsample_x / ctx->packRate;
+				int pixel_downsample_y = pixel_upsample_y / ctx->packRate + k;
+				pixel_downsample_idx = pixel_downsample_x + pixel_downsample_y * ctx->packedW;
+				if (pixel_downsample_y  < 0)
 				{
 					continue;
 				}
 
-				int pixel_upsample_idx_normalized = pixel_upsample_idx % (*ctx->W);
-				int pixel_downsample_idx_noramlized = pixel_downsample_idx % (int)ctx->packedW;
-				int coefIdx = abs((int)(pixel_downsample_idx_noramlized*ctx->packRate) - pixel_upsample_idx_normalized);
+				if (pixel_downsample_y >= ctx->packedW)
+				{
+					pixel_downsample_idx = pixel_downsample_x + pixel_upsample_y / ctx->packRate * ctx->packedW - k;
+				}
+
+				int coefIdx = abs(pixel_downsample_y*ctx->packRate - pixel_upsample_y);
 				float coef = get_coef(ctx, coefIdx);
 				u += (unsigned char)(ctx->pU[pixel_downsample_idx] * coef);
 				v += (unsigned char)(ctx->pV[pixel_downsample_idx] * coef);
 			}
 
-			ctx->pRgb[upsample_idx + 1] = ctx->pRgb[upsample_idx + 1] / 2 + u / 2;
-			ctx->pRgb[upsample_idx + 2] = ctx->pRgb[upsample_idx + 2] / 2 + v / 2;
+			ctx->pRgb[upsample_idx + 1] = (unsigned char)(ctx->pRgb[upsample_idx + 1]*0.5f + u*0.5f);
+			ctx->pRgb[upsample_idx + 2] = (unsigned char)(ctx->pRgb[upsample_idx + 2]*0.5f + v*0.5f);
 
 			IJImageTranslator::TranslateYUVToRGB(
 				ctx->pRgb[upsample_idx + 0], 
@@ -268,6 +299,7 @@ int IJYuvPackedConverter::unpack(const unsigned char* pY, const unsigned char* p
 	ctx->ySize = ySize;
 	ctx->uvSize = uvSize;
 	ctx->packRate = packRate;
+	ctx->filterType = filter_type::Mitchell;
 	ctx->pRgb = pRgb;
 	ctx->W = W;
 	ctx->H = H;

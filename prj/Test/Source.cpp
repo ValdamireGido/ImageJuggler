@@ -15,8 +15,13 @@
 #define	PROFILING_ENABLED 1
 #include "Profiling.h"
 
+#if defined(_DEBUG)
 #define DBG_REPORT_ERROR(format, ...) _CrtDbgReport(_CRT_ERROR, __FILE__, __LINE__, __FUNCDNAME__, format, __VA_ARGS__)
 #define DBG_REPORT_WARN(format, ...) _CrtDbgReport(_CRT_WARN, __FILE__, __LINE__, __FUNCDNAME__, format, __VA_ARGS__)
+#else
+#define DBG_REPORT_ERROR(format, ...)
+#define DBG_REPORT_WARN(format, ...)
+#endif
 
 void RGBLoadUnload()
 {
@@ -192,8 +197,8 @@ void YBRToRGBTranslate()
 
 void RGBToYUVPack()
 {
-	const std::string inputFileName  = "input/Lenna.tga";
-	const std::string outputFileName = "output/Lenna.yuv.tga";
+	const std::string inputFileName  = "input/SourceR.tga";
+	const std::string outputFileName = "output/SourceR.yuv.tga";
 
 	IJResult result = IJResult::UnknownResult;
 	IJPackedColourImage* packedImage = nullptr;
@@ -248,8 +253,8 @@ void RGBToYUVPack()
 
 void YUVpackToRGB()
 {
-	const std::string inputFileName  = "output/Lenna.yuv.tga";
-	const std::string outputFileName = "output/Lenna.yuv.rgb.tga";
+	const std::string inputFileName  = "output/SourceR.yuv.tga";
+	const std::string outputFileName = "output/SourceR.yuv.rgb.tga";
 
 	IJResult result = IJResult::UnknownResult;
 	IJPackedColourImage* packedImage = nullptr;

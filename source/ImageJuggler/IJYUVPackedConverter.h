@@ -14,6 +14,12 @@ class IJPackedColourImage;
 
 struct IJYuvPackedConverter
 {
+	enum filter_type
+	{
+		Mitchell, 
+		Catmullrom, 
+	};
+
 	enum dither_type
 	{
 		FloydSteinberg = 0
@@ -46,17 +52,18 @@ struct IJYuvPackedConverter
 		const unsigned char* pY;
 		const unsigned char* pU;
 		const unsigned char* pV;
-		unsigned ySize;
-		unsigned uvSize;
-		unsigned packRate;
+		int ySize;
+		int uvSize;
+		int packRate;
+		filter_type filterType;
 		unsigned char* pRgb;
 		unsigned short* W;
 		unsigned short* H;
 
-		float packedW;
+		int    packedW;
 		float* pCoefs;
-		unsigned coefRange;
-		float pixelRadius;
+		int    coefsRange;
+		int    pixelRadius;
 		
 		context_yuv2rgb()
 			: pY(nullptr)
@@ -65,11 +72,12 @@ struct IJYuvPackedConverter
 			, ySize(0)
 			, uvSize(0)
 			, packRate(0)
+			, filterType(Catmullrom)
 			, pRgb(nullptr)
 			, W(nullptr)
 			, H(nullptr)
-			, coefRange(0)
 			, pCoefs(nullptr)
+			, coefsRange(0)
 			, pixelRadius(0)
 		{}
 
@@ -124,9 +132,8 @@ struct IJYuvPackedConverter
 	static void	 allocate_coefs_memory(context_yuv2rgb* ctx);
 	static void  deallocate_coefs_memory(context_yuv2rgb* ctx);
 	static float calculate_coef_distance(float _X, float _Y);
-	static void  calculate_coef(float* coef, float _X);
-	static void  calculate_coef(float* coef, float _X, float _Y);
-	static void  calculate_coefs_upsample_range(context_yuv2rgb* ctx, float pixelRadius);
+	static void  calculate_coef(context_yuv2rgb* ctx, float* coef, float _X);
+	static void  calculate_coef(context_yuv2rgb* ctx, float* coef, float _X, float _Y);
 	static void  calculate_coefs_upsample(context_yuv2rgb* ctx);
 	static float get_coef(context_yuv2rgb* ctx, int idx);
 
