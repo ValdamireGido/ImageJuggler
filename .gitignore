@@ -15,3 +15,10 @@ prj/ImageJuggler/Debug/UnitTestImageJuggler.ilk
 /prj/ImageJuggler/ImageJuggler/Debug/ijimage.obj.enc
 /prj/ImageJuggler/ImageJuggler/Debug/ijyuvpackedconverter.obj.enc
 *.diagsession
+/prj/ImageJuggler/Release/Test.ipdb
+/prj/ImageJuggler/Release/Test.iobj
+/prj/ImageJuggler/Release/Test.exe
+/prj/ImageJuggler/Release/ImageJuggler.lib
+/prj/ImageJuggler/Debug/output/dbg/y_image.zip
+/prj/ImageJuggler/Debug/output/dbg/y_image.pvr
+/prj/ImageJuggler/Debug/output/dbg/dbg.zip
