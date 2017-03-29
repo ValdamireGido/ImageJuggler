@@ -2,6 +2,8 @@
 #include "Image/IJRGBImage.h"
 #include "Image/IJPackedColourImage.h"
 #include "IJImageTranslator.h"
+
+#define IJUTILS_ENABLE_SPECIAL_LOGGER 1
 #include "IJUtils.h"
 //#include "Fixed.h"
 
@@ -18,6 +20,8 @@ namespace
 		7/16, 3/16, 5/16, 1/16
 	};
 }
+
+static std::ofstream s_log_ofstream;
 
 //
 //float IJYuvPackedConverter::get_dither_coef(size_t idx, context_rgb2yuv* ctx)
@@ -226,6 +230,7 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 	calculate_coefs_upsample(ctx);
 	for (int pixel_upsample_y = 0; pixel_upsample_y < *ctx->H; pixel_upsample_y++)
 	{
+		//IJ_SPECIAL_LOG_SCOPE_DURATION_FILE(s_log_ofstream, "Processing ling '%d'...", pixel_upsample_y);
 		for (int pixel_upsample_x = 0; pixel_upsample_x < *ctx->W; pixel_upsample_x++)
 		{
 			// update pixel upsampled idx
@@ -233,9 +238,17 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 			// update absolute upsample idx
 			upsample_idx = pixel_upsample_idx * 3;
 
+			IJ_SPECIAL_LOG_FILE(s_log_ofstream, "Pixel      - %d (%d, %d)", pixel_upsample_idx, pixel_upsample_x, pixel_upsample_y);
+			IJ_SPECIAL_LOG_FILE(s_log_ofstream, "Downsample - %d (%d, %d)", pixel_upsample_x / ctx->packRate + pixel_upsample_y / ctx->packRate * ctx->packedW, 
+								pixel_upsample_x / ctx->packRate, 
+								pixel_upsample_y / ctx->packRate);
+
 			// put Y comp to the R chanel
 			ctx->pRgb[upsample_idx] = ctx->pY[pixel_upsample_idx];
-
+#define PACKED_CONVERTER_USING_CROSS_BICUBIC_FILTER 0
+#define PACKED_CONVERTER_USING_BICUBIC_FILTER 1
+#if PACKED_CONVERTER_USING_CROSS_BICUBIC_FILTER
+			IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\tHorizontal upsample:");
 			// upsample horizontal
 			for (int k = -2; k <= 2; k++)
 			{
@@ -256,8 +269,10 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 				float coef = get_coef(ctx, coefIdx);
 				ctx->pRgb[upsample_idx + 1] += (unsigned char)(ctx->pU[pixel_downsample_idx] * coef);
 				ctx->pRgb[upsample_idx + 2] += (unsigned char)(ctx->pV[pixel_downsample_idx] * coef);
+				IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\t\tk = '%2d' didx = (%3d, %3d) coefIdx = '%2d' coef = '%2.4f'", k, pixel_downsample_x, pixel_downsample_y, coefIdx, coef);
 			}
 
+			IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\tVertical upsample:");
 			// upsample vertical
 			upsampled_u = 0;
 			upsampled_v = 0;
@@ -280,10 +295,12 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 				float coef = get_coef(ctx, coefIdx);
 				upsampled_u += (unsigned char)(ctx->pU[pixel_downsample_idx] * coef);
 				upsampled_v += (unsigned char)(ctx->pV[pixel_downsample_idx] * coef);
+				IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\t\tk = '%2d' didx = (%3d, %3d) coefIdx = '%2d' coef = '%2.4f'", k, pixel_downsample_x, pixel_downsample_y, coefIdx, coef);
 			}
 
-#define PACKED_CONVERTER_USING_BICUBIC_FILTER 0
-#if PACKED_CONVERTER_USING_BICUBIC_FILTER 
+	#define PACKED_CONVERTER_USING_BICUBIC_FILTER_ELEMENTS 1
+	#if PACKED_CONVERTER_USING_BICUBIC_FILTER_ELEMENTS 
+			IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\tBicubic upsample:");
 			// upsample bicubic (also diagonal downsampled pixels)
 			char bicubic_u = 0;
 			char bicubic_v = 0;
@@ -299,15 +316,16 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 					continue;
 				}
 
-				int diff_x = abs(pixel_downsample_x*ctx->packRate + (int)(pixel_upsample_x%ctx->packRate) - pixel_upsample_x);
-				int diff_y = abs(pixel_downsample_y*ctx->packRate + (int)(pixel_upsample_y%ctx->packRate) - pixel_upsample_y);
+				int diff_x = abs(pixel_downsample_x*ctx->packRate - pixel_upsample_x);
+				int diff_y = abs(pixel_downsample_y*ctx->packRate - pixel_upsample_y);
 				float coef = get_coef(ctx, diff_x, diff_y);
 				bicubic_u += (char)(ctx->pU[pixel_downsample_idx] * coef);
 				bicubic_v += (char)(ctx->pV[pixel_downsample_idx] * coef);
+				IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\t\tk = '%2d' didx = (%3d, %3d) coefIdx (%3d,%3d) coef = '%2.4f'", k, pixel_downsample_x, pixel_downsample_y, diff_x, diff_y, coef);
 			}
-#endif
+	#endif
 
-#if PACKED_CONVERTER_USING_BICUBIC_FILTER
+	#if PACKED_CONVERTER_USING_BICUBIC_FILTER_ELEMENTS
 			static const float horizontal_uv_weight = 0.5f;
 			static const float vertical_uv_weight   = 0.5f;
 			static const float bicubic_uv_weight    = 0.3f;
@@ -317,11 +335,50 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 			ctx->pRgb[upsample_idx + 2] = (unsigned char)(ctx->pRgb[upsample_idx + 2] * horizontal_uv_weight + 
 														  upsampled_v                 * vertical_uv_weight   + 
 														  cusmath::clamp((float)bicubic_v, 16.f, 240.f)*bicubic_uv_weight);
-#else
+	#else
 			ctx->pRgb[upsample_idx + 1] = (unsigned char)(ctx->pRgb[upsample_idx + 1]*0.5f + upsampled_u*0.5f);
 			ctx->pRgb[upsample_idx + 2] = (unsigned char)(ctx->pRgb[upsample_idx + 2]*0.5f + upsampled_v*0.5f);
-#endif
+	#endif
+#elif PACKED_CONVERTER_USING_BICUBIC_FILTER
+			static const int k_bicubic_downsample_idx_offsets_count = 13;
+			static const int k_bicubic_downsample_idx_offsets[k_bicubic_downsample_idx_offsets_count][2] = 
+			{
+						  		    { 0,  2},                             //     Donwsampled pixel that will be 
+																		  // involved in the upsampled pixel
+						  {-1,  1}, { 0,  1}, { 1,  1},					  // compilation with the separate weight 
+																		  // for every calculated downsampled 
+				{-2,  0}, {-1,  0}, { 0,  0}, { 1,  0}, { 2,  0},		  // pixel.
+																		  //
+				          {-1, -1}, { 0, -1}, { 1, -1}, 				  //
+																		  //
+						            { 0, -2}							  //
+			};
 
+			for (int k = 0; k < k_bicubic_downsample_idx_offsets_count; k++)
+			{
+				int pixel_downsample_x = pixel_upsample_x / ctx->packRate + k_bicubic_downsample_idx_offsets[k][0];
+				int pixel_downsample_y = pixel_upsample_y / ctx->packRate + k_bicubic_downsample_idx_offsets[k][1];
+				pixel_downsample_idx = get_downsample_idx(ctx, pixel_downsample_x, pixel_downsample_y);
+				if (pixel_downsample_idx < 0 || pixel_downsample_idx > (ctx->uvSize))
+				{
+					continue;
+				}
+
+				int diff_x = abs(pixel_downsample_x*ctx->packRate - pixel_upsample_x);
+				int diff_y = abs(pixel_downsample_y*ctx->packRate - pixel_upsample_y);
+				float coef = get_coef(ctx, diff_x, diff_y);
+				ctx->pRgb[upsample_idx + 1] += (unsigned char)(ctx->pU[pixel_downsample_idx] * coef);
+				ctx->pRgb[upsample_idx + 2] += (unsigned char)(ctx->pV[pixel_downsample_idx] * coef);
+				IJ_SPECIAL_LOG_FILE(s_log_ofstream, 
+									"\t\tdownsampled (%2d, %2d), offset (%d, %d), diff (%2d, %2d) coef %.4f", 
+									pixel_downsample_x, pixel_downsample_y, 
+									k_bicubic_downsample_idx_offsets[k][0], k_bicubic_downsample_idx_offsets[k][1], 
+									diff_x, diff_y, coef);
+			}
+#endif
+			/*IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\tTraslating pixel {%3d %3d %3d}", ctx->pRgb[upsample_idx + 0], 
+																			        ctx->pRgb[upsample_idx + 1], 
+																			        ctx->pRgb[upsample_idx + 2]);
 			IJImageTranslator::TranslateYUVToRGB(
 				ctx->pRgb[upsample_idx + 0], 
 				ctx->pRgb[upsample_idx + 1], 
@@ -329,6 +386,9 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 				ctx->pRgb[upsample_idx + 0], 
 				ctx->pRgb[upsample_idx + 1], 
 				ctx->pRgb[upsample_idx + 2]);
+			IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\tTranslated pixel {%3d %3d %3d}", ctx->pRgb[upsample_idx + 0], 
+																			        ctx->pRgb[upsample_idx + 1], 
+																			        ctx->pRgb[upsample_idx + 2]);*/
 		}
 	}
 
@@ -342,6 +402,11 @@ int IJYuvPackedConverter::unpack(const unsigned char* pY, const unsigned char* p
 								 unsigned ySize, unsigned uvSize, unsigned packRate,
 								 unsigned char* pRgb, unsigned short* W, unsigned short* H)
 {
+	{
+		s_log_ofstream.open("output/debug_output_log.dbglg", std::ios::out);
+		IJ_SPECIAL_LOG_FILE(s_log_ofstream, "Starting unpack...");
+	}
+
 	context_yuv2rgb* ctx = new context_yuv2rgb;
 	ctx->pY = pY;
 	ctx->pU = pU;

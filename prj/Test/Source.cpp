@@ -197,8 +197,8 @@ void YBRToRGBTranslate()
 
 void RGBToYUVPack()
 {
-	const std::string inputFileName  = "input/bar_skybox2.tga";
-	const std::string outputFileName = "output/bar_skybox2.yuv.tga";
+	const std::string inputFileName  = "input/Lenna.tga";
+	const std::string outputFileName = "output/Lenna.yuv.tga";
 
 	IJResult result = IJResult::UnknownResult;
 	IJPackedColourImage* packedImage = nullptr;
@@ -253,8 +253,8 @@ void RGBToYUVPack()
 
 void YUVpackToRGB()
 {
-	const std::string inputFileName  = "output/SourceR.yuv.tga";
-	const std::string outputFileName = "output/SourceR.yuv.rgb.tga";
+	const std::string inputFileName  = "output/Lenna.yuv.tga";
+	const std::string outputFileName = "output/Lenna.yuv.rgb.tga";
 
 	IJResult result = IJResult::UnknownResult;
 	IJPackedColourImage* packedImage = nullptr;
@@ -325,7 +325,7 @@ int main(int argc, char** argv)
 	//RGBToYCbCrTranslate();
 	//YBRToRGBTranslate();
 
-	//RGBToYUVPack();
+	RGBToYUVPack();
 	YUVpackToRGB();
 
 	return EXIT_SUCCESS;
