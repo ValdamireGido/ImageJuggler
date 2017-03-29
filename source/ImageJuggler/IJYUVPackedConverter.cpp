@@ -3,7 +3,7 @@
 #include "Image/IJPackedColourImage.h"
 #include "IJImageTranslator.h"
 
-#define IJUTILS_ENABLE_SPECIAL_LOGGER 1
+#define IJUTILS_ENABLE_SPECIAL_LOGGER 0
 #include "IJUtils.h"
 //#include "Fixed.h"
 
@@ -176,7 +176,7 @@ void IJYuvPackedConverter::calculate_coef(context_yuv2rgb* ctx, float* coef, flo
 
 void IJYuvPackedConverter::calculate_coefs_upsample(context_yuv2rgb* ctx)
 {
-	ctx->pixelRadius = ctx->packRate<<1;
+	ctx->pixelRadius = ctx->packRate*2;
 	ctx->coefsRange = ctx->pixelRadius;
 	allocate_coefs_memory(ctx);
 	unsigned coefIdx = 0;
@@ -340,6 +340,11 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 			ctx->pRgb[upsample_idx + 2] = (unsigned char)(ctx->pRgb[upsample_idx + 2]*0.5f + upsampled_v*0.5f);
 	#endif
 #elif PACKED_CONVERTER_USING_BICUBIC_FILTER
+
+	#define USE_BICUBIC_1 0
+	#define USE_BICUBIC_2 0
+	#define USE_BICUBIC_3 1
+	#if USE_BICUBIC_1
 			static const int k_bicubic_downsample_idx_offsets_count = 13;
 			static const int k_bicubic_downsample_idx_offsets[k_bicubic_downsample_idx_offsets_count][2] = 
 			{
@@ -353,6 +358,35 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 																		  //
 						            { 0, -2}							  //
 			};
+	#elif USE_BICUBIC_2
+			static const int k_bicubic_downsample_idx_offsets_count = 9;
+			static const int k_bicubic_downsample_idx_offsets[k_bicubic_downsample_idx_offsets_count][2] = 
+			{
+						  		    { 0,  2},                    
+																
+						            { 0,  1},          			
+																
+				{-2,  0}, {-1,  0}, { 0,  0}, { 1,  0}, { 2,  0},
+																
+				                    { 0, -1},           		
+																
+						            { 0, -2}					
+			};
+	#elif USE_BICUBIC_3
+			static const int k_bicubic_downsample_idx_offsets_count = 21;
+			static const int k_bicubic_downsample_idx_offsets[k_bicubic_downsample_idx_offsets_count][2] = 
+			{
+						  {-1,  2}, { 0,  2}, { 1,  2},           
+																
+				{-2,  1}, {-1,  1}, { 0,  1}, { 1,  1},	{ 2,  1}, 
+																
+				{-2,  0}, {-1,  0}, { 0,  0}, { 1,  0}, { 2,  0},
+																
+				{-2, -1}, {-1, -1}, { 0, -1}, { 1, -1}, { 2, -1}, 
+																
+						  {-1, -2}, { 0, -2}, { 1, -2}, 
+			};
+	#endif
 
 			for (int k = 0; k < k_bicubic_downsample_idx_offsets_count; k++)
 			{
@@ -414,7 +448,7 @@ int IJYuvPackedConverter::unpack(const unsigned char* pY, const unsigned char* p
 	ctx->ySize = ySize;
 	ctx->uvSize = uvSize;
 	ctx->packRate = packRate;
-	ctx->filterType = filter_type::Catmullrom;
+	ctx->filterType = filter_type::Mitchell;
 	ctx->pRgb = pRgb;
 	ctx->W = W;
 	ctx->H = H;
