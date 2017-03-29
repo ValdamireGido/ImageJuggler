@@ -115,6 +115,13 @@ IJResult IJPackedColourImage::Save(std::ostream& ostream)
 	result = m_vImage->Save(ostream);
 	assert(result == IJResult::Success);
 	
+	SaveHeader(m_yImage);
+	SaveHeader(m_uImage);
+	SaveHeader(m_vImage);
+	m_yImage->Save("output/dbg/y_image.tga");
+	m_uImage->Save("output/dbg/u_image.tga");
+	m_vImage->Save("output/dbg/v_image.tga");
+
 	return result;
 }
 

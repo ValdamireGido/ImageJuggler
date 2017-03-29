@@ -18,6 +18,7 @@ struct IJYuvPackedConverter
 	{
 		Mitchell, 
 		Catmullrom, 
+		CubicBSpline
 	};
 
 	enum dither_type
@@ -135,7 +136,10 @@ struct IJYuvPackedConverter
 	static void  calculate_coef(context_yuv2rgb* ctx, float* coef, float _X);
 	static void  calculate_coef(context_yuv2rgb* ctx, float* coef, float _X, float _Y);
 	static void  calculate_coefs_upsample(context_yuv2rgb* ctx);
+	static float get_coef(context_yuv2rgb* ctx, int x, int y);
 	static float get_coef(context_yuv2rgb* ctx, int idx);
+	static int   get_upsample_idx(context_yuv2rgb* ctx, int upsample_x, int upsample_y);
+	static int   get_downsample_idx(context_yuv2rgb* ctx, int downsample_x, int downsample_y);
 
 	static int   unpack(context_yuv2rgb* ctx);
 	static int   unpack(const unsigned char* pY, const unsigned char* pU, const unsigned char* pV, 

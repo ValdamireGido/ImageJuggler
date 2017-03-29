@@ -121,7 +121,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\ImageJuggler\IJImageTranslator.cpp" />
-    <ClCompile Include="..\..\..\source\ImageJuggler\IJMainWorker.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\IJYUVPackedConverter.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\ImageJuggler.cpp" />
     <ClCompile Include="..\..\..\source\ImageJuggler\Image\IJImage.cpp" />
@@ -138,12 +137,10 @@
     <ClInclude Include="..\..\..\source\gles20\KHR\khrplatform.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Fixed.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\IJImageTranslator.h" />
-    <ClInclude Include="..\..\..\source\ImageJuggler\IJMainWorker.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\IJTypes.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\IJUtils.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\IJYUVPackedConverter.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\ImageJuggler.h" />
-    <ClInclude Include="..\..\..\source\ImageJuggler\ImageJuggler_config.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImage.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJImageInterface.h" />
     <ClInclude Include="..\..\..\source\ImageJuggler\Image\IJPackedColourImage.h" />
