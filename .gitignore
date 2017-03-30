@@ -22,3 +22,6 @@ prj/ImageJuggler/Debug/UnitTestImageJuggler.ilk
 /prj/ImageJuggler/Debug/output/dbg/y_image.zip
 /prj/ImageJuggler/Debug/output/dbg/y_image.pvr
 /prj/ImageJuggler/Debug/output/dbg/dbg.zip
+*.enc
+*.dbglg
+*.i
