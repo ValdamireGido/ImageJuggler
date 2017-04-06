@@ -1,0 +1,515 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0A4F35DDFC63D7070E679C1D /* IJSingleCompImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F47DFFED68AA9CD777DC3E2D /* IJSingleCompImage.cpp */; };
+		1CD28A039FAE172DE3667043 /* ImageJuggler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AF37A932CE7837D101D38D3 /* ImageJuggler.cpp */; };
+		30C4745D380AC3077B0E4A9D /* IJImageInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB59B06DB3060AD7E9935EAD /* IJImageInterface.cpp */; };
+		31DE03F1D9D1839BED047A31 /* IJRGBImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B67B4FC105953B2B8D0D9E01 /* IJRGBImage.cpp */; };
+		446C174B3680B87548847D8B /* IJYUVPackedConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FD6055BF402A2450334439B /* IJYUVPackedConverter.cpp */; };
+		61E528DD638AB2875E3DDF1D /* IJImageTranslator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8E4764DC8402BB74B01048D /* IJImageTranslator.cpp */; };
+		BF40EDA1421C7ACB85D4D3E1 /* IJMainWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9EB2EFD1A0A6F8BB83DCAE11 /* IJMainWorker.cpp */; };
+		C44583F1C574201B39A4CA31 /* IJYCbCrImage888.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1EAA59C133C911AB6A237801 /* IJYCbCrImage888.cpp */; };
+		CAF980730B6EA69D555B06B3 /* IJPackedColourImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0C5E0A3B26AE28D59993EE3 /* IJPackedColourImage.cpp */; };
+		EA03E4FB35636D25301EAB3B /* IJImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3F946ABD4096A95777DE4EB /* IJImage.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0164028B360CC8F5888930CB /* IJRGBImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IJRGBImage.h; path = ../../../source/ImageJuggler/Image/IJRGBImage.h; sourceTree = "<group>"; };
+		0471C7DBF481EBC597F6661B /* IJMainWorker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IJMainWorker.h; path = ../../../source/ImageJuggler/IJMainWorker.h; sourceTree = "<group>"; };
+		05AE6C87D2C2C3F1F7EC3AC7 /* IJTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IJTypes.h; path = ../../../source/ImageJuggler/IJTypes.h; sourceTree = "<group>"; };
+		1AD487D5512B46BFA2440615 /* IJImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IJImage.h; path = ../../../source/ImageJuggler/Image/IJImage.h; sourceTree = "<group>"; };
+		1EAA59C133C911AB6A237801 /* IJYCbCrImage888.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IJYCbCrImage888.cpp; path = ../../../source/ImageJuggler/Image/IJYCbCrImage888.cpp; sourceTree = "<group>"; };
+		2AF37A932CE7837D101D38D3 /* ImageJuggler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ImageJuggler.cpp; path = ../../../source/ImageJuggler/ImageJuggler.cpp; sourceTree = "<group>"; };
+		4801C2A55D207A8F937AE0E5 /* IJYUVPackedConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IJYUVPackedConverter.h; path = ../../../source/ImageJuggler/IJYUVPackedConverter.h; sourceTree = "<group>"; };
+		513897AB6473EA95CA5C95EB /* IJYCbCrImage888.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IJYCbCrImage888.h; path = ../../../source/ImageJuggler/Image/IJYCbCrImage888.h; sourceTree = "<group>"; };
+		5E6A7A9773893281A9E398D7 /* IJSingleCompImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IJSingleCompImage.h; path = ../../../source/ImageJuggler/Image/IJSingleCompImage.h; sourceTree = "<group>"; };
+		69485EF740DDEF61C0D7CD37 /* IJImageTranslator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IJImageTranslator.h; path = ../../../source/ImageJuggler/IJImageTranslator.h; sourceTree = "<group>"; };
+		7FD6055BF402A2450334439B /* IJYUVPackedConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IJYUVPackedConverter.cpp; path = ../../../source/ImageJuggler/IJYUVPackedConverter.cpp; sourceTree = "<group>"; };
+		8443DA77539F8FE1D66068B7 /* IJImageInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IJImageInterface.h; path = ../../../source/ImageJuggler/Image/IJImageInterface.h; sourceTree = "<group>"; };
+		90950A6F0DD7785954F3E8AF /* stb_image_resize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stb_image_resize.h; path = ../../../source/ImageJuggler/stb_image_resize.h; sourceTree = "<group>"; };
+		9EB2EFD1A0A6F8BB83DCAE11 /* IJMainWorker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IJMainWorker.cpp; path = ../../../source/ImageJuggler/IJMainWorker.cpp; sourceTree = "<group>"; };
+		ABFCC0978A49F301450D6ED7 /* Fixed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Fixed.h; path = ../../../source/ImageJuggler/Fixed.h; sourceTree = "<group>"; };
+		AD646F96FABDD1403A7425D6 /* ImageJuggler */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = ImageJuggler; path = libImageJuggler_d.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B67B4FC105953B2B8D0D9E01 /* IJRGBImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IJRGBImage.cpp; path = ../../../source/ImageJuggler/Image/IJRGBImage.cpp; sourceTree = "<group>"; };
+		B81DC07F853217E9AA5B8EBF /* IJUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IJUtils.h; path = ../../../source/ImageJuggler/IJUtils.h; sourceTree = "<group>"; };
+		C160A28790BC57F1137D30C7 /* ImageJuggler_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ImageJuggler_config.h; path = ../../../source/ImageJuggler/ImageJuggler_config.h; sourceTree = "<group>"; };
+		DB59B06DB3060AD7E9935EAD /* IJImageInterface.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IJImageInterface.cpp; path = ../../../source/ImageJuggler/Image/IJImageInterface.cpp; sourceTree = "<group>"; };
+		DBBFD44D4FEC71375F1E128D /* IJPackedColourImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IJPackedColourImage.h; path = ../../../source/ImageJuggler/Image/IJPackedColourImage.h; sourceTree = "<group>"; };
+		E3F946ABD4096A95777DE4EB /* IJImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IJImage.cpp; path = ../../../source/ImageJuggler/Image/IJImage.cpp; sourceTree = "<group>"; };
+		F0C5E0A3B26AE28D59993EE3 /* IJPackedColourImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IJPackedColourImage.cpp; path = ../../../source/ImageJuggler/Image/IJPackedColourImage.cpp; sourceTree = "<group>"; };
+		F47DFFED68AA9CD777DC3E2D /* IJSingleCompImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IJSingleCompImage.cpp; path = ../../../source/ImageJuggler/Image/IJSingleCompImage.cpp; sourceTree = "<group>"; };
+		F8E4764DC8402BB74B01048D /* IJImageTranslator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IJImageTranslator.cpp; path = ../../../source/ImageJuggler/IJImageTranslator.cpp; sourceTree = "<group>"; };
+		FEA13DDDEEB161C79225DC1D /* ImageJuggler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ImageJuggler.h; path = ../../../source/ImageJuggler/ImageJuggler.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A4478D06AF6EA9B0AB762346 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		073D1E364F57492075F81C76 /* ImageJuggler */ = {
+			isa = PBXGroup;
+			children = (
+				ABFCC0978A49F301450D6ED7 /* Fixed.h */,
+				F8E4764DC8402BB74B01048D /* IJImageTranslator.cpp */,
+				69485EF740DDEF61C0D7CD37 /* IJImageTranslator.h */,
+				9EB2EFD1A0A6F8BB83DCAE11 /* IJMainWorker.cpp */,
+				0471C7DBF481EBC597F6661B /* IJMainWorker.h */,
+				05AE6C87D2C2C3F1F7EC3AC7 /* IJTypes.h */,
+				B81DC07F853217E9AA5B8EBF /* IJUtils.h */,
+				7FD6055BF402A2450334439B /* IJYUVPackedConverter.cpp */,
+				4801C2A55D207A8F937AE0E5 /* IJYUVPackedConverter.h */,
+				C3BA78B17B0B061BCD2E06F1 /* Image */,
+				2AF37A932CE7837D101D38D3 /* ImageJuggler.cpp */,
+				FEA13DDDEEB161C79225DC1D /* ImageJuggler.h */,
+				C160A28790BC57F1137D30C7 /* ImageJuggler_config.h */,
+				90950A6F0DD7785954F3E8AF /* stb_image_resize.h */,
+				EA8E290FE2272BF9B2E0274F /* Products */,
+			);
+			name = ImageJuggler;
+			sourceTree = "<group>";
+		};
+		C3BA78B17B0B061BCD2E06F1 /* Image */ = {
+			isa = PBXGroup;
+			children = (
+				E3F946ABD4096A95777DE4EB /* IJImage.cpp */,
+				1AD487D5512B46BFA2440615 /* IJImage.h */,
+				DB59B06DB3060AD7E9935EAD /* IJImageInterface.cpp */,
+				8443DA77539F8FE1D66068B7 /* IJImageInterface.h */,
+				F0C5E0A3B26AE28D59993EE3 /* IJPackedColourImage.cpp */,
+				DBBFD44D4FEC71375F1E128D /* IJPackedColourImage.h */,
+				B67B4FC105953B2B8D0D9E01 /* IJRGBImage.cpp */,
+				0164028B360CC8F5888930CB /* IJRGBImage.h */,
+				F47DFFED68AA9CD777DC3E2D /* IJSingleCompImage.cpp */,
+				5E6A7A9773893281A9E398D7 /* IJSingleCompImage.h */,
+				1EAA59C133C911AB6A237801 /* IJYCbCrImage888.cpp */,
+				513897AB6473EA95CA5C95EB /* IJYCbCrImage888.h */,
+			);
+			name = Image;
+			sourceTree = "<group>";
+		};
+		EA8E290FE2272BF9B2E0274F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AD646F96FABDD1403A7425D6 /* ImageJuggler */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		DBEB4FBC796A24260EBD3DFC /* ImageJuggler */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8069E8C58B91056F87987F05 /* Build configuration list for PBXNativeTarget "ImageJuggler" */;
+			buildPhases = (
+				261871A6313F8E502D4707E6 /* Resources */,
+				BFCDF95DCAF51607C6FC8F9D /* Sources */,
+				A4478D06AF6EA9B0AB762346 /* Frameworks */,
+				270043F1C47F185B59D23231 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ImageJuggler;
+			productName = ImageJuggler;
+			productReference = AD646F96FABDD1403A7425D6 /* ImageJuggler */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				TargetAttributes = {
+					DBEB4FBC796A24260EBD3DFC = {
+					};
+				};
+			};
+			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "ImageJuggler" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions  = (
+					en,
+			);
+			mainGroup = 073D1E364F57492075F81C76 /* ImageJuggler */;
+			productRefGroup = 4E56C54F8F2DC379FA2F4B8F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DBEB4FBC796A24260EBD3DFC /* ImageJuggler */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		261871A6313F8E502D4707E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BFCDF95DCAF51607C6FC8F9D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61E528DD638AB2875E3DDF1D /* IJImageTranslator.cpp in Sources */,
+				BF40EDA1421C7ACB85D4D3E1 /* IJMainWorker.cpp in Sources */,
+				446C174B3680B87548847D8B /* IJYUVPackedConverter.cpp in Sources */,
+				EA03E4FB35636D25301EAB3B /* IJImage.cpp in Sources */,
+				30C4745D380AC3077B0E4A9D /* IJImageInterface.cpp in Sources */,
+				CAF980730B6EA69D555B06B3 /* IJPackedColourImage.cpp in Sources */,
+				31DE03F1D9D1839BED047A31 /* IJRGBImage.cpp in Sources */,
+				0A4F35DDFC63D7070E679C1D /* IJSingleCompImage.cpp in Sources */,
+				C44583F1C574201B39A4CA31 /* IJYCbCrImage888.cpp in Sources */,
+				1CD28A039FAE172DE3667043 /* ImageJuggler.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		56CBA611B4B6A1FB85674451 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Valeri Vuchov (WDTMDP2J2J)";
+				COMMON_HEADER_SEARCH_PATHS = (
+					../../../source/ImageJuggler,
+					../../../source/boost,
+				);
+				COMPILER_FLAGS = "-fobjc-arc";
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					_DEBUG,
+					_SCL_SECURE_NO_WARNINGS,
+					_CRT_SECURE_NO_WARNINGS,
+					_WINSOCK_DEPRECATED_NO_WARNINGS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "$(COMMON_HEADER_SEARCH_PATHS)";
+				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OBJROOT = obj/Debug/ImageJuggler;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-std=c++11",
+					"-stdlib=libc++",
+					"-x",
+					"objective-c++",
+					"-Wno-error",
+				);
+				PRODUCT_NAME = ImageJuggler_d;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+				SYMROOT = ../../../lib;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "$(ARCHS_STANDARD)";
+			};
+			name = Debug;
+		};
+		730CE99CE46DD8C6003A0FDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Valeri Vuchov (WDTMDP2J2J)";
+				COMMON_HEADER_SEARCH_PATHS = (
+					../../../source/ImageJuggler,
+					../../../source/boost,
+				);
+				COMPILER_FLAGS = "-fobjc-arc";
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					_DEBUG,
+					_SCL_SECURE_NO_WARNINGS,
+					_CRT_SECURE_NO_WARNINGS,
+					_WINSOCK_DEPRECATED_NO_WARNINGS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "$(COMMON_HEADER_SEARCH_PATHS)";
+				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OBJROOT = obj/Debug/ImageJuggler;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-std=c++11",
+					"-stdlib=libc++",
+					"-x",
+					"objective-c++",
+					"-Wno-error",
+				);
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+				SYMROOT = ../../../lib;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "$(ARCHS_STANDARD)";
+			};
+			name = Debug;
+		};
+		9AAB2FCB1F44CE35DEA75E0B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Valeri Vuchov (WDTMDP2J2J)";
+				COMMON_HEADER_SEARCH_PATHS = (
+					../../../source/ImageJuggler,
+					../../../source/boost,
+				);
+				COMPILER_FLAGS = "-fobjc-arc";
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
+					"_SECURE_SCL=0",
+					"_SECURE_SCL_THROWS=0",
+					_SCL_SECURE_NO_WARNINGS,
+					_CRT_SECURE_NO_WARNINGS,
+					_WINSOCK_DEPRECATED_NO_WARNINGS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "$(COMMON_HEADER_SEARCH_PATHS)";
+				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OBJROOT = obj/Release/ImageJuggler;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-std=c++11",
+					"-stdlib=libc++",
+					"-x",
+					"objective-c++",
+					"-Wno-error",
+				);
+				PRODUCT_NAME = ImageJuggler;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+				SYMROOT = ../../../lib;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "$(ARCHS_STANDARD)";
+			};
+			name = Release;
+		};
+		D851509625AAB240656106D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Valeri Vuchov (WDTMDP2J2J)";
+				COMMON_HEADER_SEARCH_PATHS = (
+					../../../source/ImageJuggler,
+					../../../source/boost,
+				);
+				COMPILER_FLAGS = "-fobjc-arc";
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
+					"_SECURE_SCL=0",
+					"_SECURE_SCL_THROWS=0",
+					_SCL_SECURE_NO_WARNINGS,
+					_CRT_SECURE_NO_WARNINGS,
+					_WINSOCK_DEPRECATED_NO_WARNINGS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "$(COMMON_HEADER_SEARCH_PATHS)";
+				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OBJROOT = obj/Release/ImageJuggler;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-std=c++11",
+					"-stdlib=libc++",
+					"-x",
+					"objective-c++",
+					"-Wno-error",
+				);
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = static;
+				SYMROOT = ../../../lib;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "$(ARCHS_STANDARD)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "ImageJuggler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				730CE99CE46DD8C6003A0FDC /* Debug */,
+				D851509625AAB240656106D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8069E8C58B91056F87987F05 /* Build configuration list for PBXNativeTarget "ImageJuggler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56CBA611B4B6A1FB85674451 /* Debug */,
+				9AAB2FCB1F44CE35DEA75E0B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

@@ -143,7 +143,7 @@ Fixed<I,F> divide(Fixed<I,F> numerator, Fixed<I,F> denominator, Fixed<I,F> &rema
 	static const int bits = Fixed<I,F>::total_bits;
 
 	if(denominator == 0) {
-		throw divide_by_zero();
+		return Fixed<I, F>(0);
 	} else {
 
 		int sign = 0;

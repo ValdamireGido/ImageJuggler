@@ -2,7 +2,6 @@
 
 #include "IJSingleCompImage.h"
 
-struct IJImageInterface<uint8_t, 3>::TGAHeader;
 class IJImage;
 class IJYCbCrImage888;
 class IJRGBImage;

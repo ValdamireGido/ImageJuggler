@@ -6,7 +6,7 @@
 #include <future>
 
 #define PROFILING_ENABLED 1
-#include "../../../prj/Test/Profiling.h"
+#include "../../test/Profiling.h"
 
 #include "stb_image_resize.h"
 
@@ -158,7 +158,7 @@ IJResult IJPackedColourImage::PackImage(IJYCbCrImage888* image, uint8_t rate)
 		uComp[i] = pixel.c2;
 		vComp[i] = pixel.c3;
 	};
-	parallel::asyncForeach(0, size, iteration, k_workingThreadCount);
+	parallel::asyncForeach(0, (int)size, iteration, k_workingThreadCount);
 
 	{
 		dbg__profileBlock2("Comps resize: Separate components resize. ");
@@ -244,9 +244,9 @@ IJResult IJPackedColourImage::UnpackImage(IJYCbCrImage888* image, uint8_t rate)
 	auto& Y = *m_yImage;
 	auto& U = *m_uImage;
 	auto& V = *m_vImage;
-	size_t W = static_cast<size_t>(m_header->width);
-	size_t H = static_cast<size_t>(m_header->height);
-	size_t packedW = static_cast<size_t>(m_header->width / m_packRate);
+	int W = static_cast<int>(m_header->width);
+	int H = static_cast<int>(m_header->height);
+	int packedW = static_cast<int>(m_header->width / m_packRate);
 
 	std::vector<uint8_t> uC;
 	std::vector<uint8_t> vC;
@@ -275,7 +275,7 @@ IJResult IJPackedColourImage::UnpackImage(IJYCbCrImage888* image, uint8_t rate)
 		rawImage[i].c2 = uC[i];
 		rawImage[i].c3 = vC[i];
 	};
-	parallel::asyncForeach(0, image->GetPixelCount(), interation, k_workingThreadCount);
+	parallel::asyncForeach(0, (int)image->GetPixelCount(), interation, k_workingThreadCount);
 
 	SaveHeader(image);
 	return IJResult::Success;

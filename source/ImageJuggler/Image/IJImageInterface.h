@@ -192,24 +192,24 @@ IJImageInterface<_PixelClassTy, _compsCount>::TGAHeader::operator std::vector<ui
 {
 	return std::vector<uint8_t> 
 	{
-		(uint8_t)idlength;
-		(uint8_t)colourmaptype;
-		(uint8_t)datatypecode;
-		(uint8_t)(colourmaporigin & 0x00FF);		// 2 bytes
-		(uint8_t)(colourmaporigin & 0xFF00) >> 8;	// 
-		(uint8_t)(colourmaplength & 0x00FF);		// 2 bytes
-		(uint8_t)(colourmaplength & 0xFF00) >> 8;	// 
-		(uint8_t)colourmapdepth;
-		(uint8_t)(x_origin & 0x00FF);				// 2 bytes
-		(uint8_t)(x_origin & 0xFF00) >> 8;			// 
-		(uint8_t)(y_origin & 0x00FF);				// 2 bytes
-		(uint8_t)(y_origin & 0xFF00) >> 8;			// 
-		(uint8_t)(width & 0x00FF);					// 2 bytes
-		(uint8_t)(width & 0xFF00) >> 8;				// 
-		(uint8_t)(height & 0x00FF);					// 2 bytes
-		(uint8_t)(height & 0xFF00) >> 8;			// 
-		(uint8_t)bitsperpixel; 
-		(uint8_t)imagedescriptor;
+		(uint8_t)idlength,
+		(uint8_t)colourmaptype,
+		(uint8_t)datatypecode,
+		(uint8_t)(colourmaporigin & 0x00FF),		// 2 bytes
+		(uint8_t)(colourmaporigin & 0xFF00) >> 8,	//
+		(uint8_t)(colourmaplength & 0x00FF),		// 2 bytes
+		(uint8_t)(colourmaplength & 0xFF00) >> 8,	//
+		(uint8_t)colourmapdepth,
+		(uint8_t)(x_origin & 0x00FF),				// 2 bytes
+		(uint8_t)(x_origin & 0xFF00) >> 8,			//
+		(uint8_t)(y_origin & 0x00FF),				// 2 bytes
+		(uint8_t)(y_origin & 0xFF00) >> 8,			//
+		(uint8_t)(width & 0x00FF),					// 2 bytes
+		(uint8_t)(width & 0xFF00) >> 8,				//
+		(uint8_t)(height & 0x00FF),					// 2 bytes
+		(uint8_t)(height & 0xFF00) >> 8,			//
+		(uint8_t)bitsperpixel,
+		(uint8_t)imagedescriptor
 	};
 }
 

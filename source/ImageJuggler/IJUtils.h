@@ -86,15 +86,15 @@ namespace parallel
 		handles.resize(_nThreads);
 		int size = _end - _start;
 		int sizePerThread = size / _nThreads;
-		for (size_t handleIdx = 0; handleIdx < _nThreads; handleIdx++)
+		for (int handleIdx = 0; handleIdx < _nThreads; handleIdx++)
 		{
-			size_t offset = sizePerThread * handleIdx;
-			size_t start = _start + offset;
-			size_t end = start + sizePerThread;
+			int offset = sizePerThread * handleIdx;
+			int start = _start + offset;
+			int end = start + sizePerThread;
 			handles[handleIdx] = std::async(std::launch::async, 
 											[start, end, &_func] () 
 			{
-				for (size_t i = start; i < end; i++)
+				for (int i = start; i < end; i++)
 				{
 					_func(i);
 				}

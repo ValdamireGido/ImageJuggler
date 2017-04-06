@@ -166,7 +166,7 @@ IJResult IJImageTranslator::RGBToYCbCr888(IJRGBImage* input, IJYCbCrImage888* ou
 		IJPixel& ybrPixel = output->GetData()[_i];
 		TranslateRGBPixelToYUV(rgbPixel, ybrPixel);
 	};
-	parallel::asyncForeach(0, nPixels, iteration, TRANSLATOR_AVAILABLE_THREADS);
+	parallel::asyncForeach(0, (int)nPixels, iteration, TRANSLATOR_AVAILABLE_THREADS);
 #else 
 	for (size_t idx = 0; idx < nPixels; idx++)
 	{
@@ -203,7 +203,7 @@ IJResult IJImageTranslator::YCbCr888ToRGB(IJYCbCrImage888* input, IJRGBImage* ou
 		IJPixel& rgbPixel = output->GetData()[_i];
 		TranslateYUVPixelToRGB(ybrPixel, rgbPixel);
 	};
-	parallel::asyncForeach(0, nPixels, iteration, TRANSLATOR_AVAILABLE_THREADS);
+	parallel::asyncForeach(0, (int)nPixels, iteration, TRANSLATOR_AVAILABLE_THREADS);
 #else
 	for (size_t i = 0; i < nPixels; i++)
 	{

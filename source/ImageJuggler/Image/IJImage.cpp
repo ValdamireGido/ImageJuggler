@@ -32,7 +32,7 @@ IJResult IJImage::Load(const std::vector<PixelComp_t>& rawImage)
 	assert(!rawImage.empty());
 	assert(GetData().empty());
 
-	std::strstream stream((char*)&rawImage.front(), rawImage.size(), std::ios::in);
+	std::strstream stream((char*)&rawImage.front(), (int)rawImage.size(), std::ios::in);
 	return Load(stream);
 }
 
@@ -89,7 +89,7 @@ IJResult IJImageAlpha::Load(const std::vector<PixelComp_t>& rawImage)
 	assert(!rawImage.empty());
 	assert(GetData().empty());
 
-	std::strstream stream((char*)&rawImage.front(), rawImage.size(), std::ios::in);
+	std::strstream stream((char*)&rawImage.front(), (int)rawImage.size(), std::ios::in);
 	return Load(stream);
 }
 

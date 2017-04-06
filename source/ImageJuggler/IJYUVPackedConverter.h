@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "IJTypes.h"
+#include <stdlib.h>
 
 namespace numeric
 {

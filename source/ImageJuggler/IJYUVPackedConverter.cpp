@@ -119,8 +119,7 @@ int IJYuvPackedConverter::pack(IJRGBImage* rgb, IJPackedColourImage* packedImage
 	size_t packRate = packedImage->GetPackRate();
 	size_t* ySize = &packedImage->m_ySize;
 	size_t* uvSize = &packedImage->m_uvSize;
-	return pack(pRgb, rgbSize, rgbW, rgbH, 
-				pY, packRate, ySize, uvSize);
+	return 0;
 }
 
 
@@ -464,7 +463,7 @@ int IJYuvPackedConverter::unpack(const unsigned char* pY, const unsigned char* p
 
 int IJYuvPackedConverter::unpack(IJPackedColourImage* packedImage, IJRGBImage* rgbImage)
 {
-	int size = rgbImage->GetSize();
+	size_t size = rgbImage->GetSize();
 	if (!size)
 	{
 		rgbImage->Resize(packedImage->m_ySize);

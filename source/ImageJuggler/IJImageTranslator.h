@@ -2,6 +2,7 @@
 
 #include "IJTypes.h"
 #include <vector>
+#include <array>
 
 #define	IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES 0
 #define IMAGE_CONVERSION_STANDARD_SDTV 0
