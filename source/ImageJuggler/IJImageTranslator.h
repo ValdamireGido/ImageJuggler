@@ -4,10 +4,85 @@
 #include <vector>
 #include <array>
 
-#define	IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES 0
+#define TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION 1
 #define IMAGE_CONVERSION_STANDARD_SDTV 0
 #define IMAGE_CONVERSION_STANDARD_HDTV 1
-#define IMAGE_CONVERSION_CUSTOM_COCG 0
+
+/*******************************************************************************************************************\
+ 								  SDTV Fixed point translation decalration
+\*******************************************************************************************************************/
+
+#define ijTranslate_yuv2rgb_sdtv_inline_fixed_point(y, u, v, r, g, b)												\
+do {																												\
+	fixed_int Y_ = y - 16, 																							\
+			  kY = Y_ * 1.164f,																						\
+			  U_ = u - 128,																							\
+			  V_ = v - 128;																							\
+	r = cusmath::clamp<fixed_int>(kY + V_ * 1.196f, 0, 255).to_uint();												\
+	g = cusmath::clamp<fixed_int>(kY + U_ * (-0.392f) + V_ * (-0.813f), 0, 255).to_uint();							\
+	b = cusmath::clamp<fixed_int>(kY + U_ * 2.017f, 0, 255).to_uint();												\
+} while(false)
+
+#define ijTranslate_rgb2yuv_sdtv_inline_fixed_point(r, g, b, y, u, v)												\
+do {																												\
+	y = cusmath::clamp<fixed_int>(r * 0.257f + g * 0.504f + b * 0.098f + 16, 16, 235).to_uint();					\
+	u = cusmath::clamp<fixed_int>(r * (-0.169f) + g * (-0.291f) + b * 0.439f + 128, 16, 240).to_uint();				\
+	v = cusmath::clamp<fixed_int>(r * 0.439f + g * (-0.368f) + b * (-0.071f) + 128, 16, 240).to_uint();				\
+} while(false)
+
+/*******************************************************************************************************************\
+									HDTV Fixed point translation decalration
+\*******************************************************************************************************************/
+
+#define ijTranslate_yuv2rgb_hdtv_inline_fixed_point_declare_constants(y, u, v)										\
+static fixed_int rrk = 1.13983f,																					\
+				 gbk = -0.39465f, grk = -0.58060f,																	\
+				 bbk = 2.03211f,																					\
+				 yMu = 1.05f, yDec = 16, uvDec = 128,																\
+				 lower = 0, upper = 255
+
+#define ijTranslate_yuv2rgb_hdtv_inline_fixed_point(y, u, v, r, g, b)												\
+do {																												\
+	ijTranslate_yuv2rgb_hdtv_inline_fixed_point_declare_constants(y, u, v);											\
+	fixed_int kY = (y - yDec) * yMu,																				\
+			  U_ = u - uvDec,																						\
+			  V_ = v - uvDec;																						\
+	r = cusmath::clamp<fixed_int>(kY + V_ * rrk, lower, upper).to_uint();											\
+	g = cusmath::clamp<fixed_int>(kY + U_ * gbk + V_ * grk, lower, upper).to_uint();								\
+	b = cusmath::clamp<fixed_int>(kY + U_ * bbk, lower, upper).to_uint();											\
+} while(false)
+
+#define ijTranslate_rgb2yuv_hdtv_inline_fixed_point_declare_constans()												\
+static fixed_int yrk =  0.2126f , ygk =  0.7152f , ybk =  0.0722f, 													\
+				 brk = -0.09991f, bgk = -0.33609f, bbk = 0.436f,													\
+				 rrk = 0.615f, rgk = -0.55861f, rbk = -0.05639f,													\
+				 incY = 16, incUV = 128, lower = 16, upperY = 235, upperUV = 240
+
+#define ijTranslate_rgb2yuv_hdtv_inline_fixed_point(_r, _g, _b, _y, _u, _v)											\
+do { 																												\
+	ijTranslate_rgb2yuv_hdtv_inline_fixed_point_declare_constans()													\
+	y = cusmath::clamp<fixed_int>(r * yrk + g * ygk + b * ybk + incY, lower, upperY).to_uint();						\
+	u = cusmath::clamp<fixed_int>(r * brk + g * bgk + b * bbk + incUV, lower, upperUV).to_uint();					\
+	v = cusmath::clamp<fixed_int>(r * rrk + g * rgk + b * rbk + incUV, lower, upperUV).to_uint();					\
+} while(false)
+
+/*******************************************************************************************************************\
+										General defines to use declaration
+\*******************************************************************************************************************/
+
+
+#if IMAGE_CONVERSION_STANDARD_SDTV
+#define ijTranslateYuv2RgbComps(y, u, v, r, g, b) ijTranslate_yuv2rgb_sdtv_inline_fixed_point(y, u, v, r, g, b)
+#define ijTranslateRgb2YuvComps(r, g, b, y, u, v) ijTranslate_rgb2yuv_sdtv_inline_fixed_point(r, g, b, y, u, v)
+#elif IMAGE_CONVERSION_STANDARD_HDTV
+#define ijTranslateYuv2RgbComps(y, u, v, r, g, b) ijTranslate_yuv2rgb_hdtv_inline_fixed_point(y, u, v, r, g, b)
+#define ijTranslateRgb2YuvComps(r, g, b, y, u, v) ijTranslate_rgb2yuv_hdtv_inline_fixed_point(r, g, b, y, u, v)
+#endif
+
+/*******************************************************************************************************************\
+										 For implementation declaration
+\*******************************************************************************************************************/
+
 
 template <typename _PixelCompTy, size_t _compsCount> class IJImageInterface;
 

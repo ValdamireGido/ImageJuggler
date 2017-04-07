@@ -28,4 +28,19 @@ function addJetEngineConfig()
  		removeflags {"NoRTTI"} 
  		
     filter {}
+
+    if (IsVisualStudio()) then 
+        -- disable -'noexcept' used with no exception handling mode specified; termination on exception is not guaranteed.Specify / EHsc
+        buildoptions { "/wd4577 /we4390" }
+    end
+    	
+	if IsXCode() then
+
+    	filter { "Release*"}      
+			xcodebuildsettings
+			{
+				["ENABLE_BITCODE"] = "YES",				
+			}
+		filter {}	
+	end
 end

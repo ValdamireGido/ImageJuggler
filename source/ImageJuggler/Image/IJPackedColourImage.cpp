@@ -22,6 +22,7 @@ IJPackedColourImage::IJPackedColourImage()
 	: m_yImage(nullptr)
 	, m_uImage(nullptr)
 	, m_vImage(nullptr)
+	, m_header(nullptr)
 	, m_packRate(k_defaultPackRate)
 	, m_fileName()
 {}
@@ -30,6 +31,7 @@ IJPackedColourImage::IJPackedColourImage(const std::string& fileName)
 	: m_yImage(nullptr)
 	, m_uImage(nullptr)
 	, m_vImage(nullptr)
+	, m_header(nullptr)
 	, m_packRate(k_defaultPackRate)
 	, m_fileName(fileName)
 {}
@@ -38,6 +40,7 @@ IJPackedColourImage::IJPackedColourImage(const std::string& fileName, uint8_t pa
 	: m_yImage(nullptr)
 	, m_uImage(nullptr)
 	, m_vImage(nullptr)
+	, m_header(nullptr)
 	, m_packRate(packRate)
 	, m_fileName(fileName)
 {}

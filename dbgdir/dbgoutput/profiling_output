@@ -1,0 +1,190 @@
+
+Run on 14914907536860533
+>  Block: Loading rgb image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       216
+>   Time spent(ms): 1
+>  } 
+>  Block: Translating and packing the rgb image to packed YUV image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       230
+>   Time spent(ms): 47
+>  } 
+>  Block: Saving the result image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       243
+>   Time spent(ms): 1
+>  } 
+>  Block: Loading the packed image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       272
+>   Time spent(ms): 0
+>  } 
+>  Block: Unpacking the image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       291
+>   Time spent(ms): 40
+>  } 
+>  Block: Clean up
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       313
+>   Time spent(ms): 2
+>  } 
+
+Run on 14914907826393719
+>  Block: Loading rgb image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       216
+>   Time spent(ms): 2
+>  } 
+>  Block: Translating and packing the rgb image to packed YUV image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       230
+>   Time spent(ms): 45
+>  } 
+>  Block: Saving the result image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       243
+>   Time spent(ms): 1
+>  } 
+>  Block: Loading the packed image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       272
+>   Time spent(ms): 1
+>  } 
+>  Block: Unpacking the image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       291
+>   Time spent(ms): 39
+>  } 
+>  Block: Clean up
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       313
+>   Time spent(ms): 2
+>  } 
+
+Run on 14914908169017676
+>  Block: Loading rgb image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       216
+>   Time spent(ms): 1
+>  } 
+>  Block: Translating and packing the rgb image to packed YUV image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       230
+>   Time spent(ms): 48
+>  } 
+>  Block: Saving the result image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       243
+>   Time spent(ms): 1
+>  } 
+>  Block: Loading the packed image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       272
+>   Time spent(ms): 1
+>  } 
+>  Block: Unpacking the image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       291
+>   Time spent(ms): 40
+>  } 
+>  Block: Clean up
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       313
+>   Time spent(ms): 2
+>  } 
+
+Run on 14914910345139370
+>  Block: Loading rgb image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       216
+>   Time spent(ms): 23
+>  } 
+>  Block: Translating and packing the rgb image to packed YUV image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       230
+>   Time spent(ms): 596
+>  } 
+>  Block: Saving the result image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       243
+>   Time spent(ms): 10
+>  } 
+>  Block: Loading the packed image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       272
+>   Time spent(ms): 4
+>  } 
+>  Block: Unpacking the image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       291
+>   Time spent(ms): 659
+>  } 
+>  Block: Clean up
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       313
+>   Time spent(ms): 16
+>  } 
+
+Run on 14914924150641191
+>  Block: Loading rgb image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       216
+>   Time spent(ms): 22
+>  } 
+>  Block: Translating and packing the rgb image to packed YUV image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       230
+>   Time spent(ms): 637
+>  } 
+>  Block: Saving the result image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       243
+>   Time spent(ms): 9
+>  } 
+>  Block: Loading the packed image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       272
+>   Time spent(ms): 34
+>  } 
+>  Block: Unpacking the image
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       291
+>   Time spent(ms): 1273
+>  } 
+>  Block: Clean up
+>  {
+>   File:       f:\svn_rep\imagejuggler\source\test\source.cpp
+>   Line:       313
+>   Time spent(ms): 32
+>  } 

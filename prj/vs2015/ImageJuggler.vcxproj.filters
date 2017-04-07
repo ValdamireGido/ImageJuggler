@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Image">
+      <UniqueIdentifier>{886C650D-F480-8DBE-BD02-311E29D689EF}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\ImageJuggler\Fixed.h" />
+    <ClInclude Include="..\..\source\ImageJuggler\IJImageTranslator.h" />
+    <ClInclude Include="..\..\source\ImageJuggler\IJMainWorker.h" />
+    <ClInclude Include="..\..\source\ImageJuggler\IJTypes.h" />
+    <ClInclude Include="..\..\source\ImageJuggler\IJUtils.h" />
+    <ClInclude Include="..\..\source\ImageJuggler\IJYUVPackedConverter.h" />
+    <ClInclude Include="..\..\source\ImageJuggler\Image\IJImage.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ImageJuggler\Image\IJImageInterface.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ImageJuggler\Image\IJPackedColourImage.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ImageJuggler\Image\IJRGBImage.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ImageJuggler\Image\IJSingleCompImage.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ImageJuggler\Image\IJYCbCrImage888.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ImageJuggler\ImageJuggler.h" />
+    <ClInclude Include="..\..\source\ImageJuggler\ImageJuggler_config.h" />
+    <ClInclude Include="..\..\source\ImageJuggler\stb_image_resize.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\source\ImageJuggler\IJImageTranslator.cpp" />
+    <ClCompile Include="..\..\source\ImageJuggler\IJMainWorker.cpp" />
+    <ClCompile Include="..\..\source\ImageJuggler\IJYUVPackedConverter.cpp" />
+    <ClCompile Include="..\..\source\ImageJuggler\Image\IJImage.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ImageJuggler\Image\IJImageInterface.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ImageJuggler\Image\IJPackedColourImage.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ImageJuggler\Image\IJRGBImage.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ImageJuggler\Image\IJSingleCompImage.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ImageJuggler\Image\IJYCbCrImage888.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ImageJuggler\ImageJuggler.cpp" />
+  </ItemGroup>
+</Project>

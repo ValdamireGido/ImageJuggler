@@ -125,3 +125,6 @@ prj/xcode4/ios/obj/Release/ImageJuggler/ImageJuggler.build/dgph
 prj/xcode4/ios/obj/Release/Test/Test.build/dgph
 prj/xcode4/ios/Test.xcodeproj/project.xcworkspace/xcuserdata/vladimir.gnidenko.xcuserdatad/UserInterfaceState.xcuserstate
 prj/xcode4/ios/Test.xcodeproj/xcuserdata/vladimir.gnidenko.xcuserdatad/xcschemes/Test.xcscheme
+/prj/vs2017/.vs/ImageJuggler_Test/v15
+*.db-shm
+*.db-wal

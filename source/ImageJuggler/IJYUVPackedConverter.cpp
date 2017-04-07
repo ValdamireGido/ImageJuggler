@@ -5,13 +5,25 @@
 
 #define IJUTILS_ENABLE_SPECIAL_LOGGER 0
 #include "IJUtils.h"
-//#include "Fixed.h"
+
+#include "Fixed.h"
 
 #include <cmath>
 #include <algorithm>
 
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize.h"
+
+#define PACKED_CONVERTER_USING_PARALLEL_UPSAMPLE     0
+#define PACKED_CONVERTER_USING_CONSISTENTLY_UPSAMPLE 1
+
+#define PACKED_CONVERTER_USING_CROSS_BICUBIC_FILTER 1
+	#define PACKED_CONVERTER_USING_BICUBIC_FILTER_ELEMENTS 0
+
+#define PACKED_CONVERTER_USING_BICUBIC_FILTER 0
+	#define USE_BICUBIC_1 1
+	#define USE_BICUBIC_2 0
+	#define USE_BICUBIC_3 0
 
 namespace 
 {
@@ -67,21 +79,21 @@ int IJYuvPackedConverter::pack(context_rgb2yuv* ctx)
 	uint8_t* py = ctx->pY;
 	uint8_t* pu = py + pxlSize;
 	uint8_t* pv = pu + pxlSize;
-	pixel yuv;
-	yuv.y = ctx->pY;
-	yuv.u = py + pxlSize;
-	yuv.v = pu + pxlSize;
-	for (size_t pxlIdx = 0; pxlIdx < pxlSize; pxlIdx += ctx->chanels)
-	{
-		//pr = ctx->pRgb[pxlIdx];
-		//pg = *(&pr + 1);
-		//pb = *(&pg + 1);
-
-//		dither(&pr, &pg, &pb);
-
-		IJImageTranslator::TranslateRGBToYUV(pr, pg, pb, *py, *pu, *pv);
-
-	}
+//	pixel yuv;
+//	yuv.y = ctx->pY;
+//	yuv.u = py + pxlSize;
+//	yuv.v = pu + pxlSize;
+//	for (size_t pxlIdx = 0; pxlIdx < pxlSize; pxlIdx += ctx->chanels)
+//	{
+//		//pr = ctx->pRgb[pxlIdx];
+//		//pg = *(&pr + 1);
+//		//pb = *(&pg + 1);
+//
+////		dither(&pr, &pg, &pb);
+//
+//		IJImageTranslator::TranslateRGBToYUV(pr, pg, pb, *py, *pu, *pv);
+//
+//	}
 
 	return 0;
 }
@@ -213,7 +225,7 @@ inline int IJYuvPackedConverter::get_downsample_idx(context_yuv2rgb* ctx, int do
 }
 
 
-int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
+int IJYuvPackedConverter::unpack_consistently(context_yuv2rgb* ctx)
 {
 	ASSERT_PTR_INT(ctx);
 	
@@ -244,8 +256,6 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 
 			// put Y comp to the R chanel
 			ctx->pRgb[upsample_idx] = ctx->pY[pixel_upsample_idx];
-#define PACKED_CONVERTER_USING_CROSS_BICUBIC_FILTER 0
-#define PACKED_CONVERTER_USING_BICUBIC_FILTER 1
 #if PACKED_CONVERTER_USING_CROSS_BICUBIC_FILTER
 			IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\tHorizontal upsample:");
 			// upsample horizontal
@@ -297,7 +307,6 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 				IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\t\tk = '%2d' didx = (%3d, %3d) coefIdx = '%2d' coef = '%2.4f'", k, pixel_downsample_x, pixel_downsample_y, coefIdx, coef);
 			}
 
-	#define PACKED_CONVERTER_USING_BICUBIC_FILTER_ELEMENTS 1
 	#if PACKED_CONVERTER_USING_BICUBIC_FILTER_ELEMENTS 
 			IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\tBicubic upsample:");
 			// upsample bicubic (also diagonal downsampled pixels)
@@ -339,10 +348,6 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 			ctx->pRgb[upsample_idx + 2] = (unsigned char)(ctx->pRgb[upsample_idx + 2]*0.5f + upsampled_v*0.5f);
 	#endif
 #elif PACKED_CONVERTER_USING_BICUBIC_FILTER
-
-	#define USE_BICUBIC_1 0
-	#define USE_BICUBIC_2 0
-	#define USE_BICUBIC_3 1
 	#if USE_BICUBIC_1
 			static const int k_bicubic_downsample_idx_offsets_count = 13;
 			static const int k_bicubic_downsample_idx_offsets[k_bicubic_downsample_idx_offsets_count][2] = 
@@ -409,23 +414,65 @@ int IJYuvPackedConverter::unpack(context_yuv2rgb* ctx)
 									diff_x, diff_y, coef);
 			}
 #endif
-			/*IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\tTraslating pixel {%3d %3d %3d}", ctx->pRgb[upsample_idx + 0], 
+
+			IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\tTraslating pixel {%3d %3d %3d}", ctx->pRgb[upsample_idx + 0], 
 																			        ctx->pRgb[upsample_idx + 1], 
 																			        ctx->pRgb[upsample_idx + 2]);
-			IJImageTranslator::TranslateYUVToRGB(
-				ctx->pRgb[upsample_idx + 0], 
-				ctx->pRgb[upsample_idx + 1], 
-				ctx->pRgb[upsample_idx + 2], 
-				ctx->pRgb[upsample_idx + 0], 
-				ctx->pRgb[upsample_idx + 1], 
-				ctx->pRgb[upsample_idx + 2]);
+			
+			ijTranslateYuv2RgbComps(ctx->pRgb[upsample_idx + 0], ctx->pRgb[upsample_idx + 1], ctx->pRgb[upsample_idx + 2],
+				ctx->pRgb[upsample_idx + 0], ctx->pRgb[upsample_idx + 1], ctx->pRgb[upsample_idx + 2]);
+
 			IJ_SPECIAL_LOG_FILE(s_log_ofstream, "\tTranslated pixel {%3d %3d %3d}", ctx->pRgb[upsample_idx + 0], 
 																			        ctx->pRgb[upsample_idx + 1], 
-																			        ctx->pRgb[upsample_idx + 2]);*/
+																			        ctx->pRgb[upsample_idx + 2]);
 		}
 	}
 
 	deallocate_coefs_memory(ctx);
+
+	return 0;
+}
+
+
+int IJYuvPackedConverter::unpack_parallel(context_yuv2rgb* ctx)
+{
+	ASSERT_PTR_INT(ctx);
+
+	int upsampled_idx = 0;
+	int pixel_upsampled_idx = 0;
+	int uv_upsampled_size = ctx->ySize;
+	int w_downsampled = (int)sqrt(ctx->uvSize);
+	int w_upsampled = (int)sqrt(uv_upsampled_size);
+	const unsigned char* pu_downsampled = ctx->pU;
+	const unsigned char* pv_downsampled = ctx->pV;
+	unsigned char* pu_upsampled = (unsigned char*)malloc((size_t)uv_upsampled_size);
+	unsigned char* pv_upsampled = (unsigned char*)malloc((size_t)uv_upsampled_size);
+	
+	int ures = stbir__resize_arbitrary(nullptr, 
+		pu_downsampled, w_downsampled, w_downsampled, 0,
+		pu_upsampled, w_upsampled, w_upsampled, 0, 
+		0, 0, 1, 1, nullptr, 1, -1, 0, 
+		STBIR_TYPE_UINT8, STBIR_FILTER_DEFAULT, STBIR_FILTER_DEFAULT, 
+		STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);
+
+	int vres = stbir__resize_arbitrary(nullptr, 
+		pv_downsampled, w_downsampled, w_downsampled, 0, 
+		pv_upsampled, w_upsampled, w_upsampled, 0, 
+		0, 0, 1, 1, nullptr, 1, -1, 0, 
+		STBIR_TYPE_UINT8, STBIR_FILTER_DEFAULT, STBIR_FILTER_DEFAULT, 
+		STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);
+
+	for (; pixel_upsampled_idx < ctx->ySize; pixel_upsampled_idx++)
+	{
+		upsampled_idx = pixel_upsampled_idx * 3;
+		ijTranslateYuv2RgbComps(ctx->pY[pixel_upsampled_idx], pu_upsampled[pixel_upsampled_idx], pv_upsampled[pixel_upsampled_idx],
+			ctx->pRgb[upsampled_idx + 0], ctx->pRgb[upsampled_idx + 1], ctx->pRgb[upsampled_idx + 2]);
+	}
+
+	*ctx->W = w_upsampled;
+	*ctx->H = w_upsampled;
+	free(pu_upsampled);
+	free(pv_upsampled);
 
 	return 0;
 }
@@ -452,7 +499,12 @@ int IJYuvPackedConverter::unpack(const unsigned char* pY, const unsigned char* p
 	ctx->W = W;
 	ctx->H = H;
 
-	int result = unpack(ctx);
+	int result = 0;
+#if PACKED_CONVERTER_USING_PARALLEL_UPSAMPLE
+	result = unpack_parallel(ctx);
+#elif PACKED_CONVERTER_USING_CONSISTENTLY_UPSAMPLE
+	result = unpack_consistently(ctx);
+#endif
 
 	delete ctx;
 	ctx = nullptr;

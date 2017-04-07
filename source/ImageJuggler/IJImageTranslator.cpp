@@ -26,25 +26,9 @@ void IJImageTranslator::TranslateRGBToYUV(uint8_t R, uint8_t G, uint8_t B,
 										  uint8_t& y, uint8_t& u, uint8_t& v)
 {
 #if TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION
-	#if IMAGE_CONVERSION_STANDARD_SDTV
-		y = cusmath::clamp<fixed_int>(R * 0.257f    + G * 0.504f    + B * 0.098f    + 16 , 16, 235).to_uint();
-		u = cusmath::clamp<fixed_int>(R * (-0.169f) + G * (-0.291f) + B * 0.439f    + 128, 16, 240).to_uint();
-		v = cusmath::clamp<fixed_int>(R * 0.439f    + G * (-0.368f) + B * (-0.071f) + 128, 16, 240).to_uint();
-	#elif IMAGE_CONVERSION_STANDARD_HDTV
-		static fixed_int yrk =  0.2126f , ygk =  0.7152f , ybk =  0.0722f, 
-						 brk = -0.09991f, bgk = -0.33609f, bbk =  0.436f, 
-						 rrk =  0.615f  , rgk = -0.55861f, rbk = -0.05639f, 
-						incY = 16, incUV = 128, lower = 16, upperY = 235, upperUV = 240;
-		y = cusmath::clamp<fixed_int>(R * yrk + G * ygk + B * ybk + incY , lower, upperY).to_uint();
-		u = cusmath::clamp<fixed_int>(R * brk + G * bgk + B * bbk + incUV, lower, upperUV).to_uint();
-		v = cusmath::clamp<fixed_int>(R * rrk + G * rgk + B * rbk + incUV, lower, upperUV).to_uint();
-	#endif // IMAGE_CONVERSION_STANDRARD_SDTV
+		ijTranslateRgb2YuvComps(R, G, B, y, u, v);
 #else
-	#if IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES
-		y = static_cast<uint8_t>(cusmath::clamp<float>( 0.299f * R + 0.587f * G + 0.114f * B, 0, 255));
-		u = static_cast<uint8_t>(cusmath::clamp<float>(-0.169f * R - 0.331f * G + 0.500f * B + 128, 0, 255));
-		v = static_cast<uint8_t>(cusmath::clamp<float>( 0.500f * R - 0.419f * G - 0.081f * B + 128, 0, 255));
-	#elif IMAGE_CONVERSION_STANDARD_SDTV
+	#if IMAGE_CONVERSION_STANDARD_SDTV
 		y = static_cast<uint8_t>(cusmath::clamp<float>(0.257f * R + 0.504f * G + 0.098f * B + 16, 16, 235));
 		u = static_cast<uint8_t>(cusmath::clamp<float>(-0.148f * R - 0.291f * G + 0.439f * B + 128, 16, 240));
 		v = static_cast<uint8_t>(cusmath::clamp<float>(0.439f * R - 0.368f * G - 0.071f * B + 128, 16, 240));
@@ -71,11 +55,7 @@ void IJImageTranslator::TranslateYUVToRGB(uint8_t Y, uint8_t U, uint8_t V,
 		rgbPixel[1] = cusmath::clamp<fixed_int>(kY + U_ * (-0.392f) + V_ * (-0.813f), 0, 255).to_uint();
 		rgbPixel[2] = cusmath::clamp<fixed_int>(kY + U_ * 2.017f, 0, 255).to_uint();
 	#elif IMAGE_CONVERSION_STANDARD_HDTV
-		static fixed_int rrk = 1.13983f, 
-						 gbk = -0.39465f, grk = -0.58060f, 
-						 bbk = 2.03211f, 
-						yMu = 1.f, yDec = 16, uvDec = 128,
-						lower = 0, upper = 255;
+		ijTranslate_yuv2rgb_hdtv_inline_fixed_point_declare_constants(Y, U, V);
 		fixed_int kY = (Y - yDec) * yMu, 
 				  U_ = U - uvDec, 
 				  V_ = V - uvDec;
@@ -84,13 +64,7 @@ void IJImageTranslator::TranslateYUVToRGB(uint8_t Y, uint8_t U, uint8_t V,
 		b = cusmath::clamp<fixed_int>(kY + U_ * bbk, lower, upper).to_uint();
 	#endif
 #else 	
-	#if IMAGE_CONVERSION_STANDARD_FULL_RANGE_VALUES
-		double V_ = R - 128,
-			U_ = B - 128;
-		rgbPixel[0] = static_cast<uint8_t>(cusmath::clamp<float>(Y + 1.400f * V_, 0, 255));
-		rgbPixel[1] = static_cast<uint8_t>(cusmath::clamp<float>(Y - 0.343f * U_ - 0.711f * V_, 0, 255));
-		rgbPixel[2] = static_cast<uint8_t>(cusmath::clamp<float>(Y + 1.765f * U_, 0, 255));
-	#elif IMAGE_CONVERSION_STANDARD_SDTV
+	#if IMAGE_CONVERSION_STANDARD_SDTV
 		float Y_ = Y - 16,
 			U_ = B - 128,
 			V_ = R - 128,

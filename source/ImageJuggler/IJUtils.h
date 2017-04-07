@@ -49,7 +49,7 @@ do {\
 
 namespace cusmath
 {
-	template <typename T>
+	template <typename T> inline
 	T clamp(const T& val, const T& lower, const T& upper)
 	{
 		if (val < lower)
@@ -67,10 +67,9 @@ namespace cusmath
 
 namespace parallel
 {
-	inline void asyncForeach(int _start,
-							 int _end,
+	inline void asyncForeach(int _start, int _end,
 							 std::function<void(int _i)> _func, 
-							 const size_t _nThreads = 4)
+							 const int _nThreads = 4)
 	{
 		if (!_func)
 		{

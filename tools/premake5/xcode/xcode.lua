@@ -7,12 +7,14 @@
 premake.APPEX       = "AppExtension"
 premake.WATCHAPP    = "WatchApp"
 premake.WATCHEX     = "WatchKitExtension"
+premake.MESSEX      = "MessagesExtension"
 premake.FRAMEWORK   = "Framework"
 
 premake.api.addAllowed("kind", "AppExtension")
 premake.api.addAllowed("kind", "Framework")
 premake.api.addAllowed("kind", "WatchApp")
 premake.api.addAllowed("kind", "WatchKitExtension")
+premake.api.addAllowed("kind", "MessagesExtension")
 
 	premake.xcode = { }
 	
@@ -90,7 +92,7 @@ premake.api.addAllowed("kind", "WatchKitExtension")
 ---
 
 	function isExtension(kind)
-		return kind == premake.APPEX or kind == premake.WATCHAPP or kind == premake.WATCHEX
+		return kind == premake.APPEX or kind == premake.WATCHAPP or kind == premake.WATCHEX or kind == premake.MESSEX
 	end
 			
 		

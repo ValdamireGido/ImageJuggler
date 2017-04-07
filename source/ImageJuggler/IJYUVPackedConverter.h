@@ -95,36 +95,6 @@ struct IJYuvPackedConverter
 		}
 	};
 
-	struct pixel
-	{
-		union 
-		{
-			uint8_t* r;
-			uint8_t* y;
-		};
-
-		union 
-		{
-			uint8_t* g;
-			uint8_t* u;
-		};
-
-		union 
-		{
-			uint8_t* b;
-			uint8_t* v;
-		};
-
-		pixel() = default;
-		pixel(uint8_t* c1, uint8_t* c2, uint8_t* c3)
-			: r(c1), g(c2), b(c3)
-		{}
-
-		pixel(uint8_t* firstComp)
-			: r(firstComp), g(firstComp+1), b(g+1)
-		{}
-	};
-
 	static int pack(context_rgb2yuv* ctx);
 	static int pack(const unsigned char* rgbSrc, unsigned rgbSize, unsigned rgbW, unsigned rgbH,
 					unsigned char* packedImage, unsigned packRate, unsigned* ySize, unsigned* uvSize);
@@ -142,7 +112,8 @@ struct IJYuvPackedConverter
 	static int   get_upsample_idx(context_yuv2rgb* ctx, int upsample_x, int upsample_y);
 	static int   get_downsample_idx(context_yuv2rgb* ctx, int downsample_x, int downsample_y);
 
-	static int   unpack(context_yuv2rgb* ctx);
+	static int   unpack_consistently(context_yuv2rgb* ctx);
+	static int   unpack_parallel(context_yuv2rgb* ctx);
 	static int   unpack(const unsigned char* pY, const unsigned char* pU, const unsigned char* pV, 
 						unsigned ySize, unsigned uvSize, unsigned packRate, 
 						unsigned char* pRgb, unsigned short* W, unsigned short* H);
@@ -151,7 +122,6 @@ struct IJYuvPackedConverter
 private:
 
 	static float get_dither_coef(context_rgb2yuv* ctx, size_t idx);
-	static void dither(context_rgb2yuv* ctx, pixel target, pixel pxlR, pixel pxlLL, 
-					   pixel pxlL, pixel pxlLR);
+	
 
 };

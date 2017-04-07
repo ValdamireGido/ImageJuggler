@@ -2319,6 +2319,19 @@ function addCommonXcodeBuildSettings()
 	end	
 end	
 
+function addCommonXcodeApplicationBuildSettings()
+	addCommonXcodeBuildSettings()
+	
+	if IsXCode() then
+		xcodebuildsettings
+		{
+			["CODE_SIGN_IDENTITY"] = "iPhone Developer",
+			["DEVELOPMENT_TEAM"] = "A4QBZ46HAP";
+			["PROVISIONING_PROFILE_SPECIFIER"] = "GAMELOFT315";
+		}
+	end
+end
+
 -------------------------------------------------------------------------------
 --
 -------------------------------------------------------------------------------

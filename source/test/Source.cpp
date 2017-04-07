@@ -14,9 +14,12 @@
 
 #define	PROFILING_ENABLED 1
 #include "Profiling.h"
+std::ofstream s_profiling_output_file_stream;
+
+#define profile_block(blockName) dbg__profileBlock2_file(blockName, s_profiling_output_file_stream)
 
 #if defined(_DEBUG)
-	#if defined(MVC)
+	#if defined(_WIN32) || defined(_WIN64)
 		#define DBG_REPORT_ERROR(format, ...) _CrtDbgReport(_CRT_ERROR, __FILE__, __LINE__, __FUNCDNAME__, format, __VA_ARGS__)
 		#define DBG_REPORT_WARN(format, ...) _CrtDbgReport(_CRT_WARN, __FILE__, __LINE__, __FUNCDNAME__, format, __VA_ARGS__)
 	#elif defined(__APPLE__)
@@ -202,15 +205,15 @@ void YBRToRGBTranslate()
 
 void RGBToYUVPack()
 {
-	const std::string inputFileName  = "input/Lenna.tga";
-	const std::string outputFileName = "output/Lenna.yuv.tga";
+	const std::string inputFileName  = "input/SourceG.tga";
+	const std::string outputFileName = "output/SourceG.yuv.tga";
 
 	IJResult result = IJResult::UnknownResult;
 	IJPackedColourImage* packedImage = nullptr;
 	IJRGBImage* rgbImage = nullptr;
 
 	{
-		dbg__profileBlock2("Loading rgb image");
+		profile_block("Loading rgb image");
 
 		rgbImage = new IJRGBImage();
 		assert(rgbImage);
@@ -224,7 +227,7 @@ void RGBToYUVPack()
 
 
 	{
-		dbg__profileBlock2("Translating and packing the rgb image to packed YUV image");
+		profile_block("Translating and packing the rgb image to packed YUV image");
 		packedImage = new IJPackedColourImage();
 		assert(packedImage);
 		
@@ -237,7 +240,7 @@ void RGBToYUVPack()
 
 
 	{
-		dbg__profileBlock2("Saving the result image");
+		profile_block("Saving the result image");
 
 		std::ofstream ofile(outputFileName, std::ios::out | std::ios::binary);
 		result = packedImage->Save(ofile);
@@ -258,15 +261,15 @@ void RGBToYUVPack()
 
 void YUVpackToRGB()
 {
-	const std::string inputFileName  = "output/Lenna.yuv.tga";
-	const std::string outputFileName = "output/Lenna.yuv.rgb.tga";
+	const std::string inputFileName  = "output/SourceG.yuv.tga";
+	const std::string outputFileName = "output/SourceG.yuv.rgb.tga";
 
 	IJResult result = IJResult::UnknownResult;
 	IJPackedColourImage* packedImage = nullptr;
 	IJRGBImage* rgbImage = nullptr;
 
 	{
-		dbg__profileBlock2("Loading the packed image");
+		profile_block("Loading the packed image");
 
 		packedImage = new IJPackedColourImage();
 		assert(packedImage);
@@ -285,7 +288,7 @@ void YUVpackToRGB()
 	}
 
 	{
-		dbg__profileBlock2("Unpacking the image");
+		profile_block("Unpacking the image");
 
 		rgbImage = new IJRGBImage();
 		assert(rgbImage);
@@ -307,7 +310,7 @@ void YUVpackToRGB()
 	}
 
 	{
-		dbg__profileBlock2("Clean up");
+		profile_block("Clean up");
 
 		result = rgbImage->Save(outputFileName);
 		if (result != IJResult::Success)
@@ -327,8 +330,8 @@ void YUVpackToRGB()
 
 int main(int argc, char** argv)
 {
-	//RGBToYCbCrTranslate();
-	//YBRToRGBTranslate();
+	s_profiling_output_file_stream.open("dbgoutput/profiling_output", std::ios::out | std::ios::app);
+	s_profiling_output_file_stream << std::endl << "Run on " << std::chrono::system_clock::now().time_since_epoch().count() << std::endl;
 
 	RGBToYUVPack();
 	YUVpackToRGB();

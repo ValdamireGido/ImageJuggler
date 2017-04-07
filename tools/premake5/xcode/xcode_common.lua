@@ -405,6 +405,7 @@
 			
 			WatchApp    = "com.apple.product-type.application.watchapp",
 			WatchKitExtension    = "com.apple.product-type.watchkit-extension",
+			MessagesExtension    = "com.apple.product-type.app-extension.messages",
 		}
 		return types[node.cfg.kind]
 	end
@@ -429,6 +430,7 @@
 			Framework    = "wrapper.framework",
 			WatchApp     = "wrapper.application",
 			WatchKitExtension = "\"wrapper.app-extension\"",
+			MessagesExtension = "\"wrapper.app-extension\"",
 		}
 		return types[kind]
 	end
@@ -688,7 +690,7 @@ end
 				_p(3,'files = (')
 				tree.traverse(tr.binaries, {
 					onnode = function(node)
-						if node.prj and node.prj.kind and (node.prj.kind == premake.APPEX or  node.prj.kind == premake.WATCHEX) then
+						if node.prj and node.prj.kind and (node.prj.kind == premake.APPEX or node.prj.kind == premake.WATCHEX or node.prj.kind == premake.MESSEX) then
 							_p(4,'%s /* %s in %s */,', node.buildid, node.name, xcode.getbuildcategory(node))
 						end
 					end
@@ -730,7 +732,7 @@ end
 				
 				-- is this a project dependency?
 				elseif node.parent.parent == tr.projects then
-					if not node.cfg or (node.cfg.kind ~= premake.APPEX and node.cfg.kind ~= premake.WATCHEX) then 
+					if not node.cfg or (node.cfg.kind ~= premake.APPEX and node.cfg.kind ~= premake.WATCHEX and node.prj.kind ~= premake.MESSEX) then 
 						settings[node.parent.id] = function(level)
 							-- ms Is there something wrong with path is relative ?
 							-- if we have a and b without slashes get relative should assume the same parent folder and return ../
@@ -1385,7 +1387,7 @@ end
 		end
 		
 		-- Code Signing
-		settings['CODE_SIGN_IDENTITY'] = 'iPhone Developer: Valeri Vuchov (WDTMDP2J2J)'
+		settings['CODE_SIGN_IDENTITY'] = 'iPhone Developer'
 		
 		-- Deployment
 --		settings['DSTROOT'] = '/tmp/$(PROJECT_NAME).dst' -- NEW

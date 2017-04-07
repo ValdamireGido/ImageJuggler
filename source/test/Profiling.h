@@ -7,11 +7,17 @@
 
 #if PROFILING_ENABLED
 
+#define dbg__profileBlock2_file(blockName, stream) \
+ProfileUtils::ProfileBlock __profile__block__info__(__FILE__, __FUNCTION__, __LINE__, blockName, stream)
+
 #define dbg__profileBlock2(blockName) \
 ProfileUtils::ProfileBlock __profile__block__info__(__FILE__, __FUNCTION__, __LINE__, blockName)
 
 #define dbg__profileBlock() \
 ProfileUtils::ProfileBlock __profile__block__info__(__FILE__, __FUNCTION__, __LINE__, __FUNCTION__)
+
+#define dbg__profielBlock_file(stream) \
+ProfileUtils::ProfileBlock __profile__block__info__(__FILE__, __FUNCTION__, __LINE__, __FUNCTION__, stream)
 
 #else 
 #define dbg__profileBlock2(blockName)

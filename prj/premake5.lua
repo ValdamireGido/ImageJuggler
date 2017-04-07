@@ -27,7 +27,8 @@ solution ("ImageJuggler_Test")
 
 project ("Test")
     kind "ConsoleApp"
-    targetdir ("../lib")
+    targetdir ("../dbgdir")
+    debugdir ("../dbgdir")
     files {
         "../source/test/**.cpp",
         "../source/test/**.h"
@@ -39,10 +40,15 @@ project ("Test")
         "../source/boost"
     }
 
-    links { 
-        "../ImageJugglerLib",
-        "ImageJuggler"
-    }
+    if IsWin32() then
+		defines {"WIN32", "OS_WIN32"}
+		buildoptions { "/FC", "/EHsc" }
+        configuration "Debug"
+            links { "../lib/ImageJuggler_x86_d" }
+
+        configuration "Release"
+            links { "../lib/ImageJuggler_x86" }
+	end
 
     if IsXCode() then
         buildoptions { "-std=c++11 -stdlib=libc++ -x objective-c++ -Wno-error" }
@@ -67,6 +73,7 @@ project ("Test")
 project ("ImageJuggler")
     kind "StaticLib"
     targetdir ("../lib")
+    debugdir ("$(TargetDir)")
     files {
         "../source/ImageJuggler/**.cpp", 
         "../source/ImageJuggler/**.h"
@@ -76,6 +83,11 @@ project ("ImageJuggler")
         "../source/ImageJuggler", 
         "../source/boost"
     }
+
+    if IsWin32() then
+		defines {"WIN32", "OS_WIN32" }
+        buildoptions { "/EHsc" }
+	end
 
     if IsXCode() then
 		buildoptions { "-std=c++11 -stdlib=libc++ -x objective-c++ -Wno-error" }

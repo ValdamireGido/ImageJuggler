@@ -146,7 +146,7 @@
 		 end
 		
 		for lprj in premake.solution.eachproject(prj.solution) do
-			if lprj.kind == premake.APPEX or lprj.kind == premake.WATCHEX then
+			if lprj.kind == premake.APPEX or lprj.kind == premake.WATCHEX or lprj.kind == premake.MESSEX then
 				for cfg in project.eachconfig(lprj) do
 					for _, link in ipairs(config.getlinks(cfg, "system", "fullpath")) do
 						local name = path.getname(link)
@@ -222,6 +222,7 @@
 			--"dep" .. path.getbasename(cnode.name)..".a")
 			local node = tree.insert(cnode, tree.new(cfg.linktarget.name))
 			node.path =  cfg.linktarget.relpath --"dep" .. cnode.name				
+			node.special = "special"
 			node.prjids = {}
 			node.prjids[prj.xcode.projectnode.id] = {}		
 		end
@@ -254,7 +255,7 @@
 				local cfg = project.getconfig(dep, dep.configurations[1], dep.platforms[1])
 			
 				local nodename = cfg.targetname
-				if cfg.kind == premake.APPEX or cfg.kind == premake.WATCHEX then
+				if cfg.kind == premake.APPEX or cfg.kind == premake.WATCHEX or cfg.kind == premake.MESSEX then
 					nodename = nodename .. ".appex"
 				end
 				if cfg.kind == premake.WATCHAPP then
@@ -282,7 +283,11 @@
 		
 		local onnode = function(node)
 			-- assign IDs to every node in the tree
-			node.id = xcode.newid(node.name, node.prjid, node.path)
+			special = ''
+			if node.special then
+				special = node.special
+			end
+			node.id = xcode.newid(node.name, node.prjid, node.path, special)
 			
 			local project = prj
 			
@@ -295,7 +300,7 @@
 			
 			-- assign build IDs to buildable files
 			if xcode.getbuildcategory(node) then		
-				node.buildid = xcode.newid(node.name, "build", node.path)
+				node.buildid = xcode.newid(node.name, "build", node.path, special)
 				node.buildfilesettings = project.xcodebuildfilesettings[node.name]
 				
 			end						
@@ -317,7 +322,7 @@
 				local cfg = project.getconfig(lprj, lprj.configurations[1], lprj.platforms[1])
 			
 				local nodename = cfg.targetname
-				if cfg.kind == premake.APPEX or cfg.kind == premake.WATCHEX then
+				if cfg.kind == premake.APPEX or cfg.kind == premake.WATCHEX or cfg.kind == premake.MESSEX then
 					nodename = nodename .. ".appex"
 				end
 				if cfg.kind == premake.WATCHAPP then
