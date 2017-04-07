@@ -26,7 +26,7 @@ void IJImageTranslator::TranslateRGBToYUV(uint8_t R, uint8_t G, uint8_t B,
 										  uint8_t& y, uint8_t& u, uint8_t& v)
 {
 #if TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION
-		ijTranslateRgb2YuvComps(R, G, B, y, u, v);
+	ijTranslateRgb2YuvComps(R, G, B, y, u, v);
 #else
 	#if IMAGE_CONVERSION_STANDARD_SDTV
 		y = static_cast<uint8_t>(cusmath::clamp<float>(0.257f * R + 0.504f * G + 0.098f * B + 16, 16, 235));
@@ -46,23 +46,7 @@ void IJImageTranslator::TranslateYUVToRGB(uint8_t Y, uint8_t U, uint8_t V,
 										  uint8_t& r, uint8_t& g, uint8_t& b)
 {
 #if TRANSLATOR_USING_FIXED_POINT_IMPLEMENTATION
-	#if IMAGE_CONVERSION_STANDARD_SDTV
-		fixed_int Y_ = Y - 16, 
-				  kY = Y_ * 1.164f, 
-				  U_ = B - 128, 
-				  V_ = R - 128;
-		rgbPixel[0] = cusmath::clamp<fixed_int>(kY + V_ * 1.196f, 0, 255).to_uint();
-		rgbPixel[1] = cusmath::clamp<fixed_int>(kY + U_ * (-0.392f) + V_ * (-0.813f), 0, 255).to_uint();
-		rgbPixel[2] = cusmath::clamp<fixed_int>(kY + U_ * 2.017f, 0, 255).to_uint();
-	#elif IMAGE_CONVERSION_STANDARD_HDTV
-		ijTranslate_yuv2rgb_hdtv_inline_fixed_point_declare_constants(Y, U, V);
-		fixed_int kY = (Y - yDec) * yMu, 
-				  U_ = U - uvDec, 
-				  V_ = V - uvDec;
-		r = cusmath::clamp<fixed_int>(kY + V_ * rrk, lower, upper).to_uint();
-		g = cusmath::clamp<fixed_int>(kY + U_ * gbk + V_ * grk, lower, upper).to_uint();
-		b = cusmath::clamp<fixed_int>(kY + U_ * bbk, lower, upper).to_uint();
-	#endif
+	ijTranslateYuv2RgbComps(Y, U, V, r, g, b);
 #else 	
 	#if IMAGE_CONVERSION_STANDARD_SDTV
 		float Y_ = Y - 16,

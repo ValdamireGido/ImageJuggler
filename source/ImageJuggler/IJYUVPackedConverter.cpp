@@ -14,8 +14,8 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize.h"
 
-#define PACKED_CONVERTER_USING_PARALLEL_UPSAMPLE     0
-#define PACKED_CONVERTER_USING_CONSISTENTLY_UPSAMPLE 1
+#define PACKED_CONVERTER_USING_PARALLEL_UPSAMPLE     1
+#define PACKED_CONVERTER_USING_CONSISTENTLY_UPSAMPLE 0
 
 #define PACKED_CONVERTER_USING_CROSS_BICUBIC_FILTER 1
 	#define PACKED_CONVERTER_USING_BICUBIC_FILTER_ELEMENTS 0
@@ -348,7 +348,6 @@ int IJYuvPackedConverter::unpack_consistently(context_yuv2rgb* ctx)
 			ctx->pRgb[upsample_idx + 2] = (unsigned char)(ctx->pRgb[upsample_idx + 2]*0.5f + upsampled_v*0.5f);
 	#endif
 #elif PACKED_CONVERTER_USING_BICUBIC_FILTER
-	#if USE_BICUBIC_1
 			static const int k_bicubic_downsample_idx_offsets_count = 13;
 			static const int k_bicubic_downsample_idx_offsets[k_bicubic_downsample_idx_offsets_count][2] = 
 			{
@@ -362,36 +361,6 @@ int IJYuvPackedConverter::unpack_consistently(context_yuv2rgb* ctx)
 																		  //
 						            { 0, -2}							  //
 			};
-	#elif USE_BICUBIC_2
-			static const int k_bicubic_downsample_idx_offsets_count = 9;
-			static const int k_bicubic_downsample_idx_offsets[k_bicubic_downsample_idx_offsets_count][2] = 
-			{
-						  		    { 0,  2},                    
-																
-						            { 0,  1},          			
-																
-				{-2,  0}, {-1,  0}, { 0,  0}, { 1,  0}, { 2,  0},
-																
-				                    { 0, -1},           		
-																
-						            { 0, -2}					
-			};
-	#elif USE_BICUBIC_3
-			static const int k_bicubic_downsample_idx_offsets_count = 21;
-			static const int k_bicubic_downsample_idx_offsets[k_bicubic_downsample_idx_offsets_count][2] = 
-			{
-						  {-1,  2}, { 0,  2}, { 1,  2},           
-																
-				{-2,  1}, {-1,  1}, { 0,  1}, { 1,  1},	{ 2,  1}, 
-																
-				{-2,  0}, {-1,  0}, { 0,  0}, { 1,  0}, { 2,  0},
-																
-				{-2, -1}, {-1, -1}, { 0, -1}, { 1, -1}, { 2, -1}, 
-																
-						  {-1, -2}, { 0, -2}, { 1, -2}, 
-			};
-	#endif
-
 			for (int k = 0; k < k_bicubic_downsample_idx_offsets_count; k++)
 			{
 				int pixel_downsample_x = pixel_upsample_x / ctx->packRate + k_bicubic_downsample_idx_offsets[k][0];
@@ -438,6 +407,8 @@ int IJYuvPackedConverter::unpack_parallel(context_yuv2rgb* ctx)
 {
 	ASSERT_PTR_INT(ctx);
 
+	system("pause");
+
 	int upsampled_idx = 0;
 	int pixel_upsampled_idx = 0;
 	int uv_upsampled_size = ctx->ySize;
@@ -448,12 +419,16 @@ int IJYuvPackedConverter::unpack_parallel(context_yuv2rgb* ctx)
 	unsigned char* pu_upsampled = (unsigned char*)malloc((size_t)uv_upsampled_size);
 	unsigned char* pv_upsampled = (unsigned char*)malloc((size_t)uv_upsampled_size);
 	
+	system("pause");
+
 	int ures = stbir__resize_arbitrary(nullptr, 
 		pu_downsampled, w_downsampled, w_downsampled, 0,
 		pu_upsampled, w_upsampled, w_upsampled, 0, 
 		0, 0, 1, 1, nullptr, 1, -1, 0, 
 		STBIR_TYPE_UINT8, STBIR_FILTER_DEFAULT, STBIR_FILTER_DEFAULT, 
 		STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_COLORSPACE_LINEAR);
+
+	system("pause");
 
 	int vres = stbir__resize_arbitrary(nullptr, 
 		pv_downsampled, w_downsampled, w_downsampled, 0, 
@@ -473,6 +448,8 @@ int IJYuvPackedConverter::unpack_parallel(context_yuv2rgb* ctx)
 	*ctx->H = w_upsampled;
 	free(pu_upsampled);
 	free(pv_upsampled);
+
+	system("pause");
 
 	return 0;
 }

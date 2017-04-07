@@ -58,9 +58,9 @@ static fixed_int yrk =  0.2126f , ygk =  0.7152f , ybk =  0.0722f, 													
 				 rrk = 0.615f, rgk = -0.55861f, rbk = -0.05639f,													\
 				 incY = 16, incUV = 128, lower = 16, upperY = 235, upperUV = 240
 
-#define ijTranslate_rgb2yuv_hdtv_inline_fixed_point(_r, _g, _b, _y, _u, _v)											\
+#define ijTranslate_rgb2yuv_hdtv_inline_fixed_point(r, g, b, y, u, v)												\
 do { 																												\
-	ijTranslate_rgb2yuv_hdtv_inline_fixed_point_declare_constans()													\
+	ijTranslate_rgb2yuv_hdtv_inline_fixed_point_declare_constans();													\
 	y = cusmath::clamp<fixed_int>(r * yrk + g * ygk + b * ybk + incY, lower, upperY).to_uint();						\
 	u = cusmath::clamp<fixed_int>(r * brk + g * bgk + b * bbk + incUV, lower, upperUV).to_uint();					\
 	v = cusmath::clamp<fixed_int>(r * rrk + g * rgk + b * rbk + incUV, lower, upperUV).to_uint();					\
